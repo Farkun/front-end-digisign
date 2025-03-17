@@ -1,0 +1,30 @@
+.container {
+  max-width: 500px;
+  margin: auto;
+  text-align: center;
+}
+
+.signatureBox {
+  width: 100%;
+  height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* Memberi jarak antar tombol */
+  margin-top: 10px;
+}
+
+.deleteButton {
+  background-color: #ff4d4d !important; /* Merah */
+  color: white !important;
+}
+
+.saveButton {
+  background-color: #28a745 !important; /* Hijau */
+  color: white !important;
+}

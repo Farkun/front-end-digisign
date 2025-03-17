@@ -1,0 +1,48 @@
+.homepage-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Konten utama menyesuaikan sidebar */
+  .main-content {
+    margin-top: 60px;
+    margin-left: 250px;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out;
+  }
+  
+  /* Saat sidebar mengecil */
+  .main-content.closed {
+    margin-left: 70px;
+  }
+  
+  .content {
+    margin-top: 20px;
+  }
+
+  .dashboard-cards {
+    display: flex;
+    gap: 20px; /* Jarak antar kartu */
+    margin-top: 20px;
+  }
+  
+  .card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    width: 200px; /* Atur ukuran kartu */
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+    background: #f1f1f1;
+    display: flex;
+  }
+  
+  

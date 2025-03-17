@@ -1,0 +1,40 @@
+.navbar2 {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background: white;
+  padding: 15px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 250px; /* Sesuaikan dengan sidebar */
+  width: calc(100% - 250px); /* Gunakan calc agar lebar pas */
+  height: 60px;
+  z-index: 900;
+  transition: left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+/* Navbar menyesuaikan saat sidebar ditutup */
+.main-content.closed .navbar2 {
+  left: 70px;
+  width: calc(100% - 70px);
+}
+
+/* Tombol logout lebih besar */
+.logoutBtn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background 0.3s;
+  width: 140px; /* Tambah ukuran */
+  text-align: center;
+  margin-right: 40px; /* Jangan terlalu ke kanan */
+}
+
+.logoutBtn:hover {
+  background: #c0392b;
+}

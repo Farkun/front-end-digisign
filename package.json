@@ -1,0 +1,40 @@
+{
+  "name": "front-end",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "^0.1.68",
+    "@syncfusion/ej2-react-buttons": "^28.2.7",
+    "@syncfusion/ej2-react-inputs": "^28.2.11",
+    "@syncfusion/ej2-react-pdfviewer": "^28.2.11",
+    "file-saver": "^2.0.5",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "3.9.179",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-konva": "^19.0.3",
+    "react-router-dom": "^7.3.0",
+    "react-signature-canvas": "^1.1.0-alpha.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/file-saver": "^2.0.7",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.24.1",
+    "vite": "^6.2.0"
+  }
+}

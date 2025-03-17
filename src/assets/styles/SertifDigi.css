@@ -1,0 +1,134 @@
+.SertifDigi-container {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.SertifDigi-container h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Tabel */
+.SertifDigi-table {
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.SertifDigi-table th,
+.SertifDigi-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.SertifDigi-table th {
+    background-color: #2c3e50;
+}
+
+/* Aksi Buttons */
+.aksi-buttons {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.aksi-buttons button {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.revoke-btn {
+    background: #6c757d;
+    color: white;
+    align-items: center;
+    width: auto;
+}
+
+.buat-sertifikat-btn {
+    top: 10px;
+    left: 10px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    background: #2ecc71;
+    color: white;
+}
+
+.revoke-btn:hover {
+    background: #5a6268;
+}
+
+.download-btn:hover {
+    background: #27ae60;
+}
+
+
+.status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    min-width: 80px;
+}
+
+/* 🔹 Warna untuk status "aktif" */
+.status.aktif {
+    background-color: #d4edda;
+    /* Hijau muda */
+    color: #155724;
+    /* Hijau tua */
+    border: 1px solid #c3e6cb;
+}
+
+/* 🔹 Warna untuk status "kadaluarsa" */
+.status.kadaluarsa {
+    background-color: #f8d7da;
+    /* Merah muda */
+    color: #721c24;
+    /* Merah tua */
+    border: 1px solid #f5c6cb;
+}
+
+/* Card umum */
+.card {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border-left: 6px solid #007bff; /* Garis tebal di kiri */
+    width: 100%;
+  }
+  
+  /* Konten dalam card */
+  .card-content {
+    flex: 1;
+    padding-left: 15px;
+  }
+  
+  /* Judul dalam card */
+  .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  /* Teks informasi */
+  .info-text {
+    font-size: 14px;
+    color: #555;
+  }
+  

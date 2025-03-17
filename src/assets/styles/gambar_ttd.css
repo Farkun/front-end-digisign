@@ -1,0 +1,87 @@
+/* Container utama */
+.gambar-ttd-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    text-align: left;
+  }
+  
+  /* Judul halaman */
+  .gambar-ttd-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Card umum */
+  .card {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border-left: 6px solid #007bff; /* Garis tebal di kiri */
+    width: 100%;
+  }
+  
+  /* Konten dalam card */
+  .card-content {
+    flex: 1;
+    padding-left: 15px;
+  }
+  
+  /* Judul dalam card */
+  .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  /* Teks informasi */
+  .info-text {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Input file */
+  input[type="file"] {
+    display: block;
+    margin: 10px 0;
+  }
+  
+  /* Nama file */
+  .file-name {
+    font-size: 14px;
+    color: #333;
+    margin-top: 5px;
+  }
+  
+  /* Preview gambar */
+  .preview-image {
+    width: auto;
+    height: 120px;
+    margin-top: 10px;
+    display: block;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  /* Tombol simpan */
+  .save-button {
+    margin-top: 10px;
+    background-color: #28a745;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .save-button:hover {
+    background-color: #218838;
+  }
+  

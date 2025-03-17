@@ -1,0 +1,112 @@
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: #2c3e50;
+  color: white;
+  padding: 20px;
+  z-index: 1000;
+  transition: width 0.3s ease-in-out;
+}
+
+.open {
+  width: 250px;
+}
+
+.closed {
+  width: 70px;
+  padding: 20px 10px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hamburger {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  display: block;
+  text-align: right;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.closed .logo {
+  opacity: 0;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.sidebar li {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.sidebar li a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  transition: background 0.3s;
+}
+
+.sidebar li:hover {
+  background: #34495e;
+}
+
+/* Hilangkan teks menu jika sidebar tertutup */
+.closed li a {
+  justify-content: center;
+  gap: 0;
+}
+
+.closed li a span {
+  display: none;
+}
+
+/* Tambahkan efek untuk link aktif */
+.active {
+  background: #1abc9c;
+}
+
+.dropdownMenu {
+  list-style: none;
+  padding-left: 20px;
+}
+
+.dropdownMenu li {
+  padding: 5px 0;
+}
+
+.dropdownMenu li:hover {
+  background: #1abc9c;
+}
+
+.dropdown span {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+
+

@@ -1,0 +1,175 @@
+
+
+/* ====== Container utama ====== */
+.tandaTangani {
+  background: #ffffff;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+
+/* ====== Header ====== */
+h1 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+/* ====== File Upload ====== */
+input[type="file"] {
+  width: 95% !important;
+  max-width: 500px !important; /* Sesuaikan dengan lebar PDF */
+  display: block !important;
+  margin: 10px auto !important;
+}
+ 
+
+.file-upload-label {
+  display: inline-block;
+  padding: 12px 20px;
+  background: #007bff;
+  color: white;
+  font-size: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-upload-label:hover {
+  background: #0056b3;
+}
+
+.file-info {
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+}
+
+/* ====== Tombol Aksi ====== */
+#actionBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+button,
+.e-btn {
+  padding: 12px 18px;
+  margin: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  border-radius: 6px;
+  transition: all 0.3s ease-in-out;
+}
+
+button.primary,
+.e-btn.e-primary {
+  background: #28a745;
+  color: white;
+}
+
+button.primary:hover {
+  background: #218838;
+}
+
+button.secondary,
+.e-btn.e-secondary {
+  background: #dc3545;
+  color: white;
+}
+
+button.secondary:hover {
+  background: #c82333;
+}
+
+/* ====== Signature Pad ====== */
+.e-signature {
+  border: 2px dashed #007bff;
+  padding: 15px;
+  background: white;
+  width: 420px;
+  height: 220px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  border-radius: 8px;
+}
+
+/* ====== PDF Preview ====== */
+.pdf-stage {
+  border: 2px solid #ccc;
+  margin-top: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* ====== Tombol Upload ====== */
+#uploadBtn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.pdf-navigation {
+  display: flex;
+  justify-content: center; /* Posisikan di tengah */
+  align-items: center;
+  gap: 10px; /* Beri jarak antar elemen */
+  margin: 20px 0; /* Jarak dari atas dan bawah */
+}
+
+.pdf-navigation button {
+  background-color: #007bff; /* Warna biru */
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.pdf-navigation button:disabled {
+  background-color: #ccc; /* Warna abu-abu untuk tombol yang dinonaktifkan */
+  cursor: not-allowed;
+}
+
+.pdf-navigation span {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* ====== Responsive Design ====== */
+@media (max-width: 768px) {
+  .tandaTangani {
+    max-width: 90%;
+  }
+
+  .file-upload-label {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  .e-signature {
+    width: 100%;
+    height: 200px;
+  }
+
+
+}

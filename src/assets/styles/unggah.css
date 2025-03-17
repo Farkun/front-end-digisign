@@ -1,0 +1,89 @@
+.unggah {
+    text-align: center;
+    max-width: 600px;
+    margin: 20px auto;
+  }
+  
+  h2, h3 {
+    margin-bottom: 10px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  table, th, td {
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    padding: 8px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  input[type="text"], input[type="number"] {
+    width: 95%;
+    padding: 5px;
+    margin: 2px 0;
+  }
+  
+  button {
+    padding: 5px 10px;
+    margin-top: 5px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button.primary {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  button.secondary {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+
+  /* Card umum */
+  .card {
+    display: flex;
+    align-items: flex-start;
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    border-left: 6px solid #007bff; /* Garis tebal di kiri */
+    width: 100%;
+  }
+  
+  /* Konten dalam card */
+  .card-content {
+    flex: 1;
+    padding-left: 15px;
+  }
+  
+  /* Judul dalam card */
+  .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  /* Teks informasi */
+  .info-text {
+    font-size: 14px;
+    color: #555;
+  }
+  

@@ -1,0 +1,42 @@
+.permintaanContainer {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .permintaanTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .permintaanTable th, .permintaanTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .permintaanTable th {
+    background-color: #2c3e50;
+    color: white;
+  }
+  
+  .signBtn, .detailBtn, .editBtn, .deleteBtn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 2px;
+  }
+  
+  .signBtn { background: #3498db; color: white; }
+  .detailBtn { background: #2ecc71; color: white; }
+  .editBtn { background: #f1c40f; color: black; }
+  .deleteBtn { background: #e74c3c; color: white; }
+  
+  .signBtn:hover { background: #2980b9; }
+  .detailBtn:hover { background: #27ae60; }
+  .editBtn:hover { background: #f39c12; }
+  .deleteBtn:hover { background: #c0392b; }
+  

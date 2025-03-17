@@ -1,0 +1,26 @@
+.login-container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  input {
+    display: block !important;
+    width: 100% !important;
+    margin: 10px 0 !important;
+    padding: 10px !important;
+    border: 1px solid #ccc !important;
+  }
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
