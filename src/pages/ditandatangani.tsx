@@ -4,7 +4,7 @@ import "../assets/styles/ditandatangani.css";
 function Ditandatangani() {
   return (
     <Homepage>
-      <div className="ditandatangani-container">
+      <div className="ditandatangani-container" style={{color: 'black'}}>
         <h2>Dokumen yang Diunggah</h2>
         <table className="ditandatangani-table">
           <thead>
