@@ -1,11 +1,22 @@
+import { useEffect, useState } from "react";
 import Homepage from "../layouts/homepage";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import Cookies from 'universal-cookie';
 
 function Dashboard() {
+  const [username, setUsername] = useState<string | null>(null)
+
+  useEffect(() => {
+    const cookies = new Cookies()
+    const decoded: any = jwtDecode(cookies.get('accessToken'))
+    setUsername(decoded.username)
+  }, [])
+
   return (
     <Homepage>
       <div className="content">
-        <h2>Selamat datang, User</h2>
+        <h2>Selamat datang, {username}</h2>
         <p>Pilih aktivitas yang ingin Anda lakukan</p>
         <div className="dashboard-cards">
           <Link to="/tandatangani" className="card">✍️ Tanda Tangani Dokumen Sendiri</Link>

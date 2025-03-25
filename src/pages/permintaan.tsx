@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 function Permintaan() {
     return (
         <Homepage>
-            <div className="permintaanContainer">
+            <div className="permintaanContainer"  style={{color: 'black'}}>
                 <h2>Rekap Permintaan Data</h2>
                 <table className="permintaanTable">
                     <thead>

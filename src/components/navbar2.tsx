@@ -1,15 +1,17 @@
+import Cookies from "universal-cookie";
 import styles from "./navbar2.module.css";
-import { useNavigate } from "react-router-dom";
 
 interface NavbarProps {
   isSidebarOpen: boolean;
 }
 
 function Navbar2({ isSidebarOpen }: NavbarProps) {
-  const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate("/"); 
+    // localStorage.removeItem('accessToken')
+    const cookies = new Cookies()
+    cookies.remove('accessToken')
+    window.location.href = '/login'
   };
   return (
     <header

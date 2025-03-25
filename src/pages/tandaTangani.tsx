@@ -182,7 +182,7 @@ function TandaTangani() {
 
   return (
     <Homepage>
-      <div className="tandaTangani">
+      <div className="tandaTangani" style={{color: 'black'}}>
         <h1>Unggah dokumen PDF untuk ditandatangani</h1>
 
         {/* ✅ Input File untuk Tanda Tangan Gambar */}

@@ -4,7 +4,7 @@ import "../assets/styles/diunggah.css";
 function Diunggah() {
   return (
     <Homepage>
-      <div className="diunggah-container">
+      <div className="diunggah-container" style={{color: 'black'}}>
         <h2>Dokumen yang Diunggah</h2>
         <table className="diunggah-table">
           <thead>
