@@ -19,7 +19,7 @@ const Register = () => {
         else {
             try {
                 const {confirm_password, ...registerData} = formData
-                const {data}: any = await axios.post('http://localhost:8080/api/auth/register', registerData, {
+                const {data}: any = await axios.post(import.meta.env.VITE_API_HOST + '/api/auth/register', registerData, {
                     headers: {
                         'Content-Type': 'application/json'
                     }

@@ -21,7 +21,7 @@ function Login() {
     // navigate("/dashboard");
     try {
       const cookies = new Cookies();
-      const { data } = await axios.post("http://localhost:8080/api/auth/login", {
+      const { data } = await axios.post(import.meta.env.VITE_API_HOST + "/api/auth/login", {
         username,
         password
       }, {

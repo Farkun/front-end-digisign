@@ -21,7 +21,7 @@ const GambarTandaTangan = () => {
 
   const saveSign = async (accessToken: string) => {
     try {
-      const {data} = await axios.post('http://localhost:8080/api/signature/store-sign', {
+      const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-sign', {
         sign: selectedFile
       }, {
         headers: {
@@ -57,7 +57,7 @@ const GambarTandaTangan = () => {
       const token: string = cookies.get('accessToken')
       // console.log(token);
       
-      const {data}: any = await axios.get('http://localhost:8080/api/signature/get', {
+      const {data}: any = await axios.get(import.meta.env.VITE_API_HOST + '/api/signature/get', {
         headers: {
           "Authorization": `Bearer ${token}`
         }
