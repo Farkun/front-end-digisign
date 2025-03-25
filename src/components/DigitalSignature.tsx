@@ -17,7 +17,7 @@ const DigitalSignature = ({isSignatureExist}: any) => {
     try {
       const cookies: Cookies = new Cookies()
       const token: string = cookies.get('accessToken')
-      const {data} = await axios.post('http://localhost:8080/api/signature/store-sign-base64', {
+      const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-sign-base64', {
         bytes: bytes
       }, {
         headers: {

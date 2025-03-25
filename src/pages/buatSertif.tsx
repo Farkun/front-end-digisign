@@ -16,7 +16,7 @@ const buatSertif: React.FC = () => {
       try {
         const cookies: Cookies = new Cookies()
         const token: string = cookies.get("accessToken")
-        const {data}: any = await axios.post('http://localhost:8080/api/signature/store-certificate', {
+        const {data}: any = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-certificate', {
           passphrase: passphrase,
           expire_in: days
         }, {
