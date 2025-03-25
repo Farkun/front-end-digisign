@@ -14,7 +14,7 @@ const Unverified = () => {
         const cookies = new Cookies()
         const token = cookies.get('accessToken')
         try {
-            const {data} = await axios.get('http://localhost:8080/api/auth/verification/resend', {
+            const {data} = await axios.get(import.meta.env.VITE_API_HOST + '/api/auth/verification/resend', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }

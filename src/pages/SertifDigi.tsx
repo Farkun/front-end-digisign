@@ -13,7 +13,7 @@ function SertifDigi() {
     try {
       const cookies: Cookies = new Cookies()
       const token: string = cookies.get('accessToken')
-      const {data}: any = await axios.get('http://localhost:8080/api/signature/get-certificate', {
+      const {data}: any = await axios.get(import.meta.env.VITE_API_HOST + '/api/signature/get-certificate', {
         headers: {
           "Authorization": `Bearer ${token}`
         }

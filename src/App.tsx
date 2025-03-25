@@ -41,7 +41,7 @@ function App() {
     
     useEffect(() => {
       validateToken()
-      // console.log('jhbsdjn');
+      
       
     }, [location])
 
