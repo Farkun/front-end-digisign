@@ -76,7 +76,7 @@ const Unggah: React.FC = () => {
 
   return (
     <Homepage>
-        <div className="card">
+        <div className="card" style={{color: 'black'}}>
           <div className="card-content">
             <h4 className="card-title">Informasi</h4>
             <p className="info-text">

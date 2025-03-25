@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import "../assets/styles/login.css";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     // if (username === "admin" && password === "password") {
     //   alert("Login berhasil!");
@@ -15,8 +18,32 @@ function Login() {
     // } else {
     //   alert("Username atau password salah!");
     // }
-    navigate("/dashboard");
+    // navigate("/dashboard");
+    try {
+      const cookies = new Cookies();
+      const { data } = await axios.post("http://localhost:8080/api/auth/login", {
+        username,
+        password
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      // localStorage.setItem("accessToken", data.token)
+      const expiration: any = jwtDecode(data.token).exp
+      let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
+      maxAge = parseInt(maxAge.toFixed())
+      
+      cookies.set('accessToken', data.token, {
+        path: '/',
+        maxAge: maxAge
+      })
+      if (data.token) window.location.href = '/dashboard'
+    } catch (err: any) {
+      console.error(err.message)
+    }
   };
+  
 
   return (
     <div className="login-container">
@@ -36,6 +63,9 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button type="submit">Login</button>
+        <div>
+          Or <a href="/register">Register</a>
+        </div>
       </form>
     </div>
   );

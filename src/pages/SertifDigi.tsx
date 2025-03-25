@@ -1,11 +1,43 @@
 import Homepage from "../layouts/homepage";
 import "../assets/styles/SertifDigi.css";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Cookies from "universal-cookie";
+import axios from "axios";
 
 function SertifDigi() {
+
+  const [certificate, setCertificate] = useState<any>(null)
+
+  const getCertificate = async () => {
+    try {
+      const cookies: Cookies = new Cookies()
+      const token: string = cookies.get('accessToken')
+      const {data}: any = await axios.get('http://localhost:8080/api/signature/get-certificate', {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      
+      if (data?.payload && data.payload.createdAt && data.payload.expire && data.payload.passphrase) {
+        const {passphrase, bytes, ...cert}: any = data.payload
+        cert.isExpired = new Date().getTime() >= new Date(certificate?.expire).getTime()
+        cert.createdAt = new Date(cert.createdAt).toDateString()
+        cert.expiring = new Date(cert.expire).toDateString()
+        setCertificate(cert)
+      }
+    } catch (err: any) {
+      console.error(err.message)
+    }
+  }
+
+  useEffect(() => {
+    getCertificate()
+  }, [])
+
   return (
     <Homepage>
-        <div className="card">
+        <div className="card" style={{color: 'black'}}>
           <div className="card-content">
             <h4 className="card-title">Informasi</h4>
             <p className="info-text">
@@ -16,9 +48,11 @@ function SertifDigi() {
             </p>
           </div>
         </div>
-      <div className="SertifDigi-container">
+      <div className="SertifDigi-container" style={{color: 'black'}}>
         <h2>Sertifikat</h2>
-        <Link to="/pengaturan/sertifikat/create"><button className="buat-sertifikat-btn">➕ Buat Sertifikat</button></Link>
+        <Link to="/pengaturan/sertifikat/create">
+          <button className="buat-sertifikat-btn" style={certificate && !certificate.isExpired ? {backgroundColor: 'gray'} : {}}>➕ Buat Sertifikat</button>
+        </Link>
         <table className="SertifDigi-table">
           <thead>
             <tr>
@@ -32,21 +66,22 @@ function SertifDigi() {
             </tr>
           </thead>
           <tbody>
+            {certificate &&
+              <tr>
+                <td>#</td>
+                <td>6957A925BB39E460</td>
+                <td>Sub: E=fabimanyu@apps.ipb.ac.id, CN=Farchan Abimanyu
+                Iss: CN=IPB University, OU=IPB, O=IPB, L=Bogor, S=West Java, C=ID</td>
+                <td style={{minWidth: '100px'}}>{certificate.createdAt} <br /> - {certificate.expiring}</td>
+                <td>{certificate.createdAt}</td>
+                <td><span className={`status ${certificate.isExpired ? 'kadaluarsa' : 'aktif'}`}>{certificate.isExpired ? 'Kadaluarsa' : 'Aktif'}</span></td>
+                <td>
+                  <button className="revoke-btn">❌ Revoke</button>
+                </td>
+              </tr>
+            }
 
-            <tr>
-              <td>1</td>
-              <td>6957A925BB39E460</td>
-              <td>Sub: E=fabimanyu@apps.ipb.ac.id, CN=Farchan Abimanyu
-              Iss: CN=IPB University, OU=IPB, O=IPB, L=Bogor, S=West Java, C=ID</td>
-              <td>Selasa, 19 Oktober 2021 - Rabu, 19 Oktober 2022</td>
-              <td>Selasa, 19 Oktober 2021 - 20.30.46</td>
-              <td><span className="status aktif">Aktif</span></td>
-              <td>
-                <button className="revoke-btn">❌ Revoke</button>
-                
-              </td>
-            </tr>
-            <tr>
+            {/* <tr>
               <td>2</td>
               <td>097ACB1D17C1581D</td>
               <td>Sub: E=fabimanyu@apps.ipb.ac.id, CN=Farchan Abimanyu
@@ -68,7 +103,8 @@ function SertifDigi() {
               <td>
                 <button className="revoke-btn">❌ Revoke</button>
               </td>
-            </tr>
+            </tr> */}
+
           </tbody>
         </table>
       </div>

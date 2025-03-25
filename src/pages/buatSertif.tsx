@@ -1,19 +1,40 @@
-import React, { useState } from "react";
-import Homepage from "../layouts/homepage";
-import "../assets/styles/buatSertif.css"; // Import CSS
+import React, { useState } from "react"
+import Homepage from "../layouts/homepage"
+import "../assets/styles/buatSertif.css" // Import CSS
+import axios from "axios"
+import Cookies from "universal-cookie"
 
 const buatSertif: React.FC = () => {
-  const [passphrase, setPassphrase] = useState("");
-  const [days, setDays] = useState(365);
+  const [passphrase, setPassphrase] = useState(null)
+  const [days, setDays] = useState(0)
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    alert(`Sertifikat berhasil dibuat!\nPassphrase: ${passphrase}\nBerlaku: ${days} hari`);
-  };
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (days <= 0) alert('minimum expiration is 1 day')
+    if (!passphrase || passphrase == '') alert('passphrase cannot be null')
+    if (days > 0 && passphrase && passphrase != '') {
+      try {
+        const cookies: Cookies = new Cookies()
+        const token: string = cookies.get("accessToken")
+        const {data}: any = await axios.post('http://localhost:8080/api/signature/store-certificate', {
+          passphrase: passphrase,
+          expire_in: days
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+        if (data) alert(`Sertifikat berhasil dibuat!\nBerlaku sampai dengan: ${days} hari`)
+        window.location.href = '/pengaturan/sertifikat'
+      } catch (err: any) {
+        console.error(err.message)
+      }
+    }
+  }
 
-  return (
-    <Homepage>
-    <div className="buatSertifcontainer">
+  return <Homepage>
+    <div className="buatSertifcontainer" style={{color: 'black'}}>
       {/* Header */}
       <h2 className="header">Buat Sertifikat Baru</h2>
 
@@ -41,8 +62,9 @@ const buatSertif: React.FC = () => {
             <label>Passphrase</label>
             <input
               type="password"
-              value={passphrase}
-              onChange={(e) => setPassphrase(e.target.value)}
+              // value={passphrase}
+              name="passphrase"
+              onChange={(e: any) => setPassphrase(e.target.value)}
               className="input-field"
               placeholder="Masukkan passphrase"
               required
@@ -53,8 +75,10 @@ const buatSertif: React.FC = () => {
             <label>Masa Berlaku</label>
             <input
               type="number"
-              value={days}
-              onChange={(e) => setDays(Number(e.target.value))}
+              min={0}
+              defaultValue={0}
+              name="expire_in"
+              onChange={(e: any) => setDays(Number(e.target.value))}
               className="input-field"
               required
             />
@@ -68,8 +92,7 @@ const buatSertif: React.FC = () => {
         </button>
       </form>
     </div>
-    </Homepage>
-  );
-};
+  </Homepage>
+}
 
-export default buatSertif;
+export default buatSertif

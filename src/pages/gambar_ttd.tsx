@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DigitalSignature from "../components/DigitalSignature";
 import Homepage from "../layouts/homepage";
 import "../assets/styles/gambar_ttd.css"; // CSS khusus halaman ini
+import axios from "axios";
+import Cookies from "universal-cookie";
 
 const GambarTandaTangan = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [currentImage, setCurrentImage] = useState<string | null>(null)
 
   // Handle upload file
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,15 +19,58 @@ const GambarTandaTangan = () => {
     }
   };
 
+  const saveSign = async (accessToken: string) => {
+    try {
+      const {data} = await axios.post('http://localhost:8080/api/signature/store-sign', {
+        sign: selectedFile
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          "Authorization": `Bearer ${accessToken}`
+        }
+      })
+      if (data) alert("Tanda tangan berhasil diupload!")
+        console.log(data);
+        
+    } catch (err: any) {
+      console.error(err.message)
+    }
+  }
+
   // Simpan tanda tangan yang di-upload
   const handleSave = () => {
+    const cookies: Cookies = new Cookies()
+    const accessToken: string = cookies.get("accessToken")
     if (selectedFile) {
-      console.log("File disimpan:", selectedFile.name);
-      alert("Tanda tangan berhasil diupload!");
+      if (currentImage) {
+        if (confirm('Apakah Anda ingin mengganti gambar tanda tangan saat ini?')) saveSign(accessToken)
+      }
+      saveSign(accessToken)
     } else {
       alert("Silakan pilih file terlebih dahulu.");
     }
   };
+
+  const getSignature = async () => {
+    try {
+      const cookies: Cookies = new Cookies()
+      const token: string = cookies.get('accessToken')
+      // console.log(token);
+      
+      const {data}: any = await axios.get('http://localhost:8080/api/signature/get', {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      if (data && data.payload) setCurrentImage(data.payload)
+    } catch (err: any) {
+      console.error(err.message)
+    }
+  }
+
+  useEffect(() => {
+    getSignature()
+  }, [])
 
   return (
     <Homepage>
@@ -32,7 +78,7 @@ const GambarTandaTangan = () => {
         <h2 className="gambar-ttd-title">Gambar Tanda Tangan</h2>
 
         {/* Informasi */}
-        <div className="card">
+        <div className="card" style={{color: 'black'}}>
           <div className="card-content">
             <h4 className="card-title">Informasi</h4>
             <p className="info-text">
@@ -45,12 +91,19 @@ const GambarTandaTangan = () => {
         </div>
 
         {/* Upload Tanda Tangan */}
-        <div className="card">
+        <div className="card" style={{color: 'black'}}>
           <div className="card-content">
             <h4 className="card-title">Upload Tanda Tangan</h4>
-            <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} />
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              {currentImage && !previewUrl && <img src={currentImage} className="preview-image" />}
+              {previewUrl && <img src={previewUrl} alt="Preview" className="preview-image" />}
+            </div>
             {selectedFile && <p className="file-name">File: {selectedFile.name}</p>}
-            {previewUrl && <img src={previewUrl} alt="Preview" className="preview-image" />}
+            <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} />
             <button className="save-button" onClick={handleSave}>
               Simpan
             </button>
@@ -58,10 +111,10 @@ const GambarTandaTangan = () => {
         </div>
 
         {/* Digital Signature */}
-        <div className="card">
+        <div className="card" style={{color: 'black'}}>
           <div className="card-content">
             <h4 className="card-title">Tanda Tangan Digital</h4>
-            <DigitalSignature />
+            <DigitalSignature isSignatureExist={currentImage ? true : false} />
           </div>
         </div>
       </div>
