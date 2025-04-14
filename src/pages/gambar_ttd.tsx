@@ -62,7 +62,7 @@ const GambarTandaTangan = () => {
           "Authorization": `Bearer ${token}`
         }
       })
-      if (data && data.payload) setCurrentImage(data.payload)
+      if (data && data.payload) setCurrentImage(data.payload.signature)
     } catch (err: any) {
       console.error(err.message)
     }
@@ -75,14 +75,14 @@ const GambarTandaTangan = () => {
   return (
     <Homepage>
       <div className="gambar-ttd-container">
-        <h2 className="gambar-ttd-title">Gambar Tanda Tangan</h2>
+        <h2 className="gambar-ttd-title" style={window.matchMedia("(prefers-color-scheme: dark)").matches ? {color: 'white'} : {}}>Gambar Tanda Tangan</h2>
 
         {/* Informasi */}
         <div className="card" style={{color: 'black'}}>
           <div className="card-content">
             <h4 className="card-title">Informasi</h4>
             <p className="info-text">
-              Anda dapat meng-upload gambar hasil scan tanda tangan Anda (JPG atau PNG) pada halaman
+              Anda dapat meng-upload gambar hasil scan tanda tangan Anda (PNG) pada halaman
               ini untuk ditempelkan di dokumen. Pastikan gambar tanda tangan cukup jelas, memiliki
               kontras yang baik, dan berlatar belakang putih bersih atau transparan. Anda juga dapat
               menggambar tanda tangan menggunakan mouse, pen tablet, atau alat penunjuk lainnya.
@@ -100,23 +100,25 @@ const GambarTandaTangan = () => {
               justifyContent: 'center',
             }}>
               {currentImage && !previewUrl && <img src={currentImage} className="preview-image" />}
-              {previewUrl && <img src={previewUrl} alt="Preview" className="preview-image" />}
+              {previewUrl && <img src={previewUrl} alt="Preview" className="preview-image"/>}
             </div>
             {selectedFile && <p className="file-name">File: {selectedFile.name}</p>}
-            <input type="file" accept="image/png, image/jpeg" onChange={handleFileChange} />
-            <button className="save-button" onClick={handleSave}>
-              Simpan
-            </button>
+            <form onSubmit={handleSave}>
+              <input type="file" accept="image/png" onChange={handleFileChange} required/>
+              <button type="submit" className="save-button">
+                Simpan
+              </button>
+            </form>
           </div>
         </div>
 
         {/* Digital Signature */}
-        <div className="card" style={{color: 'black'}}>
+        {/* <div className="card" style={{color: 'black'}}>
           <div className="card-content">
             <h4 className="card-title">Tanda Tangan Digital</h4>
             <DigitalSignature isSignatureExist={currentImage ? true : false} />
           </div>
-        </div>
+        </div> */}
       </div>
     </Homepage>
   );

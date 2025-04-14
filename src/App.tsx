@@ -20,6 +20,7 @@ import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 import Unverified from "./pages/unverified";
 import Register from "./pages/register";
+import TandaTanganiPersetujuan from "./pages/tandatanganiPersetujuan";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
@@ -38,11 +39,32 @@ function App() {
           if (tokenPayload.is_verified) setIsVerified(true)
       }
     }
+
+    // const publicRoutes = ['/', '/about']
+    const guestRoutes = ['/login', 'register']
+    const unverifiedRoutes = ['/unverified']
+    const authenticatedRoutes = [
+      '/dashboard',
+      '/permintaan',
+      '/permintaan/tandatangan',
+      '/tandatangani',
+      '/dokumen/diunggah',
+      '/dokumen/tandatangani',
+      '/dokumen/unggah',
+      '/pengaturan/tanda-tangan',
+      '/pengaturan/sertifikat',
+      '/pengaturan/sertifikat/create'
+    ]
     
     useEffect(() => {
       validateToken()
-      
-      
+      const path = window.location.pathname
+      // if (authenticatedRoutes.includes(path) && !isAuthenticated) window.location.href = '/login'
+      // if (guestRoutes.includes(path) && isAuthenticated) {
+      //   if (isVerified) window.location.href = '/dashboard'
+      //   else window.location.href = '/unverified'
+      // }
+      // if (unverifiedRoutes.includes(path) && isAuthenticated && isVerified) window.location.href = '/dashboard'
     }, [location])
 
     return null
@@ -56,8 +78,16 @@ function App() {
         <Route path="/" element={<Navbar />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
-          <Route path="login" element={!isAuthenticated ? <Login /> : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>} />
-          <Route path="register" element={!isAuthenticated ? <Register /> : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>} />
+          <Route path="login" element={
+            // !isAuthenticated ? 
+              <Login /> 
+              // : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>
+          } />
+          <Route path="register" element={
+            // !isAuthenticated ? 
+              <Register /> 
+              // : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>
+          } />
         </Route>
 
         <Route path="/unverified" element={!isAuthenticated ? <Login /> : isVerified ? <Navigate to={'/dashboard'}/> : <Unverified/>} />
@@ -65,15 +95,17 @@ function App() {
 
         {/* ✅ Panggil `Dashboard` langsung, karena sudah ada `Homepage` di dalamnya */}
         <Route path="/" element={
-          !isAuthenticated ? 
-            <Navigate to={'/login'} />
-            : !isVerified ?
-              <Navigate to={'/unverified'}/> : <Outlet/>
+          // !isAuthenticated ? 
+          //   <Navigate to={'/login'} />
+          //   : !isVerified ?
+          //     <Navigate to={'/unverified'}/> : 
+                <Outlet/>
         }>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="permintaan" element={<Permintaan />} />
           <Route path="permintaan/tandatangan" element={<TandaTangan />} />
           <Route path="tandatangani" element={<TandaTangani />} />
+          <Route path="tandatangani/:id" element={<TandaTanganiPersetujuan />} />
           <Route path="dokumen/diunggah" element={<Diunggah />} />
           <Route path="dokumen/tandatangani" element={<Ditandatangani />} />
           <Route path="dokumen/unggah" element={<Unggah />} />

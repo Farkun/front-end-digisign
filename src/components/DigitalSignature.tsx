@@ -42,8 +42,6 @@ const DigitalSignature = ({isSignatureExist}: any) => {
       else storeSignature(dataUrl)
     }
   }
-
-  console.log(drawed?.payload);
   
 
   return (

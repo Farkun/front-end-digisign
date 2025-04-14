@@ -4,19 +4,23 @@ import React, { useRef, useState, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import { saveAs } from "file-saver";
 import * as pdfjsLib from "pdfjs-dist";
-import { Stage, Layer, Image as KonvaImage } from "react-konva";
-import { SignatureComponent } from "@syncfusion/ej2-react-inputs";
-import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
+import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
+// import { SignatureComponent } from "@syncfusion/ej2-react-inputs";
+// import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import Konva from 'konva';
 
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc =
   `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js`;
 
 function TandaTangani() {
-  const signObj = useRef<SignatureComponent | null>(null);
+  // const signObj = useRef<SignatureComponent | null>(null);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfImage, setPdfImage] = useState<HTMLImageElement | null>(null);
   const [signatureImage, setSignatureImage] = useState<HTMLImageElement | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [signature, setSignature] = useState<string | null>(null)
 
   const [uploadedImagePos, setUploadedImagePos] = useState<{ [key: number]: { x: number; y: number } }>({});
   const [uploadedImageElement, setUploadedImageElement] = useState<HTMLImageElement | null>(null);
@@ -24,18 +28,53 @@ function TandaTangani() {
   const [totalPages, setTotalPages] = useState(1);
   const [signaturePositions, setSignaturePositions] = useState<{ [key: number]: { x: number; y: number } }>({});
 
+  const [signatureImageSize, setSignatureImageSize] = useState<{width: number, height: number}>({width: 0, height: 0})
+  const [renderedPdfSize, setRenderedPdfSize] = useState<{width: number, height: number}>({width: 0, height: 0})
+  const [isSignatureSelected, setIsSignatureSelected] = useState<boolean>(false)
 
+  const signatureRef = useRef<Konva.Image>(null)
+  const transformerRef = useRef<Konva.Transformer>(null)
+
+  const getSignature = async (): Promise<void> => {
+    const cookies: Cookies = new Cookies()
+    const token: string = cookies.get('accessToken')
+    try {
+      const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get`, {headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }})
+      if (data?.payload) {
+        if (data.payload.isExpire) alert('Sertifikat tanda tangan anda telah kadaluarsa')
+        else setSignature(data.payload.signature)
+      }
+    } catch (err: any) {
+      console.error(err.message)
+      alert('anda belum memiliki sertifikat tanda tangan')
+      window.location.href = '/pengaturan/tanda-tangan'
+    }
+  }
+
+  useEffect(() => {getSignature()}, [])
+  useEffect(() => {
+    if (isSignatureSelected && transformerRef.current && signatureRef.current) {
+      transformerRef.current.nodes([signatureRef.current]);
+      transformerRef.current.getLayer()?.batchDraw(); // refresh layer supaya Transformer tampil
+    }
+  }, [isSignatureSelected, uploadedImageElement])
 
   useEffect(() => {
     if (uploadedImage) {
       const img = new Image();
       img.src = uploadedImage;
-      img.onload = () => setUploadedImageElement(img);
+      img.onload = () => {
+        setUploadedImageElement(img)
+        setSignatureImageSize({width: img.width, height: img.height})
+      }
     }
   }, [uploadedImage]);
 
   /** ✅ Fungsi untuk Upload & Render PDF */
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setPdfFile(file);
@@ -61,6 +100,8 @@ function TandaTangani() {
       const scale = containerWidth / page.getViewport({ scale: 1 }).width;
       const viewport = page.getViewport({ scale });
 
+      setRenderedPdfSize({width: viewport.width, height: viewport.height})
+
       const canvas = document.createElement("canvas");
       const context = canvas.getContext("2d");
       if (!context) return;
@@ -77,25 +118,26 @@ function TandaTangani() {
   };
 
   /** ✅ Fungsi untuk Menyimpan Signature sebagai Gambar */
-  const saveSignatureAsImage = async () => {
-    if (!signObj.current) return;
-    const signatureDataUrl = signObj.current.getSignature();
-    if (!signatureDataUrl) return;
-
-    const img = new Image();
-    img.src = signatureDataUrl;
-    img.onload = () => setSignatureImage(img);
-  };
+  // const saveSignatureAsImage = async () => {
+  //   if (!signObj.current) return;
+  //   const signatureDataUrl = signObj.current.getSignature();
+  //   if (!signatureDataUrl) return;
+  //   console.log(signatureDataUrl);
+    
+  //   const img = new Image();
+  //   img.src = signatureDataUrl;
+  //   img.onload = () => setSignatureImage(img);
+  // };
 
   /** ✅ Fungsi untuk Mengunggah Gambar Tanda Tangan */
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => setUploadedImage(reader.result as string);
-    }
-  };
+  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(file);
+  //     reader.onload = () => setUploadedImage(reader.result as string);
+  //   }
+  // };
 
   const handleSignatureDragEnd = (e: any) => {
     setSignaturePositions((prev) => ({
@@ -133,12 +175,30 @@ function TandaTangani() {
           if (signatureImage) {
             const signatureBytes = await fetch(signatureImage.src).then(res => res.arrayBuffer());
             const pdfSignature = await pdfDoc.embedPng(signatureBytes);
-            page.drawImage(pdfSignature, {
-              x: position.x,
-              y: page.getHeight() - position.y - 40,
-              width: 120,
-              height: 40,
-            });
+
+            const scaleX = page.getWidth() / renderedPdfSize.width;
+            const scaleY = page.getHeight() / renderedPdfSize.height;
+
+            const drawScale = {
+                width: signatureImageSize.width * scaleX,
+                height: signatureImageSize.height * scaleY,
+            };
+
+            console.log(signatureImageSize)
+            console.log(drawScale)
+
+            const drawPosition = {
+                x: position.x * scaleX,
+                y: page.getHeight() - drawScale.height - (position.y * scaleY)
+            }
+
+            page.drawImage(pdfSignature, {...drawPosition, ...drawScale})
+            // page.drawImage(pdfSignature, {
+            //   x: drawPosition.x,
+            //   y: drawPosition.y,
+            //   width: drawScale.width,
+            //   height: drawScale.height
+            // })
 
             console.log(`✅ Digital signature ditempatkan di halaman ${pageNumber} pada (${position.x}, ${position.y})`);
           }
@@ -155,30 +215,42 @@ function TandaTangani() {
           if (uploadedImage) {
             const uploadedBytes = await fetch(uploadedImage).then(res => res.arrayBuffer());
             const pdfUploadedSignature = await pdfDoc.embedPng(uploadedBytes);
-            page.drawImage(pdfUploadedSignature, {
-              x: position.x,
-              y: page.getHeight() - position.y - 40,
-              width: 120,
-              height: 40,
-            });
 
-            console.log(`📸 Uploaded signature ditempatkan di halaman ${pageNumber} pada (${position.x}, ${position.y})`);
+            const scaleX = page.getWidth() / renderedPdfSize.width;
+            const scaleY = page.getHeight() / renderedPdfSize.height;
+            const drawScale = {
+                width: signatureImageSize.width * scaleX,
+                height: signatureImageSize.height * scaleY,
+            }
+            const drawPosition = {
+                x: position.x * scaleX,
+                y: page.getHeight() - drawScale.height - (position.y * scaleY)
+            }
+            page.drawImage(pdfUploadedSignature, {...drawPosition, ...drawScale})
+
+            // page.drawImage(pdfUploadedSignature, {
+            //   x: position.x,
+            //   y: page.getHeight() - position.y - 40,
+            //   width: 120,
+            //   height: 40,
+            // });
+
+            // console.log(`📸 Uploaded signature ditempatkan di halaman ${pageNumber} pada (${position.x}, ${position.y})`);
           }
         }
       }
 
       // Simpan & Unduh PDF yang telah dimodifikasi
-      console.log("Cek data sebelum ditambahkan ke PDF:");
-      console.log("uploadedImagePos:", uploadedImagePos);
-      console.log("uploadedImage:", uploadedImage);
-      console.log("uploadedImageElement:", uploadedImageElement);
-      console.log("signatureImage:", signatureImage);
+      // console.log("Cek data sebelum ditambahkan ke PDF:");
+      // console.log("uploadedImagePos:", uploadedImagePos);
+      // console.log("uploadedImage:", uploadedImage);
+      // console.log("uploadedImageElement:", uploadedImageElement);
+      // console.log("signatureImage:", signatureImage);
       const modifiedPdfBytes = await pdfDoc.save();
       const blob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
       saveAs(blob, "signed-document.pdf");
     };
   };
-
 
   return (
     <Homepage>
@@ -186,16 +258,16 @@ function TandaTangani() {
         <h1>Unggah dokumen PDF untuk ditandatangani</h1>
 
         {/* ✅ Input File untuk Tanda Tangan Gambar */}
-        <input
+        {/* <input
           type="file"
           id="uploadSignature"
           accept="image/*"
           onChange={handleImageUpload}
           style={{ display: "none" }} // Sembunyikan input file
-        />
+        /> */}
 
         {/* ✅ Signature Pad */}
-        <SignatureComponent ref={signObj} velocity={1} />
+        {/* <SignatureComponent ref={signObj} velocity={1} />
 
         <div id="actionBtn">
           <ButtonComponent onClick={saveSignatureAsImage}>Terapkan Tanda Tangan Digital</ButtonComponent>
@@ -203,13 +275,19 @@ function TandaTangani() {
           <ButtonComponent onClick={() => document.getElementById("uploadSignature")?.click()}>
             Unggah Gambar Tanda Tangan
           </ButtonComponent>
-        </div>
+        </div> */}
 
         {/* ✅ Canvas Konva untuk PDF + Tanda Tangan */}
+        <div>
+          <button onClick={() => setUploadedImage(signature)}>Terapkan Tanda Tangan</button>
+          <button onClick={() => {
+            setUploadedImage(null)
+            setUploadedImageElement(null)}}>Hapus Tanda Tangan</button>
+        </div>
         <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage">
           <Layer>
             {pdfImage && <KonvaImage image={pdfImage} />}
-            {signatureImage && (
+            {/* {signatureImage && (
               <KonvaImage
                 image={signatureImage}
                 x={signaturePositions[currentPage]?.x || 200}
@@ -219,18 +297,41 @@ function TandaTangani() {
                 draggable
                 onDragEnd={handleSignatureDragEnd}
               />
-            )}
+            )} */}
             {uploadedImageElement && (
               <KonvaImage
+                ref={signatureRef}
                 image={uploadedImageElement}
-                x={uploadedImagePos[currentPage]?.x || 200}
-                y={uploadedImagePos[currentPage]?.y || 500}
-                width={120}
-                height={40}
+                x={uploadedImagePos[currentPage]?.x || 0}
+                y={uploadedImagePos[currentPage]?.y || 0}
+                width={signatureImageSize.width}
+                height={signatureImageSize.height}
                 draggable
                 onDragEnd={handleUploadedImageDragEnd}
+                onClick={() => setIsSignatureSelected(true)}
+                onTap={() => setIsSignatureSelected(true)}
               />
             )}
+            {uploadedImageElement && signaturePositions && signatureImageSize && isSignatureSelected &&
+              <Transformer 
+                ref={transformerRef}
+                boundBoxFunc={(oldBox, newBox) => {
+                    if (newBox.width < 50 || newBox.height < 50) return oldBox
+                    if (signatureRef.current) {
+                      signatureRef.current.width(newBox.width)
+                      signatureRef.current.height(newBox.height)
+                    }
+                    setSignatureImageSize({ width: newBox.width, height: newBox.height })
+                    setSignaturePositions({ ...signaturePositions, [currentPage]: { x: newBox.x, y: newBox.y } })
+                    // setSignaturePositions({ x: newBox.x, y: newBox.y })
+                    return newBox
+                }}
+                rotateEnabled={false}
+                keepRatio={true}
+                enabledAnchors={['top-left', 'top-right', 'bottom-left', 'bottom-right']}
+                resizeEnabled={true}
+              />
+            }
           </Layer>
         </Stage>
         <div className="pdf-navigation">
@@ -281,7 +382,7 @@ function TandaTangani() {
         <input type="file" accept="application/pdf" onChange={handleFileChange} />
 
         <div id="actionBtn">
-          <ButtonComponent onClick={addSignatureToPDF}>Tandatangani & Unduh PDF</ButtonComponent>
+          <button onClick={addSignatureToPDF}>Tanda tangani & Unduh PDF</button>
         </div>
       </div>
     </Homepage>
