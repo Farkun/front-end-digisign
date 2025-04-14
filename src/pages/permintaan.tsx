@@ -1,12 +1,11 @@
 import Homepage from "../layouts/homepage";
 import "../assets/styles/permintaan.css";
-import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import DatetimeFormatter from "../utils/DatetimeFormatter";
-import { jwtDecode } from "jwt-decode";
 import { saveAs } from "file-saver";
+import Crypt from "../utils/Crypt";
 
 function Permintaan() {
 
@@ -33,15 +32,16 @@ function Permintaan() {
         getDocuments()
     }, [])
 
-    const approveDocument = async (id: number): Promise<void> => {
+    const approveDocument = async (id: string): Promise<void> => {
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
-        try {
-            const {data} = await axios.put(import.meta.env.VITE_API_HOST+`/api/document/${id}/approve`, {}, {
+        if (confirm('Apakah Anda yakin ingin menyetujui penanda tanganan dokumen ini?')) try {
+            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/${id}/approve`, {}, {
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true
             })
             if (data) window.location.reload()
         } catch (err: any) {
@@ -49,15 +49,16 @@ function Permintaan() {
         }
     } 
 
-    const denyDocument = async (id: number): Promise<void> => {
+    const denyDocument = async (id: string): Promise<void> => {
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
-        try {
-            const {data} = await axios.put(import.meta.env.VITE_API_HOST+`/api/document/${id}/deny`, {}, {
+        if (confirm('Apakah Anda yakin ingin menolak penanda tanganan dokumen ini?')) try {
+            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/${id}/deny`, {}, {
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                withCredentials: true
             })
             if (data) window.location.reload()
         } catch (err: any) {
@@ -121,24 +122,24 @@ function Permintaan() {
                                 <td>
                                     {
                                         (isApproved && isDenied) || (!isApproved && !isDenied) ? <div>
-                                            <button type="button" className="detailBtn" onClick={()=>approveDocument(row.id)}>✔️ Setujui</button>
-                                            <button type="button" className="deleteBtn" onClick={()=>denyDocument(row.id)}>❌ Tolak</button>
+                                            <button type="button" className="detailBtn" onClick={()=>approveDocument(Crypt.encryptString(`${row.id}`))}>✔️ Setujui</button>
+                                            <button type="button" className="deleteBtn" onClick={()=>denyDocument(Crypt.encryptString(`${row.id}`))}>❌ Tolak</button>
                                         </div>
                                         : <div>
                                             {signedDocument ? <button type="button" onClick={() => {
-                                                // window.open(signedDocument, '_blank')
-                                                downloadDocument(signedDocument, `[SIGNED] ${row.title}`)
-                                            }}>📥 Unduh</button>
-                                            : 
-                                            <button 
-                                                type="button" 
-                                                onClick={() => { window.location.href = !isEnableSign || signedDocument ? '' 
-                                                    : `/tandatangani/${row.id}?page=${pageNumber}` 
-                                                }} 
-                                                disabled={ 
-                                                    !isEnableSign || signedDocument != null
-                                                } 
-                                                style={ !isEnableSign || signedDocument ? {backgroundColor: 'gray'} : {}}
+                                                    // window.open(signedDocument, '_blank')
+                                                    downloadDocument(signedDocument, `[SIGNED] ${row.title}`)
+                                                }}>📥 Unduh</button>
+                                                : 
+                                                !isDenied && <button 
+                                                    type="button" 
+                                                    onClick={() => { window.location.href = !isEnableSign || signedDocument ? '' 
+                                                        : `/tandatangani/${Crypt.encryptString(`${row.id}`)}?page=${pageNumber}` 
+                                                    }} 
+                                                    disabled={ 
+                                                        !isEnableSign || signedDocument != null
+                                                    } 
+                                                    style={ !isEnableSign || signedDocument ? {backgroundColor: 'gray'} : {}}
                                                 >Tanda Tangani</button>
                                             }
                                         </div>

@@ -11,7 +11,7 @@ import Konva from 'konva';
 
 const TandaTanganiPersetujuan = () => {
 
-    const {id}: any = useParams()
+    const {id} = useParams<string>()
     const queryParams = new URLSearchParams(window.location.search)
     const pageNumber: number = parseInt(`${queryParams.get('page')}`)
     
@@ -43,7 +43,7 @@ const TandaTanganiPersetujuan = () => {
                     'Content-Type': 'application/json'
                 }
             })
-            if (data && data.payload) {
+            if (data?.payload) {
                 const signed_url: string | null = data.payload.documentApprovals[0].signedDocument
                 if (signed_url) window.location.href = '/permintaan'
                 const {url, title} = data.payload
@@ -191,7 +191,8 @@ const TandaTanganiPersetujuan = () => {
         }
     }
 
-    const storeSignedDocument = async (documentId: number, formData: object): Promise<void> => {
+    const storeSignedDocument = async (documentId: string | undefined, formData: object): Promise<void> => {
+        if (documentId == undefined) throw new Error('document id undefined')
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
         if (token) try {

@@ -21,86 +21,61 @@ import { jwtDecode } from "jwt-decode";
 import Unverified from "./pages/unverified";
 import Register from "./pages/register";
 import TandaTanganiPersetujuan from "./pages/tandatanganiPersetujuan";
+import GuestRoutes from "./routes/GuestRoutes";
+import ProtectedRoutes from "./routes/ProtectedRoutes";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [isVerified, setIsVerified] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  
-  const LocationLogger = () => {
-    const location: any = useLocation()
-    const validateToken = async () => {
-      const cookies = new Cookies();
-      const token = cookies.get('accessToken')
-      if (token) {
+  const validateToken = async () => {
+    const cookies = new Cookies();
+    const token = cookies.get('accessToken')
+    if (token) {
+      try {
         const tokenPayload: any = jwtDecode(token) 
         const isExpire: boolean = tokenPayload.exp * 1000 <= Date.now()
-        !isExpire && setIsAuthenticated(true)
+        if (!isExpire) {
+          setIsAuthenticated(true)
           if (tokenPayload.is_verified) setIsVerified(true)
+        }
+      } catch {
+        setIsAuthenticated(false)
+        setIsVerified(false)
       }
     }
-
-    // const publicRoutes = ['/', '/about']
-    const guestRoutes = ['/login', 'register']
-    const unverifiedRoutes = ['/unverified']
-    const authenticatedRoutes = [
-      '/dashboard',
-      '/permintaan',
-      '/permintaan/tandatangan',
-      '/tandatangani',
-      '/dokumen/diunggah',
-      '/dokumen/tandatangani',
-      '/dokumen/unggah',
-      '/pengaturan/tanda-tangan',
-      '/pengaturan/sertifikat',
-      '/pengaturan/sertifikat/create'
-    ]
-    
-    useEffect(() => {
-      validateToken()
-      const path = window.location.pathname
-      // if (authenticatedRoutes.includes(path) && !isAuthenticated) window.location.href = '/login'
-      // if (guestRoutes.includes(path) && isAuthenticated) {
-      //   if (isVerified) window.location.href = '/dashboard'
-      //   else window.location.href = '/unverified'
-      // }
-      // if (unverifiedRoutes.includes(path) && isAuthenticated && isVerified) window.location.href = '/dashboard'
-    }, [location])
-
-    return null
-  }  
+    setIsLoading(false)
+  }
   
-  
+  useEffect(() => {
+    validateToken()
+  }, [])
+
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <Router>
-      <LocationLogger/>
+      {/* <LocationLogger/> */}
       <Routes>
         <Route path="/" element={<Navbar />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
-          <Route path="login" element={
-            // !isAuthenticated ? 
-              <Login /> 
-              // : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>
-          } />
-          <Route path="register" element={
-            // !isAuthenticated ? 
-              <Register /> 
-              // : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>
-          } />
+          <Route element={<GuestRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+          </Route>
         </Route>
 
-        <Route path="/unverified" element={!isAuthenticated ? <Login /> : isVerified ? <Navigate to={'/dashboard'}/> : <Unverified/>} />
-        <Route path="*" element={<NotFound />} />
-
-        {/* ✅ Panggil `Dashboard` langsung, karena sudah ada `Homepage` di dalamnya */}
-        <Route path="/" element={
-          // !isAuthenticated ? 
-          //   <Navigate to={'/login'} />
-          //   : !isVerified ?
-          //     <Navigate to={'/unverified'}/> : 
-                <Outlet/>
-        }>
+        <Route path="/unverified" element={
+          !isAuthenticated ? 
+          <Navigate to={'/login'} /> 
+          : isVerified ? 
+            <Navigate to={'/dashboard'}/> 
+            : <Unverified/>
+        } />
+        
+        <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="permintaan" element={<Permintaan />} />
           <Route path="permintaan/tandatangan" element={<TandaTangan />} />
@@ -113,6 +88,8 @@ function App() {
           <Route path="pengaturan/sertifikat" element={<SertifDigi />} />
           <Route path="pengaturan/sertifikat/create" element={<BuatSertif />} />
         </Route>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

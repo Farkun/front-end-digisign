@@ -5,6 +5,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import DatetimeFormatter from "../utils/DatetimeFormatter";
 import { saveAs } from "file-saver";
+import Crypt from "../utils/Crypt";
 
 function Diunggah() {
 
@@ -32,7 +33,7 @@ function Diunggah() {
     
   }, [])
 
-  const deleteDocument = async (id: number): Promise<void> => {
+  const deleteDocument = async (id: string): Promise<void> => {
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get('accessToken')
     if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) try {
@@ -111,7 +112,7 @@ function Diunggah() {
                   <button className="download-btn" onClick={()=>{ 
                     downloadDocument(doc.url, doc.title, doc.signedCount == doc.requestCount)
                   }}>📥 Unduh</button>
-                  <button className="delete-btn" onClick={() => deleteDocument(doc.id)}>🗑️ Hapus</button>
+                  <button className="delete-btn" onClick={() => deleteDocument(Crypt.encryptString(`${doc.id}`))}>🗑️ Hapus</button>
                 </td>
               </tr>
             })}
