@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import { useParams } from "react-router-dom"
+import { Navigate, useParams } from "react-router-dom"
 import Cookies from "universal-cookie"
 import Homepage from '../layouts/homepage';
 import { Image as KonvaImage, Layer, Stage, Transformer } from "react-konva";
@@ -14,6 +14,9 @@ const TandaTanganiPersetujuan = () => {
     const {id} = useParams<string>()
     const queryParams = new URLSearchParams(window.location.search)
     const pageNumber: number = parseInt(`${queryParams.get('page')}`)
+
+    const [isLoadingSignature, setIsLoadingSignature] = useState<boolean>(true)
+    const [isLoadingDocument, setIsLoadingDocument] = useState<boolean>(true)
     
     const [pdfFile, setPdfFile] = useState<File | null>(null)
     const [pdfImage, setPdfImage] = useState<HTMLImageElement | null>(null)
@@ -26,6 +29,7 @@ const TandaTanganiPersetujuan = () => {
     const [isSignatureSelected, setIsSignatureSelected] = useState<boolean>(false)
     const signatureImageRef = useRef<Konva.Image>(null)
     const signatureTransformerRef = useRef<Konva.Transformer>(null)
+
     useEffect(() => {
         if ( isSignatureSelected && signatureTransformerRef.current && signatureImageRef.current ) {
             signatureTransformerRef.current.nodes([signatureImageRef.current]);
@@ -43,6 +47,7 @@ const TandaTanganiPersetujuan = () => {
                     'Content-Type': 'application/json'
                 }
             })
+            // if (!data?.payload) alert('Dokumen tidak ditemukan')
             if (data?.payload) {
                 const signed_url: string | null = data.payload.documentApprovals[0].signedDocument
                 if (signed_url) window.location.href = '/permintaan'
@@ -50,8 +55,10 @@ const TandaTanganiPersetujuan = () => {
                 getDocumentFile(url, title)
             }
         } catch (err: any) {
+            alert('Dokumen tidak ditemukan')
             console.error(err.message)
         }
+        setIsLoadingDocument(false)
     }
 
     const getDocumentFile = async (url: string, title: string): Promise<void> => {
@@ -66,6 +73,7 @@ const TandaTanganiPersetujuan = () => {
                 }
             }
         } catch (err: any) {
+            alert('Dokumen hilang atau rusak')
             console.error(err.message)
         }
     }
@@ -113,6 +121,7 @@ const TandaTanganiPersetujuan = () => {
                     // 'Content-Type': 'application/json'
                 }
             })
+            // if (!data?.payload) alert('Anda belum memiliki sertifikat tanda tangan')
             if (data?.payload) {
                 if (data.payload.isExpire) alert('Sertifikat tanda tangan anda telah kadaluarsa')
                 else {
@@ -120,8 +129,10 @@ const TandaTanganiPersetujuan = () => {
                 }
             }
         } catch (err: any) {
+            alert('Anda belum memiliki sertifikat tanda tangan')
             console.error(err.message )
         }
+        setIsLoadingSignature(false)
     }
 
     useEffect((): void => {
@@ -208,6 +219,9 @@ const TandaTanganiPersetujuan = () => {
         }
     }
     
+    if (isLoadingDocument || isLoadingSignature) return <div>Loading ...</div>
+    if (!signatureData) return <Navigate to={'/pengaturan/tanda-tangan'}/>
+    if (!pdfFile) return <Navigate to={'/permintaan'}/>
 
     return <Homepage>
         tandatangani dokumen disetujui

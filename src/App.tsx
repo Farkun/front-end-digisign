@@ -58,7 +58,7 @@ function App() {
     <Router>
       {/* <LocationLogger/> */}
       <Routes>
-        <Route path="/" element={<Navbar />}>
+        <Route path="/" element={<Navbar isAuthenticated={isAuthenticated} />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route element={<GuestRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>

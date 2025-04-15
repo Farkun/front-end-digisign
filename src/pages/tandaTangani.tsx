@@ -10,17 +10,20 @@ import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import Konva from 'konva';
+import { Navigate } from "react-router-dom";
 
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc =
   `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js`;
 
 function TandaTangani() {
   // const signObj = useRef<SignatureComponent | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfImage, setPdfImage] = useState<HTMLImageElement | null>(null);
-  const [signatureImage, setSignatureImage] = useState<HTMLImageElement | null>(null);
+  // const [signatureImage, setSignatureImage] = useState<HTMLImageElement | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null)
+  // const [isSignatureExpired, setIsSignatureExpired] = useState<boolean>(false)
 
   const [uploadedImagePos, setUploadedImagePos] = useState<{ [key: number]: { x: number; y: number } }>({});
   const [uploadedImageElement, setUploadedImageElement] = useState<HTMLImageElement | null>(null);
@@ -43,15 +46,16 @@ function TandaTangani() {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }})
+      if (!data?.payload) alert('Anda belum memiliki sertifikat tanda tangan')
       if (data?.payload) {
         if (data.payload.isExpire) alert('Sertifikat tanda tangan anda telah kadaluarsa')
         else setSignature(data.payload.signature)
       }
     } catch (err: any) {
       console.error(err.message)
-      alert('anda belum memiliki sertifikat tanda tangan')
-      window.location.href = '/pengaturan/tanda-tangan'
+      alert('Anda belum memiliki sertifikat tanda tangan')
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {getSignature()}, [])
@@ -166,44 +170,44 @@ function TandaTangani() {
       const pdfBytes = new Uint8Array(reader.result as ArrayBuffer);
       const pdfDoc = await PDFDocument.load(pdfBytes);
 
-      for (const [pageNumber, position] of Object.entries(signaturePositions)) {
-        const pageIndex = parseInt(pageNumber, 10) - 1; // PDF page index dimulai dari 0
-        if (pageIndex < pdfDoc.getPages().length) {
-          const page = pdfDoc.getPages()[pageIndex];
+      // for (const [pageNumber, position] of Object.entries(signaturePositions)) {
+      //   const pageIndex = parseInt(pageNumber, 10) - 1; // PDF page index dimulai dari 0
+      //   if (pageIndex < pdfDoc.getPages().length) {
+      //     const page = pdfDoc.getPages()[pageIndex];
 
-          // ✅ Tambahkan tanda tangan digital (jika ada)
-          if (signatureImage) {
-            const signatureBytes = await fetch(signatureImage.src).then(res => res.arrayBuffer());
-            const pdfSignature = await pdfDoc.embedPng(signatureBytes);
+      //     // ✅ Tambahkan tanda tangan digital (jika ada)
+      //     if (signatureImage) {
+      //       const signatureBytes = await fetch(signatureImage.src).then(res => res.arrayBuffer());
+      //       const pdfSignature = await pdfDoc.embedPng(signatureBytes);
 
-            const scaleX = page.getWidth() / renderedPdfSize.width;
-            const scaleY = page.getHeight() / renderedPdfSize.height;
+      //       const scaleX = page.getWidth() / renderedPdfSize.width;
+      //       const scaleY = page.getHeight() / renderedPdfSize.height;
 
-            const drawScale = {
-                width: signatureImageSize.width * scaleX,
-                height: signatureImageSize.height * scaleY,
-            };
+      //       const drawScale = {
+      //           width: signatureImageSize.width * scaleX,
+      //           height: signatureImageSize.height * scaleY,
+      //       };
 
-            console.log(signatureImageSize)
-            console.log(drawScale)
+      //       console.log(signatureImageSize)
+      //       console.log(drawScale)
 
-            const drawPosition = {
-                x: position.x * scaleX,
-                y: page.getHeight() - drawScale.height - (position.y * scaleY)
-            }
+      //       const drawPosition = {
+      //           x: position.x * scaleX,
+      //           y: page.getHeight() - drawScale.height - (position.y * scaleY)
+      //       }
 
-            page.drawImage(pdfSignature, {...drawPosition, ...drawScale})
-            // page.drawImage(pdfSignature, {
-            //   x: drawPosition.x,
-            //   y: drawPosition.y,
-            //   width: drawScale.width,
-            //   height: drawScale.height
-            // })
+      //       page.drawImage(pdfSignature, {...drawPosition, ...drawScale})
+      //       // page.drawImage(pdfSignature, {
+      //       //   x: drawPosition.x,
+      //       //   y: drawPosition.y,
+      //       //   width: drawScale.width,
+      //       //   height: drawScale.height
+      //       // })
 
-            console.log(`✅ Digital signature ditempatkan di halaman ${pageNumber} pada (${position.x}, ${position.y})`);
-          }
-        }
-      }
+      //       console.log(`✅ Digital signature ditempatkan di halaman ${pageNumber} pada (${position.x}, ${position.y})`);
+      //     }
+      //   }
+      // }
 
       // 🔄 Loop untuk tanda tangan gambar yang diunggah
       for (const [pageNumber, position] of Object.entries(uploadedImagePos)) {
@@ -252,7 +256,10 @@ function TandaTangani() {
     };
   };
 
+  if (isLoading) return <div>Loading ...</div>
+
   return (
+    signature ?
     <Homepage>
       <div className="tandaTangani" style={{color: 'black'}}>
         <h1>Unggah dokumen PDF untuk ditandatangani</h1>
@@ -386,6 +393,7 @@ function TandaTangani() {
         </div>
       </div>
     </Homepage>
+    : <Navigate to={'/pengaturan/tanda-tangan'}/>
   );
 }
 

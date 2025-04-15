@@ -1,6 +1,6 @@
 import Homepage from "../layouts/homepage";
 import "../assets/styles/SertifDigi.css";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import axios from "axios";
@@ -8,8 +8,9 @@ import axios from "axios";
 function SertifDigi() {
 
   const [certificate, setCertificate] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const getCertificate = async () => {
+  const getCertificate = async (): Promise<void> => {
     try {
       const cookies: Cookies = new Cookies()
       const token: string = cookies.get('accessToken')
@@ -18,10 +19,14 @@ function SertifDigi() {
           "Authorization": `Bearer ${token}`
         }
       })
-      
+      if (!data?.payload) {
+        alert('Anda belum memiliki tanda tangan')
+        setIsLoading(false)
+        return
+      }
       if (data?.payload && data.payload.createdAt && data.payload.expire && data.payload.passphrase) {
         const {passphrase, bytes, ...cert}: any = data.payload
-        cert.isExpired = new Date().getTime() >= new Date(certificate?.expire).getTime()
+        cert.isExpired = new Date().getTime() >= new Date(cert?.expire).getTime()
         cert.createdAt = new Date(cert.createdAt).toDateString()
         cert.expiring = new Date(cert.expire).toDateString()
         setCertificate(cert)
@@ -29,13 +34,18 @@ function SertifDigi() {
     } catch (err: any) {
       console.error(err.message)
     }
+    setIsLoading(false)
   }
 
   useEffect(() => {
     getCertificate()
   }, [])
 
+  
+  if (isLoading) return <div>Loading ...</div>
+
   return (
+    certificate ?
     <Homepage>
         <div className="card" style={{color: 'black'}}>
           <div className="card-content">
@@ -109,6 +119,7 @@ function SertifDigi() {
         </table>
       </div>
     </Homepage>
+    : <Navigate to={'/pengaturan/tanda-tangan'}/>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import styles from "./sidebar.module.css";
 
 // 🔹 Tambahkan props untuk Sidebar
@@ -19,7 +19,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         ☰
       </button>
 
-      <div className={styles.logo}>{isOpen ? "IPB DiSign" : "ID"}</div>
+      <Link to={'/'} className={styles.logo} style={{color: 'white'}}>{isOpen ? "IPB DiSign" : "ID"}</Link>
 
       <nav>
         <ul>

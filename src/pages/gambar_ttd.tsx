@@ -52,11 +52,9 @@ const GambarTandaTangan = () => {
   };
 
   const getSignature = async () => {
+    const cookies: Cookies = new Cookies()
+    const token: string = cookies.get('accessToken')
     try {
-      const cookies: Cookies = new Cookies()
-      const token: string = cookies.get('accessToken')
-      // console.log(token);
-      
       const {data}: any = await axios.get(import.meta.env.VITE_API_HOST + '/api/signature/get', {
         headers: {
           "Authorization": `Bearer ${token}`
