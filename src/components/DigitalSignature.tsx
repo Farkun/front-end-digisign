@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { SignatureComponent } from "@syncfusion/ej2-react-inputs";
 import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
 import styles from "./DigitalSignature.module.css"; // Import CSS Module
@@ -7,7 +7,7 @@ import Cookies from "universal-cookie";
 
 const DigitalSignature = ({isSignatureExist}: any) => {
   const signatureRef = useRef<SignatureComponent>(null);
-  const [drawed, setDrawed] = useState<any>(null)
+  // const [drawed, setDrawed] = useState<any>(null)
 
   const clearSignature = () => {
     signatureRef.current?.clear();
@@ -25,7 +25,7 @@ const DigitalSignature = ({isSignatureExist}: any) => {
           "Authorization": `Bearer ${token}`
         }
       })
-      setDrawed(data);
+      // setDrawed(data);
       
       if (data && data.payload) alert('Tanda tangan berhasil disimpan')
     } catch (err: any) {

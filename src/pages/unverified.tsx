@@ -19,7 +19,7 @@ const Unverified = () => {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            console.log(data)
+            if (data) alert('Email verifikasi berhasil dikirim ulang')
         } catch (err) {
             console.error(err)
         }

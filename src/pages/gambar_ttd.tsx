@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import DigitalSignature from "../components/DigitalSignature";
 import Homepage from "../layouts/homepage";
 import "../assets/styles/gambar_ttd.css"; // CSS khusus halaman ini
 import axios from "axios";

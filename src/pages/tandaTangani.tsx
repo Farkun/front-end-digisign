@@ -143,12 +143,12 @@ function TandaTangani() {
   //   }
   // };
 
-  const handleSignatureDragEnd = (e: any) => {
-    setSignaturePositions((prev) => ({
-      ...prev,
-      [currentPage]: { x: e.target.x(), y: e.target.y() },
-    }));
-  };
+  // const handleSignatureDragEnd = (e: any) => {
+  //   setSignaturePositions((prev) => ({
+  //     ...prev,
+  //     [currentPage]: { x: e.target.x(), y: e.target.y() },
+  //   }));
+  // };
 
   const handleUploadedImageDragEnd = (e: any) => {
     setUploadedImagePos((prev) => ({

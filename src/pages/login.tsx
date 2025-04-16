@@ -29,7 +29,14 @@ function Login() {
           "Content-Type": "application/json"
         }
       })
-      // localStorage.setItem("accessToken", data.token)
+      if (!data) {
+        alert('Username, Email, atau Password Salah')
+        return
+      }
+      if (!data.token) {
+        alert('Terlalu banyak percobaan, coba lagi dalam 24 jam')
+        return
+      }
       const expiration: any = jwtDecode(data.token).exp
       let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
       maxAge = parseInt(maxAge.toFixed())
@@ -40,6 +47,7 @@ function Login() {
       })
       if (data.token) window.location.href = '/dashboard'
     } catch (err: any) {
+      alert('Username, Email, atau Password Salah')
       console.error(err.message)
     }
   };

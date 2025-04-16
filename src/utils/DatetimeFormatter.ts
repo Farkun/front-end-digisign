@@ -9,6 +9,6 @@ export default class DatetimeFormatter {
             hour:'numeric', 
             minute: 'numeric', 
             second: 'numeric'
-        }).replaceAll('.', ':')
+        }).split('.').join(':')
     }
 }
