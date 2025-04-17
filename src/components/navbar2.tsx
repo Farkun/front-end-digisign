@@ -1,5 +1,6 @@
 import Cookies from "universal-cookie";
 import styles from "./navbar2.module.css";
+import { useState } from "react";
 
 interface NavbarProps {
   isSidebarOpen: boolean;
@@ -13,12 +14,13 @@ function Navbar2({ isSidebarOpen }: NavbarProps) {
     cookies.remove('accessToken')
     window.location.href = '/login'
   };
+
   return (
     <header
       className={styles.navbar2}
       style={{ left: isSidebarOpen ? "290px" : "70px", width: `calc(100% - ${isSidebarOpen ? "290px" : "70px"})` }}
     >
-      <button className={styles.logoutBtn} onClick={handleLogout}>Sign Out</button>
+      <button className={styles.logoutBtn} onClick={handleLogout}>Keluar</button>
     </header>
   );
 }

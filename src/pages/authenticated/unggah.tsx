@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import { Stage, Layer, Image as KonvaImage } from "react-konva";
-import Homepage from "../layouts/homepage";
-import "../assets/styles/unggah.css";
+import Homepage from "../../layouts/homepage";
+import "../../assets/styles/unggah.css";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import Select from "react-select";

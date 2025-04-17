@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import Homepage from "../layouts/homepage"
-import "../assets/styles/buatSertif.css" // Import CSS
+import Homepage from "../../layouts/homepage"
+import "../../assets/styles/buatSertif.css" // Import CSS
 import axios from "axios"
 import Cookies from "universal-cookie"
 

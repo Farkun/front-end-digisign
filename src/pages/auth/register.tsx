@@ -44,7 +44,7 @@ const Register = () => {
     }
 
     return <div className="login-container">
-        <h2>Register</h2>
+        <h2>Registrasi</h2>
         <form onSubmit={handleSubmit}>
             <input
             type="text"
@@ -57,7 +57,7 @@ const Register = () => {
             <input
             type="email"
             name="email"
-            placeholder="email"
+            placeholder="Email"
             // value={data.email}
             onChange={handleChange}
             required
@@ -65,7 +65,7 @@ const Register = () => {
             <input
             type="password"
             name="password"
-            placeholder="Password"
+            placeholder="Kata Sandi"
             // value={data.password}
             onChange={handleChange}
             required
@@ -73,14 +73,14 @@ const Register = () => {
             <input
             type="password"
             name="confirm_password"
-            placeholder="Confirm Password"
+            placeholder="Konfirmasi kata Sandi"
             // value={data.password}
             onChange={handleChange}
             required
             />
-            <button type="submit">Register</button>
+            <button type="submit">Registrasi</button>
             <div>
-                Allready have an account? <a href="/login">Login</a>
+                Sudah memiliki akun? <a href="/login">Masuk</a>
             </div>
         </form>
     </div>

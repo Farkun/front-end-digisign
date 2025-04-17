@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Homepage from "../layouts/homepage";
+import Homepage from "../../layouts/homepage";
 import { Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'universal-cookie';

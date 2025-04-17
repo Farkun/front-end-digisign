@@ -1,5 +1,5 @@
-import Homepage from "../layouts/homepage";
-import "../assets/styles/SertifDigi.css";
+import Homepage from "../../layouts/homepage";
+import "../../assets/styles/SertifDigi.css";
 import { Link, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";

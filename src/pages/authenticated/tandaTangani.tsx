@@ -1,5 +1,5 @@
-import "../assets/styles/tandaTangani.css";
-import Homepage from "../layouts/homepage";
+import "../../assets/styles/tandaTangani.css";
+import Homepage from "../../layouts/homepage";
 import React, { useRef, useState, useEffect } from "react";
 import { PDFDocument } from "pdf-lib";
 import { saveAs } from "file-saver";

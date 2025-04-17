@@ -15,7 +15,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   return (
     <aside className={`${styles.sidebar} ${isOpen ? styles.open : styles.closed}`}>
       {/* Tombol Toggle Sidebar */}
-      <button className={styles.hamburger} onClick={() => setIsOpen(!isOpen)}>
+      <button className={styles.hamburger} style={!isOpen ? {display: "flex", alignItems: 'center', justifyContent: 'center', width: '50px'} : {}} onClick={() => setIsOpen(!isOpen)}>
         ☰
       </button>
 
@@ -65,6 +65,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 <ul className={styles.dropdownMenu}>
                   <li><NavLink to="/pengaturan/sertifikat">Sertifikat Digital</NavLink></li>
                   <li><NavLink to="/pengaturan/tanda-tangan">Gambar Tanda Tangan</NavLink></li>
+                  <li><NavLink to="/pengaturan/profile">Profil</NavLink></li>
                 </ul>
               )}
             </li>

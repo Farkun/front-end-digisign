@@ -1,9 +1,9 @@
-import Homepage from "../layouts/homepage";
-import "../assets/styles/ditandatangani.css";
+import Homepage from "../../layouts/homepage";
+import "../../assets/styles/ditandatangani.css";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import { ReactElement, useEffect, useState } from "react";
-import DatetimeFormatter from "../utils/DatetimeFormatter";
+import DatetimeFormatter from "../../utils/DatetimeFormatter";
 import { saveAs } from "file-saver";
 
 function Ditandatangani() {

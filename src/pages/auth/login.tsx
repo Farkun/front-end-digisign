@@ -1,9 +1,10 @@
 import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
-import "../assets/styles/login.css";
+import "../../assets/styles/login.css";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
+import { Link } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -12,13 +13,6 @@ function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // if (username === "admin" && password === "password") {
-    //   alert("Login berhasil!");
-    //   navigate("/"); // Redirect ke Home setelah login
-    // } else {
-    //   alert("Username atau password salah!");
-    // }
-    // navigate("/dashboard");
     try {
       const cookies = new Cookies();
       const { data } = await axios.post(import.meta.env.VITE_API_HOST + "/api/auth/login", {
@@ -55,24 +49,27 @@ function Login() {
 
   return (
     <div className="login-container">
-      <h2>Login</h2>
+      <h2>Masuk</h2>
       <p>Masuk untuk menandatangani dokumen</p>
       <form onSubmit={handleLogin}>
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Username atau Email"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          required
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Kata Sandi"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <button type="submit">Login</button>
+        <button type="submit">Masuk</button>
+        <div>Tidak bisa masuk? <Link to={'/forgot-password'}>lupa kata sandi</Link></div><br />
         <div>
-          Or <a href="/register">Register</a>
+          atau <a href="/register">registrasi</a>
         </div>
       </form>
     </div>

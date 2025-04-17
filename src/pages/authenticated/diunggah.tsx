@@ -1,11 +1,11 @@
-import Homepage from "../layouts/homepage";
-import "../assets/styles/diunggah.css";
+import Homepage from "../../layouts/homepage";
+import "../../assets/styles/diunggah.css";
 import Cookies from "universal-cookie";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import DatetimeFormatter from "../utils/DatetimeFormatter";
+import DatetimeFormatter from "../../utils/DatetimeFormatter";
 import { saveAs } from "file-saver";
-import Crypt from "../utils/Crypt";
+import Crypt from "../../utils/Crypt";
 
 function Diunggah() {
 

@@ -1,11 +1,11 @@
-import Homepage from "../layouts/homepage";
-import "../assets/styles/permintaan.css";
+import Homepage from "../../layouts/homepage";
+import "../../assets/styles/permintaan.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import DatetimeFormatter from "../utils/DatetimeFormatter";
+import DatetimeFormatter from "../../utils/DatetimeFormatter";
 import { saveAs } from "file-saver";
-import Crypt from "../utils/Crypt";
+import Crypt from "../../utils/Crypt";
 
 function Permintaan() {
 

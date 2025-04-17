@@ -1,5 +1,5 @@
-import "../assets/styles/tandaTangan.css";
-import Homepage from "../layouts/homepage";
+import "../../assets/styles/tandaTangan.css";
+import Homepage from "../../layouts/homepage";
 import React, { useRef, useState, useEffect } from "react";
 import * as pdfjsLib from "pdfjs-dist";
 import { Stage, Layer, Image as KonvaImage } from "react-konva";
