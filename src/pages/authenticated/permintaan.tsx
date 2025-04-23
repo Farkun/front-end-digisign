@@ -16,7 +16,7 @@ function Permintaan() {
         const token: string = cookies.get('accessToken')
         
         try {
-            const {data}: any = await axios.get(import.meta.env.VITE_API_HOST+'/api/document/sign', {
+            const {data}: any = await axios.get(import.meta.env.VITE_API_HOST+'/api/document/requested-list', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -36,13 +36,14 @@ function Permintaan() {
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
         if (confirm('Apakah Anda yakin ingin menyetujui penanda tanganan dokumen ini?')) try {
-            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/${id}/approve`, {}, {
+            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/approve?document=${id}`, {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 withCredentials: true
             })
+            // console.log(data)
             if (data) window.location.reload()
         } catch (err: any) {
             console.error(err.message)
@@ -53,7 +54,7 @@ function Permintaan() {
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
         if (confirm('Apakah Anda yakin ingin menolak penanda tanganan dokumen ini?')) try {
-            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/${id}/deny`, {}, {
+            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/deny?document=${id}`, {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'

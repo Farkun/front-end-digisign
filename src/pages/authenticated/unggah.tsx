@@ -121,17 +121,19 @@ const Unggah: React.FC = () => {
       try {
         const cookies: Cookies = new Cookies()
         const token: string = cookies.get('accessToken')
-        const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/document/send', {
+        const datamap = {
           file: pdfFile,
           title: filename,
           signers_id: signersId,
           order_sign: isOrdered,
           page_number: pageNumbers
-        }, {
+        }
+        const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/document/send', datamap, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': `Bearer ${token}`
-          }
+          },
+          withCredentials: true
         })
         if (data?.payload) {
           alert('document sent successfully')

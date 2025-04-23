@@ -10,9 +10,13 @@ const GambarTandaTangan = () => {
   const [currentImage, setCurrentImage] = useState<string | null>(null)
 
   // Handle upload file
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran gamber terlalu besar')
+        return
+      }
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -29,8 +33,6 @@ const GambarTandaTangan = () => {
         }
       })
       if (data) alert("Tanda tangan berhasil diupload!")
-        console.log(data);
-        
     } catch (err: any) {
       console.error(err.message)
     }
@@ -69,6 +71,28 @@ const GambarTandaTangan = () => {
     getSignature()
   }, [])
 
+  const deleteSignature = async (): Promise<void> => {
+    const cookies: Cookies = new Cookies()
+    const token: string = cookies.get('accessToken')
+    if (!confirm('Apakah Anda yakin ingin menghapus tanda tangan?')) return
+    try {
+      const {data} = await axios.delete(import.meta.env.VITE_API_HOST + `/api/signature/delete`, {headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }})
+      if (!data) {
+        alert('Gagal menghapus tanda tangan')
+        return
+      } 
+      alert('Tanda tangan berhasil dihapus')
+      window.location.reload()
+      return
+    } catch (err: any) {
+      alert('Gagal menghapus tanda tangan')
+      // console.error(err.message)
+    }
+  }
+
   return (
     <Homepage>
       <div className="gambar-ttd-container">
@@ -106,6 +130,9 @@ const GambarTandaTangan = () => {
                 Simpan
               </button>
             </form>
+            {currentImage &&
+              <button type="button" style={{backgroundColor: '#cc0000'}} onClick={deleteSignature}>Hapus</button>
+            }
           </div>
         </div>
 

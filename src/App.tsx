@@ -26,11 +26,17 @@ import ProtectedRoutes from "./routes/ProtectedRoutes";
 import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import Profile from "./pages/authenticated/profile";
+// import useAuthCheck from "./hooks/useAuthCheck";
 
 function App() {
+
+  // const {user, loading} = useAuthCheck()
+  // const isAuthenticated = user ? true : false
+  // const isVerified = user?.verifiedAt ? true : false
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [isVerified, setIsVerified] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(true)
 
   const validateToken = async () => {
     const cookies = new Cookies();
@@ -48,14 +54,14 @@ function App() {
         setIsVerified(false)
       }
     }
-    setIsLoading(false)
+    setLoading(false)
   }
   
   useEffect(() => {
     validateToken()
   }, [])
 
-  if (isLoading) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
 
   return (
     <Router>

@@ -19,7 +19,10 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         ☰
       </button>
 
-      <Link to={'/'} className={styles.logo} style={{color: 'white'}}>{isOpen ? "IPB DiSign" : "ID"}</Link>
+      <Link to={'/'} className={styles.logo} style={{color: 'white'}}>
+        <img src="/eSign-logo-transparent.png" alt="logo" style={{width: isOpen ? '100px' : '20px'}} /> <br />
+        {isOpen && "BHI - eSign"}
+      </Link>
 
       <nav>
         <ul>

@@ -10,7 +10,6 @@ import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import Konva from 'konva';
-import { Navigate } from "react-router-dom";
 
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc =
   `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js`;
@@ -42,23 +41,50 @@ function TandaTangani() {
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get('accessToken')
     try {
-      const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get`, {headers: {
+      const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get-certificate`, {headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }})
-      if (!data?.payload) alert('Anda belum memiliki sertifikat tanda tangan')
-      if (data?.payload) {
-        if (data.payload.isExpire) alert('Sertifikat tanda tangan anda telah kadaluarsa')
-        else setSignature(data.payload.signature)
+      if (!data?.payload || !data.payload.expire || !data.payload.passphrase) {
+        alert('Anda belum memiliki sertifikat tanda tangan')
+        window.location.href = '/pengaturan/sertifikat'
+        return
+      }
+      else {
+        const isExpired = new Date().getTime() >= new Date(data.payload.expire).getTime()
+        if (isExpired) {
+          alert('Sertifikat tanda tangan anda telah kadaluarsa')
+          window.location.href = '/pengaturan/sertifikat'
+          return
+        }
+        else {
+          try {
+            const {data} = await axios.get(import.meta.env.VITE_API_HOST + `/api/signature/get`, {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            })
+            if (data?.payload) {
+              setSignature(data.payload.signature)
+              setIsLoading(false)
+            }
+          } catch (err: any) {
+            alert('Terjadi kesalahan')
+            window.location.href = '/pengaturan/sertifikat'
+            return
+            // console.error(err.message)
+          }
+        }
       }
     } catch (err: any) {
       console.error(err.message)
-      alert('Anda belum memiliki sertifikat tanda tangan')
     }
-    setIsLoading(false)
   }
 
-  useEffect(() => {getSignature()}, [])
+  useEffect(() => {
+    getSignature()
+  }, [])
   useEffect(() => {
     if (isSignatureSelected && transformerRef.current && signatureRef.current) {
       transformerRef.current.nodes([signatureRef.current]);
@@ -259,7 +285,6 @@ function TandaTangani() {
   if (isLoading) return <div>Loading ...</div>
 
   return (
-    signature ?
     <Homepage>
       <div className="tandaTangani" style={{color: 'black'}}>
         <h1>Unggah dokumen PDF untuk ditandatangani</h1>
@@ -286,10 +311,17 @@ function TandaTangani() {
 
         {/* ✅ Canvas Konva untuk PDF + Tanda Tangan */}
         <div>
-          <button onClick={() => setUploadedImage(signature)}>Terapkan Tanda Tangan</button>
+          <button onClick={() => setUploadedImage(signature)} 
+          style={pdfImage ? {} : {backgroundColor: 'gray'}} 
+          disabled={pdfImage == null}
+          >Terapkan Tanda Tangan</button>
           <button onClick={() => {
-            setUploadedImage(null)
-            setUploadedImageElement(null)}}>Hapus Tanda Tangan</button>
+              setUploadedImage(null)
+              setUploadedImageElement(null)
+              setUploadedImagePos({...uploadedImagePos, [currentPage]: {x: 0, y: 0}})
+            }} 
+            style={pdfImage ? {} : {backgroundColor: 'gray'}}
+          >Hapus Tanda Tangan</button>
         </div>
         <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage">
           <Layer>
@@ -314,7 +346,14 @@ function TandaTangani() {
                 width={signatureImageSize.width}
                 height={signatureImageSize.height}
                 draggable
-                onDragEnd={handleUploadedImageDragEnd}
+                onDragEnd={(e) => {
+                  if (e.target.x() < 0) e.target.x(0)
+                  if (e.target.x() > renderedPdfSize.width - e.target.width()) e.target.x(renderedPdfSize.width - e.target.width())
+                  if (e.target.y() < 0) e.target.y(0)
+                  if (e.target.y() > renderedPdfSize.height - e.target.height()) e.target.y(renderedPdfSize.height - e.target.height())
+                  handleUploadedImageDragEnd(e)
+                }}
+                onDragStart={() => setIsSignatureSelected(true)}
                 onClick={() => setIsSignatureSelected(true)}
                 onTap={() => setIsSignatureSelected(true)}
               />
@@ -323,14 +362,31 @@ function TandaTangani() {
               <Transformer 
                 ref={transformerRef}
                 boundBoxFunc={(oldBox, newBox) => {
-                    if (newBox.width < 50 || newBox.height < 50) return oldBox
+                  if (newBox.width < 50 || newBox.height < 50 || transformerRef.current?._movingAnchorName == 'top-left') return oldBox
+                    newBox.x = oldBox.x
+                    newBox.y = oldBox.y
+                    if (newBox.width > renderedPdfSize.width) {
+                      newBox.width = renderedPdfSize.width
+                      newBox.height = renderedPdfSize.width * (oldBox.height/oldBox.width)
+                    }
+                    if (newBox.height > renderedPdfSize.height) {
+                      newBox.height = renderedPdfSize.height
+                      newBox.width = renderedPdfSize.height * (oldBox.width/oldBox.height)
+                    }
                     if (signatureRef.current) {
+                      if (newBox.x < 0) newBox.x = 0
+                      if (newBox.x > renderedPdfSize.width - newBox.width) newBox.x = renderedPdfSize.width - newBox.width
+                      if (newBox.y < 0) newBox.y = 0
+                      if (newBox.y > renderedPdfSize.height - newBox.height) newBox.y = renderedPdfSize.height - newBox.height
                       signatureRef.current.width(newBox.width)
                       signatureRef.current.height(newBox.height)
+
+                      // const calcX: number = renderedPdfSize.width - (newBox.width * 2) - newBox.x
+                      // const calcY: number = renderedPdfSize.height - (newBox.height * 2) - newBox.y
+
+                      setSignatureImageSize({ width: newBox.width, height: newBox.height })
+                      setSignaturePositions({ ...signaturePositions, [currentPage]: { x: newBox.x, y: newBox.y } })
                     }
-                    setSignatureImageSize({ width: newBox.width, height: newBox.height })
-                    setSignaturePositions({ ...signaturePositions, [currentPage]: { x: newBox.x, y: newBox.y } })
-                    // setSignaturePositions({ x: newBox.x, y: newBox.y })
                     return newBox
                 }}
                 rotateEnabled={false}
@@ -393,7 +449,6 @@ function TandaTangani() {
         </div>
       </div>
     </Homepage>
-    : <Navigate to={'/pengaturan/tanda-tangan'}/>
   );
 }
 

@@ -1,6 +1,5 @@
 import Cookies from "universal-cookie";
 import styles from "./navbar2.module.css";
-import { useState } from "react";
 
 interface NavbarProps {
   isSidebarOpen: boolean;

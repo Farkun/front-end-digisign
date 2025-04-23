@@ -12,6 +12,11 @@ export default class Crypt {
         return encodeURIComponent(encrypted.toString()) // base64 hasilnya
     }
 
+    // public static encryptString(text: string): string {
+    //     const encrypted = CryptoJS.AES.encrypt(text, this.SECRET_KEY).toString()
+    //     return encodeURIComponent(encrypted)
+    // }
+
     public static decryptString(encrypted: string): string {
         const decrypted = CryptoJS.AES.decrypt(decodeURIComponent(encrypted), CryptoJS.enc.Utf8.parse(this.SECRET_KEY), {
         mode: CryptoJS.mode.ECB,

@@ -41,21 +41,25 @@ const TandaTanganiPersetujuan = () => {
         const cookies: Cookies = new Cookies()
         const token: string = cookies.get('accessToken')
         try {
-            const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/document/sign/${id}`, {
+            const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/document/requested?document=${id && encodeURIComponent(id)}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             })
-            // if (!data?.payload) alert('Dokumen tidak ditemukan')
-            if (data?.payload) {
-                const signed_url: string | null = data.payload.documentApprovals[0].signedDocument
-                if (signed_url) window.location.href = '/permintaan'
-                const {url, title} = data.payload
-                getDocumentFile(url, title)
+            if (!data?.payload) {
+                alert('Dokumen tidak ditemukan')
+                window.location.href = '/permintaan'
+                return
             }
+            const signed_url: string | null = data.payload.documentApprovals[0].signedDocument
+            if (signed_url) window.location.href = '/permintaan'
+            const {url, title} = data.payload
+            getDocumentFile(url, title)
         } catch (err: any) {
             alert('Dokumen tidak ditemukan')
+            window.location.href = '/permintaan'
+            return
             console.error(err.message)
         }
         setIsLoadingDocument(false)
@@ -64,17 +68,22 @@ const TandaTanganiPersetujuan = () => {
     const getDocumentFile = async (url: string, title: string): Promise<void> => {
         try {
             const {data} = await axios.get(url, {responseType: 'arraybuffer'})
-            if (data) {
-                const blob: Blob = new Blob([data], {type: 'application/pdf'})
-                const file: File = new File([blob], title, {type: 'application/pdf'})
-                if (file) {
-                    renderPdf(file)
-                    setPdfFile(file)
-                }
+            if (!data) {
+                alert('Dokumen hilang atau rusak')
+                window.location.href = '/permintaan'
+                return
+            }
+            const blob: Blob = new Blob([data], {type: 'application/pdf'})
+            const file: File = new File([blob], title, {type: 'application/pdf'})
+            if (file) {
+                renderPdf(file)
+                setPdfFile(file)
             }
         } catch (err: any) {
             alert('Dokumen hilang atau rusak')
-            console.error(err.message)
+            window.location.href = '/permintaan'
+            return
+            // console.error(err.message)
         }
     }
 
@@ -115,29 +124,52 @@ const TandaTanganiPersetujuan = () => {
         const cookies: Cookies = new Cookies()
         const token: string = cookies.get('accessToken')
         try {
-            const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get`, {
+            const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get-certificate`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
-                    // 'Content-Type': 'application/json'
+                    'Content-Type': 'application/json'
                 }
             })
-            // if (!data?.payload) alert('Anda belum memiliki sertifikat tanda tangan')
-            if (data?.payload) {
-                if (data.payload.isExpire) alert('Sertifikat tanda tangan anda telah kadaluarsa')
-                else {
-                    setSignatureData(data.payload.signature)
+            if (!data?.payload) {
+                alert('Anda belum memiliki sertifikat tanda tangan')
+                window.location.href = '/permintaan'
+                return
+            }
+            const isExpired = new Date().getTime() >= new Date(data.payload.expire).getTime()
+            if (isExpired) {
+                alert('Sertifikat tanda tangan anda telah kadaluarsa')
+                window.location.href = '/pengaturan/sertifikat'
+                return
+            }
+            else {
+                try {
+                    const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    if (data?.payload) setSignatureData(data.payload.signature)
+                    setIsLoadingSignature(false)
+                    return
+                } catch (err:any) {
+                    console.error(err.message)
+                    setIsLoadingSignature(false)
+                    return
                 }
             }
         } catch (err: any) {
             alert('Anda belum memiliki sertifikat tanda tangan')
-            console.error(err.message )
+            window.location.href = '/pengaturan/sertifikat'
+            return
+            // console.error(err.message )
+            // setIsLoadingSignature(false)
         }
-        setIsLoadingSignature(false)
     }
 
     useEffect((): void => {
-        getDocument()
         getSignature()
+        getDocument()
     }, [])
 
     const attachSign = (): void => {
@@ -207,7 +239,7 @@ const TandaTanganiPersetujuan = () => {
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
         if (token) try {
-            const {data} = await axios.put(import.meta.env.VITE_API_HOST+`/api/document/${documentId}/sign`, formData, {
+            const {data} = await axios.put(import.meta.env.VITE_API_HOST+`/api/document/sign?document=${documentId}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data'
@@ -220,8 +252,8 @@ const TandaTanganiPersetujuan = () => {
     }
     
     if (isLoadingDocument || isLoadingSignature) return <div>Loading ...</div>
-    if (!signatureData) return <Navigate to={'/pengaturan/tanda-tangan'}/>
-    if (!pdfFile) return <Navigate to={'/permintaan'}/>
+    // if (!signatureData) return <Navigate to={'/pengaturan/tanda-tangan'}/>
+    // if (!pdfFile) return <Navigate to={'/permintaan'}/>
 
     return <Homepage>
         tandatangani dokumen disetujui
@@ -256,8 +288,13 @@ const TandaTanganiPersetujuan = () => {
                         height={signatureImageSize.height}
                         draggable={true}
                         onDragEnd={(e) => {
+                            if (e.target.x() < 0) e.target.x(0)
+                            if (e.target.x() > renderedPdfSize.width - e.target.width()) e.target.x(renderedPdfSize.width - e.target.width())
+                            if (e.target.y() < 0) e.target.y(0)
+                            if (e.target.y() > renderedPdfSize.height - e.target.height()) e.target.y(renderedPdfSize.height - e.target.height())
                             setSignaturePositions({ x: e.target.x(), y: e.target.y() });
                         }}
+                        onDragStart={() => setIsSignatureSelected(true)}
                         onClick={() => setIsSignatureSelected(true)}
                         onTap={() => setIsSignatureSelected(true)}
                     />}
@@ -265,13 +302,15 @@ const TandaTanganiPersetujuan = () => {
                     <Transformer 
                         ref={signatureTransformerRef}
                         boundBoxFunc={(oldBox, newBox) => {
-                            if (newBox.width < 50 || newBox.height < 50) return oldBox
+                            if (newBox.width < 50 || newBox.height < 50 || signatureTransformerRef.current?._movingAnchorName == 'top-left') return oldBox
+                            newBox.x = oldBox.x
+                            newBox.y = oldBox.y
                             if (signatureImageRef.current) {
-                            signatureImageRef.current.width(newBox.width)
-                            signatureImageRef.current.height(newBox.height)
+                                signatureImageRef.current.width(newBox.width)
+                                signatureImageRef.current.height(newBox.height)
+                                setSignatureImageSize({ width: newBox.width, height: newBox.height })
+                                setSignaturePositions({ x: newBox.x, y: newBox.y })
                             }
-                            setSignatureImageSize({ width: newBox.width, height: newBox.height })
-                            setSignaturePositions({ x: newBox.x, y: newBox.y })
                             return newBox
                         }}
                         rotateEnabled={false}

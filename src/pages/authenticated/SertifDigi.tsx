@@ -1,13 +1,14 @@
 import Homepage from "../../layouts/homepage";
 import "../../assets/styles/SertifDigi.css";
-import { Link, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import axios from "axios";
+import DatetimeFormatter from "../../utils/DatetimeFormatter";
 
 function SertifDigi() {
 
   const [certificate, setCertificate] = useState<any>(null)
+  const [signature, setSignature] = useState<any>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const getCertificate = async (): Promise<void> => {
@@ -19,17 +20,17 @@ function SertifDigi() {
           "Authorization": `Bearer ${token}`
         }
       })
-      if (!data?.payload) {
-        alert('Anda belum memiliki tanda tangan')
-        setIsLoading(false)
-        return
-      }
-      if (data?.payload && data.payload.createdAt && data.payload.expire && data.payload.passphrase) {
+      if (data?.payload) {
         const {passphrase, bytes, ...cert}: any = data.payload
-        cert.isExpired = new Date().getTime() >= new Date(cert?.expire).getTime()
-        cert.createdAt = new Date(cert.createdAt).toDateString()
-        cert.expiring = new Date(cert.expire).toDateString()
-        setCertificate(cert)
+        setSignature(cert)
+        if (passphrase && cert.expire) {
+          cert.isExpired = new Date().getTime() >= new Date(cert?.expire).getTime()
+          // cert.createdAt = new Date(cert.extensionDate ?? cert.createdAt).toDateString()
+          cert.createdAt = new DatetimeFormatter().format(cert.extensionDate ?? cert.createdAt)
+          // cert.expiring = new Date(cert.expire).toDateString()
+          cert.expiring = new DatetimeFormatter().format(cert.expire)
+          setCertificate(cert)
+        }
       }
     } catch (err: any) {
       console.error(err.message)
@@ -41,11 +42,57 @@ function SertifDigi() {
     getCertificate()
   }, [])
 
+  const revoke = async (): Promise<void> => {
+    if (!confirm('Apakah Anda yakin ingin merevoke sertifikat tanda tangan ini?')) return
+    const passphrase: string | null = prompt('Masukkan passphrase untuk melanjutkan')
+    if (!passphrase || passphrase == '') return
+    const cookies: Cookies = new Cookies()
+    const token: string = cookies.get('accessToken')
+    try {
+      const {data} = await axios.delete(import.meta.env.VITE_API_HOST + `/api/signature/revoke?passphrase=${passphrase}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      if (!data) {
+        alert('gagal revoke sertifikat')
+        return
+      }
+      alert('Sertifikat berhasil direvoke')
+      window.location.reload()
+    } catch (err: any) {
+      console.error(err.message)
+    }
+  }
+
+  const extend = async (): Promise<void> => {
+    const cookies: Cookies = new Cookies()
+    const token: string = cookies.get('accessToken')
+    const extend_in_days: string | null = prompt("Masukkan jumlah perpanjangan dalam hari untuk melanjutkan\n\n*Perpanjangan dihitung per hari ini")
+    if (!extend_in_days || extend_in_days == '') return
+    if (parseInt(extend_in_days) < 1) return
+    const passphrase: string | null = prompt('Masukkan passphrase untuk melanjutkan')
+    if (!passphrase || passphrase == '') return
+    try {
+      const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/signature/extends?passphrase=${passphrase}&extend_in_days=${extend_in_days}`, {}, { headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }})
+      if (data) {
+        alert('Sertifikat berhasil diperpanjang')
+        window.location.reload()
+      } else {
+        alert('Sertifikat gagal diperpanjang')
+        return
+      }
+    } catch (err: any) {
+      console.error(err.message)
+    }
+  }
   
   if (isLoading) return <div>Loading ...</div>
 
   return (
-    certificate ?
     <Homepage>
         <div className="card" style={{color: 'black'}}>
           <div className="card-content">
@@ -60,15 +107,18 @@ function SertifDigi() {
         </div>
       <div className="SertifDigi-container" style={{color: 'black'}}>
         <h2>Sertifikat</h2>
-        <Link to="/pengaturan/sertifikat/create">
-          <button className="buat-sertifikat-btn" style={certificate && !certificate.isExpired ? {backgroundColor: 'gray'} : {}}>➕ Buat Sertifikat</button>
-        </Link>
+          <button className="buat-sertifikat-btn" style={certificate ? {backgroundColor: 'gray'} : {}} onClick={() => {
+            if (!signature) {
+              alert('Anda belum memiliki tanda tangan')
+              window.location.href = '/pengaturan/tanda-tangan'
+            } else if (!certificate) window.location.href = "/pengaturan/sertifikat/create"
+          }}>➕ Buat Sertifikat</button>
         <table className="SertifDigi-table">
           <thead>
             <tr>
               <th>#</th>
               <th>Serial Number</th>
-              <th>Subject</th>
+              {/* <th>Subject</th> */}
               <th>Valid Time</th>
               <th>Dibuat</th>
               <th>Status</th>
@@ -79,47 +129,23 @@ function SertifDigi() {
             {certificate &&
               <tr>
                 <td>#</td>
-                <td>6957A925BB39E460</td>
-                <td>Sub: E=fabimanyu@apps.ipb.ac.id, CN=Farchan Abimanyu
-                Iss: CN=IPB University, OU=IPB, O=IPB, L=Bogor, S=West Java, C=ID</td>
-                <td style={{minWidth: '100px'}}>{certificate.createdAt} <br /> - {certificate.expiring}</td>
+                <td>{certificate.serialNumber}</td>
+                {/* <td>Sub: E=fabimanyu@apps.ipb.ac.id, CN=Farchan Abimanyu
+                Iss: CN=IPB University, OU=IPB, O=IPB, L=Bogor, S=West Java, C=ID</td> */}
+                <td style={{minWidth: '100px'}}>{certificate.createdAt} <br /> - <br /> {certificate.expiring}</td>
                 <td>{certificate.createdAt}</td>
                 <td><span className={`status ${certificate.isExpired ? 'kadaluarsa' : 'aktif'}`}>{certificate.isExpired ? 'Kadaluarsa' : 'Aktif'}</span></td>
                 <td>
-                  <button className="revoke-btn">❌ Revoke</button>
+                  <button className="extend-btn" onClick={extend}>⏳ Perpanjang</button>
+                  <button className="revoke-btn" onClick={revoke}>❌ Revoke</button>
                 </td>
               </tr>
             }
-
-            {/* <tr>
-              <td>2</td>
-              <td>097ACB1D17C1581D</td>
-              <td>Sub: E=fabimanyu@apps.ipb.ac.id, CN=Farchan Abimanyu
-              Iss: CN=IPB University, OU=IPB, O=IPB, L=Bogor, S=West Java, C=ID</td>
-              <td>Selasa, 24 Agustus 2021 - Rabu, 24 Agustus 2022</td>
-              <td>Selasa, 24 Agustus 2021 - 21.50.06</td> 
-              <td><span className="status kadaluarsa">Kadaluarsa</span></td>
-              <td>
-                <button className="revoke-btn">❌ Revoke</button>
-              </td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Kontrak Kerjasama</td>
-              <td>15 Maret 2025-10:30 AM</td>
-              <td>15 Maret 2025-03:30 PM</td>
-              <td>6957A925BB39E460</td> 
-              <td><span className="status kadaluarsa">Kadaluarsa</span></td>
-              <td>
-                <button className="revoke-btn">❌ Revoke</button>
-              </td>
-            </tr> */}
 
           </tbody>
         </table>
       </div>
     </Homepage>
-    : <Navigate to={'/pengaturan/tanda-tangan'}/>
   );
 }
 

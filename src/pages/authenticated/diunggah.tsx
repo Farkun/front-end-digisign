@@ -15,7 +15,7 @@ function Diunggah() {
     try {
       const cookies: Cookies = new Cookies()
       const token: string = cookies.get('accessToken')
-      const {data} = await axios.get(import.meta.env.VITE_API_HOST + '/api/document/get', {
+      const {data} = await axios.get(import.meta.env.VITE_API_HOST + '/api/document/get-list', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -37,7 +37,7 @@ function Diunggah() {
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get('accessToken')
     if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) try {
-      const response = await axios.delete(import.meta.env.VITE_API_HOST+`/api/document/${id}/delete`, {
+      const response = await axios.delete(import.meta.env.VITE_API_HOST+`/api/document/delete?document=${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
