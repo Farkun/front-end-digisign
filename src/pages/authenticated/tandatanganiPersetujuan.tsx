@@ -60,7 +60,6 @@ const TandaTanganiPersetujuan = () => {
             alert('Dokumen tidak ditemukan')
             window.location.href = '/permintaan'
             return
-            console.error(err.message)
         }
         setIsLoadingDocument(false)
     }
