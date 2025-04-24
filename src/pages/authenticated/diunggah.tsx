@@ -10,6 +10,8 @@ import Crypt from "../../utils/Crypt";
 function Diunggah() {
 
   const [documents, setDocuments] = useState<any[]>([])
+  const [dataLoading, setDataLoading] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const getDocuments = async (): Promise<void> => {
     try {
@@ -25,6 +27,7 @@ function Diunggah() {
     } catch (err: any) {
       console.error(err.message)
     }
+    setDataLoading(false)
   }
 
   useEffect(() => {
@@ -34,6 +37,8 @@ function Diunggah() {
   }, [])
 
   const deleteDocument = async (id: string): Promise<void> => {
+    if (loading) return
+    setLoading(true)
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get('accessToken')
     if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) try {
@@ -49,9 +54,12 @@ function Diunggah() {
     } catch (err: any) {
       console.error(err.message)
     }
+    setLoading(false)
   }
 
   const downloadDocument = async (url: string, filename: string, fullSigned: boolean): Promise<void> => {
+    if (loading) return
+    setLoading(true)
     try {
       const {data} = await axios.get(url, {responseType: 'arraybuffer'})
       if (data) {
@@ -63,6 +71,7 @@ function Diunggah() {
     } catch (err: any) {
       console.error(err.message)
     }
+    setLoading(false)
   }
 
   return (
@@ -82,7 +91,9 @@ function Diunggah() {
           </thead>
           <tbody>
             {/* Contoh Data - Nanti bisa diganti dengan data dari database */}
-            {documents.map((doc, index) => {
+            {dataLoading ?
+            <tr><td colSpan={6}>Loading ...</td></tr>
+            : documents.map((doc, index) => {
               var deniedCount: number = 0
               doc.documentApprovals?.forEach((app: any) => {
                 if (app.denied) deniedCount++
@@ -106,13 +117,13 @@ function Diunggah() {
                   fontWeight: "bold"
                 } : {}}>{deniedCount}</td>
                 <td className="aksi-buttons">
-                  <button className="detail-btn" onClick={()=>{ 
+                  <button className={loading ? 'revoke-btn' : "detail-btn"} onClick={()=>{ 
                     window.open(doc.url, '_blank') 
-                  }}>🔍 Detail</button>
-                  <button className="download-btn" onClick={()=>{ 
+                  }} disabled={loading}>🔍 Detail</button>
+                  <button className={loading ? 'revoke-btn' : "download-btn"} onClick={()=>{ 
                     downloadDocument(doc.url, doc.title, doc.signedCount == doc.requestCount)
-                  }}>📥 Unduh</button>
-                  <button className="delete-btn" onClick={() => deleteDocument(Crypt.encryptString(`${doc.id}`))}>🗑️ Hapus</button>
+                  }} disabled={loading}>📥 Unduh</button>
+                  <button className={loading ? 'revoke-btn' : "delete-btn"} onClick={() => deleteDocument(Crypt.encryptString(`${doc.id}`))} disabled={loading}>🗑️ Hapus</button>
                 </td>
               </tr>
             })}

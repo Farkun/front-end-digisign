@@ -7,12 +7,15 @@ import { jwtDecode } from "jwt-decode";
 import { Link } from "react-router-dom";
 
 function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   // const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return
+    setLoading(true)
     try {
       const cookies = new Cookies();
       const { data } = await axios.post(import.meta.env.VITE_API_HOST + "/api/auth/login", {
@@ -44,6 +47,7 @@ function Login() {
       alert('Username, Email, atau Password Salah')
       console.error(err.message)
     }
+    setLoading(false)
   };
   
 
@@ -58,6 +62,7 @@ function Login() {
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
+          readOnly={loading}
         />
         <input
           type="password"
@@ -65,8 +70,9 @@ function Login() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
+          readOnly={loading}
         />
-        <button type="submit">Masuk</button>
+        <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Masuk</button>
         <div>Tidak bisa masuk? <Link to={'/forgot-password'}>lupa kata sandi</Link></div><br />
         <div>
           atau <a href="/register">registrasi</a>

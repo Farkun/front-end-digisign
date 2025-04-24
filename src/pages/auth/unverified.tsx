@@ -1,16 +1,22 @@
 import axios from "axios";
+import { ReactElement, useState } from "react";
 import Cookies from "universal-cookie";
 
 
-const Unverified = () => {
+const Unverified = (): ReactElement => {
 
-    const handleLogout = () => {
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const handleLogout = (): void => {
+        if (loading) return
         const cookies = new Cookies()
         cookies.remove('accessToken')
         window.location.href = '/login'
     };
 
-    const handleResendEmail = async () => {
+    const handleResendEmail = async (): Promise<void> => {
+        if (loading) return
+        setLoading(true)
         const cookies = new Cookies()
         const token = cookies.get('accessToken')
         try {
@@ -23,7 +29,10 @@ const Unverified = () => {
         } catch (err) {
             console.error(err)
         }
+        setLoading(false)
     }
+
+    if (loading) return <div>Loading ...</div>
 
     return <div>
         <div>

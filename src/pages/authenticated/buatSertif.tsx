@@ -7,9 +7,12 @@ import Cookies from "universal-cookie"
 const buatSertif: React.FC = () => {
   const [passphrase, setPassphrase] = useState(null)
   const [days, setDays] = useState(0)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+    if (loading) return
+    setLoading(true)
     if (days <= 0) alert('minimum expiration is 1 day')
     if (!passphrase || passphrase == '') alert('passphrase cannot be null')
     if (days > 0 && passphrase && passphrase != '') {
@@ -31,6 +34,7 @@ const buatSertif: React.FC = () => {
         console.error(err.message)
       }
     }
+    setLoading(false)
   }
 
   return <Homepage>
@@ -68,6 +72,7 @@ const buatSertif: React.FC = () => {
               className="input-field"
               placeholder="Masukkan passphrase"
               required
+              readOnly={loading}
             />
           </div>
 
@@ -81,13 +86,14 @@ const buatSertif: React.FC = () => {
               onChange={(e: any) => setDays(Number(e.target.value))}
               className="input-field"
               required
+              readOnly={loading}
             />
             <span>hari dari sekarang</span>
           </div>
         </div>
 
         {/* Tombol Simpan */}
-        <button type="submit" className="save-btn">
+        <button type="submit" className={loading ? 'revoke-btn' : "save-btn"} disabled={loading}>
           Simpan
         </button>
       </form>

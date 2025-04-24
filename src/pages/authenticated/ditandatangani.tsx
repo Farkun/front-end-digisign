@@ -9,6 +9,7 @@ import { saveAs } from "file-saver";
 function Ditandatangani() {
 
   const [documents, setDocuments] = useState<any[]>([])
+  const [dataLoading, setDataLoading] = useState<boolean>(true)
 
   const getDocuments = async (): Promise<void> => {
     const cookies: Cookies = new Cookies()
@@ -22,6 +23,7 @@ function Ditandatangani() {
     } catch (err: any) {
       console.error(err.message)
     }
+    setDataLoading(false)
   }
 
   useEffect(() => {
@@ -58,7 +60,9 @@ function Ditandatangani() {
             </tr>
           </thead>
           <tbody>
-            {documents.map((doc: any, index: number): ReactElement => {
+            {dataLoading ? 
+            <tr><td colSpan={7}>Loading ...</td></tr>
+            : documents.map((doc: any, index: number): ReactElement => {
               return <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{doc.title.replaceAll('.pdf', '')}</td>

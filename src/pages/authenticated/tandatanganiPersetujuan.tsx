@@ -17,6 +17,7 @@ const TandaTanganiPersetujuan = () => {
 
     const [isLoadingSignature, setIsLoadingSignature] = useState<boolean>(true)
     const [isLoadingDocument, setIsLoadingDocument] = useState<boolean>(true)
+    const [loading, setLoading] = useState<boolean>(false)
     
     const [pdfFile, setPdfFile] = useState<File | null>(null)
     const [pdfImage, setPdfImage] = useState<HTMLImageElement | null>(null)
@@ -183,6 +184,8 @@ const TandaTanganiPersetujuan = () => {
     }
 
     const loadSignatureToDocument = async (): Promise<void> => {
+        if (loading) return
+        setLoading(true)
         if (pdfFile && signatureImage?.src) {
             const passphrase: string | null = prompt('Masukkan passphrase tanda tangan')
             if (!passphrase || passphrase == '') {
@@ -231,6 +234,7 @@ const TandaTanganiPersetujuan = () => {
                 }
             }
         }
+        setLoading(false)
     }
 
     const storeSignedDocument = async (documentId: string | undefined, formData: object): Promise<void> => {
@@ -263,7 +267,7 @@ const TandaTanganiPersetujuan = () => {
             alignItems: 'center',
             justifyContent: 'center'
         }}>
-            <button type="button" onClick={attachSign} disabled={!signatureData} style={!signatureData ? {backgroundColor: 'gray'} : {}}>Terapkan Tanda Tangan</button>
+            <button type="button" onClick={attachSign} disabled={!signatureData || loading} style={!signatureData || loading ? {backgroundColor: 'gray'} : {}}>Terapkan Tanda Tangan</button>
             <button type="button" onClick={()=>{
                 setSignatureImage(null)
                 setSignaturePositions({x: 0, y: 0})
@@ -320,7 +324,7 @@ const TandaTanganiPersetujuan = () => {
                     }
                 </Layer>
             </Stage>
-            <button type="button" onClick={loadSignatureToDocument} disabled={!signatureData || !signatureImage} style={!signatureData || !signatureImage ? {backgroundColor: 'gray'} : {}}>Tanda Tangani</button>
+            <button type="button" onClick={loadSignatureToDocument} disabled={!signatureData || !signatureImage || loading} style={!signatureData || !signatureImage || loading ? {backgroundColor: 'gray'} : {}}>Tanda Tangani</button>
         </div>
     </Homepage>
 }

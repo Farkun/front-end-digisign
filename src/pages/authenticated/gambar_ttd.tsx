@@ -8,9 +8,12 @@ const GambarTandaTangan = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
 
   // Handle upload file
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (loading) return
+    setLoading(true)
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
@@ -20,9 +23,12 @@ const GambarTandaTangan = () => {
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
+    setLoading(false)
   };
 
-  const saveSign = async (accessToken: string) => {
+  const saveSign = async (accessToken: string): Promise<void> => {
+    if (loading) return
+    setLoading(true)
     try {
       const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-sign', {
         sign: selectedFile
@@ -33,13 +39,16 @@ const GambarTandaTangan = () => {
         }
       })
       if (data) alert("Tanda tangan berhasil diupload!")
-    } catch (err: any) {
-      console.error(err.message)
+      } catch (err: any) {
+        console.error(err.message)
+      }
+      setLoading(false)
     }
-  }
 
   // Simpan tanda tangan yang di-upload
-  const handleSave = () => {
+  const handleSave = (): void => {
+    if (loading) return
+    setLoading(true)
     const cookies: Cookies = new Cookies()
     const accessToken: string = cookies.get("accessToken")
     if (selectedFile) {
@@ -50,9 +59,12 @@ const GambarTandaTangan = () => {
     } else {
       alert("Silakan pilih file terlebih dahulu.");
     }
+    setLoading(false)
   };
 
-  const getSignature = async () => {
+  const getSignature = async (): Promise<void> => {
+    if (loading) return
+    setLoading(true)
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get('accessToken')
     try {
@@ -65,6 +77,7 @@ const GambarTandaTangan = () => {
     } catch (err: any) {
       console.error(err.message)
     }
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -72,6 +85,8 @@ const GambarTandaTangan = () => {
   }, [])
 
   const deleteSignature = async (): Promise<void> => {
+    if (loading) return
+    setLoading(true)
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get('accessToken')
     if (!confirm('Apakah Anda yakin ingin menghapus tanda tangan?')) return
@@ -91,6 +106,7 @@ const GambarTandaTangan = () => {
       alert('Gagal menghapus tanda tangan')
       // console.error(err.message)
     }
+    setLoading(false)
   }
 
   return (
@@ -125,13 +141,13 @@ const GambarTandaTangan = () => {
             </div>
             {selectedFile && <p className="file-name">File: {selectedFile.name}</p>}
             <form onSubmit={handleSave}>
-              <input type="file" accept="image/png" onChange={handleFileChange} required/>
-              <button type="submit" className="save-button">
+              <input type="file" accept="image/png" onChange={handleFileChange} required readOnly={loading}/>
+              <button type="submit" className="save-button" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>
                 Simpan
               </button>
             </form>
             {currentImage &&
-              <button type="button" style={{backgroundColor: '#cc0000'}} onClick={deleteSignature}>Hapus</button>
+              <button type="button" style={loading ? {backgroundColor: 'gray'} : {backgroundColor: '#cc0000'}} onClick={deleteSignature} disabled={loading}>Hapus</button>
             }
           </div>
         </div>

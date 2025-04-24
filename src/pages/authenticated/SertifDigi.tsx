@@ -9,7 +9,8 @@ function SertifDigi() {
 
   const [certificate, setCertificate] = useState<any>(null)
   const [signature, setSignature] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [loadingData, setLoadingData] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const getCertificate = async (): Promise<void> => {
     try {
@@ -38,7 +39,7 @@ function SertifDigi() {
     } catch (err: any) {
       console.error(err.message)
     }
-    setIsLoading(false)
+    setLoadingData(false)
   }
 
   useEffect(() => {
@@ -46,6 +47,8 @@ function SertifDigi() {
   }, [])
 
   const revoke = async (): Promise<void> => {
+    if (loading) return
+    setLoading(true)
     if (!confirm('Apakah Anda yakin ingin merevoke sertifikat tanda tangan ini?')) return
     const passphrase: string | null = prompt('Masukkan passphrase untuk melanjutkan')
     if (!passphrase || passphrase == '') return
@@ -66,9 +69,12 @@ function SertifDigi() {
     } catch (err: any) {
       console.error(err.message)
     }
+    setLoading(false)
   }
 
   const extend = async (): Promise<void> => {
+    if (loading) return
+    setLoading(true)
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get('accessToken')
     const extend_in_days: string | null = prompt("Masukkan jumlah perpanjangan dalam hari untuk melanjutkan\n\n*Perpanjangan dihitung per hari ini")
@@ -91,9 +97,10 @@ function SertifDigi() {
     } catch (err: any) {
       console.error(err.message)
     }
+    setLoading(false)
   }
   
-  if (isLoading) return <div>Loading ...</div>
+  if (loadingData) return <div>Loading ...</div>
 
   return (
     <Homepage>
@@ -110,12 +117,12 @@ function SertifDigi() {
         </div>
       <div className="SertifDigi-container" style={{color: 'black'}}>
         <h2>Sertifikat</h2>
-          <button className="buat-sertifikat-btn" style={certificate ? {backgroundColor: 'gray'} : {}} onClick={() => {
+          <button className="buat-sertifikat-btn" style={certificate || loading ? {backgroundColor: 'gray'} : {}} onClick={() => {
             if (!signature) {
               alert('Anda belum memiliki tanda tangan')
               window.location.href = '/pengaturan/tanda-tangan'
             } else if (!certificate) window.location.href = "/pengaturan/sertifikat/create"
-          }}>➕ Buat Sertifikat</button>
+          }} disabled={loading}>➕ Buat Sertifikat</button>
         <table className="SertifDigi-table">
           <thead>
             <tr>
@@ -139,8 +146,8 @@ function SertifDigi() {
                 <td>{certificate.createdAt}</td>
                 <td><span className={`status ${certificate.isExpired ? 'kadaluarsa' : 'aktif'}`} style={certificate.nearlyExpiring ? {backgroundColor: '#ffaa0055', color: '#ff7700', border: 'none'} : {}}>{certificate.isExpired ? 'Kadaluarsa' : certificate.nearlyExpiring ? 'Akan Kadaluarsa' : 'Aktif'}</span></td>
                 <td>
-                  <button style={{width: 'fit-content'}} onClick={extend}>⏳ Perpanjang</button>
-                  <button className="revoke-btn" onClick={revoke}>❌ Revoke</button>
+                  <button style={loading ? {width: 'fit-content', backgroundColor: 'gray'} : {width: 'fit-content'}} onClick={extend} disabled={loading}>⏳ Perpanjang</button>
+                  <button className="revoke-btn" onClick={revoke} disabled={loading}>❌ Revoke</button>
                 </td>
               </tr>
             }

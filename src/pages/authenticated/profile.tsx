@@ -9,6 +9,7 @@ const Profile = (): ReactElement => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [formDataProfile, setFormDataProfile] = useState<{username: string | null, email: string | null}>({username: null, email: null})
     const [formDataPassword, setFormDataPassword] = useState<{old_password: string | null, new_password: string | null, confirm_new_password: string | null}>({old_password: null, new_password: null, confirm_new_password: null})
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleChangeProfileData = (e: any): void => {
         setFormDataProfile({
@@ -26,6 +27,8 @@ const Profile = (): ReactElement => {
 
     const handleSubmitProfile = async (e: any): Promise<void> => {
         e.preventDefault()
+        if (loading) return
+        setLoading(true)
         const cookies: Cookies = new Cookies()
         const token: string = cookies.get('accessToken')
         if (confirm("Apakah Anda yakin ingin mengubah data profil Anda?")) try {
@@ -42,10 +45,13 @@ const Profile = (): ReactElement => {
         } catch (err: any) {
             console.error(err.messae)
         }
+        setLoading(false)
     }
 
     const handleSubmitPassword = async (e: any): Promise<void> => {
         e.preventDefault()
+        if (loading) return
+        setLoading(true)
         if (formDataPassword.new_password != formDataPassword.confirm_new_password) {
             alert('Konfirmasi kata sandi baru salah')
             return
@@ -68,6 +74,7 @@ const Profile = (): ReactElement => {
         } catch (err: any) {
             console.error(err.message)
         }
+        setLoading(false)
     }
 
     return <Homepage>
@@ -76,10 +83,10 @@ const Profile = (): ReactElement => {
         <div style={{backgroundColor: 'white', borderRadius: '10px', padding: '20px', borderLeft: '6px solid #007bff', color: "black", fontWeight: 'normal', margin: '20px', width: '50vw'}}>
             <h3 style={{textAlign: 'start'}}>Username dan Email</h3>
             <form style={{width: '96%'}} onSubmit={handleSubmitProfile}>
-                <input type="text" name="username" placeholder="Username" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} required/>
-                <input type="email" name="email" placeholder="Email" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} required/>
+                <input type="text" name="username" placeholder="Username" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} required readOnly={loading}/>
+                <input type="email" name="email" placeholder="Email" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} required readOnly={loading}/>
                 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-                    <button type="submit" style={{width: 'fit-content'}}>Simpan</button>
+                    <button type="submit" style={loading ? {width: 'fit-content', backgroundColor: 'gray'} : {width: 'fit-content'}} disabled={loading}>Simpan</button>
                 </div>
             </form>
         </div>
@@ -87,12 +94,12 @@ const Profile = (): ReactElement => {
         <div style={{backgroundColor: 'white', borderRadius: '10px', padding: '20px', borderLeft: '6px solid #007bff', color: "black", fontWeight: 'normal', margin: '20px', width: '50vw'}}>
             <h3 style={{textAlign: 'start'}}>Ubah Kata Sandi</h3>
             <form style={{width: '96%'}} onSubmit={handleSubmitPassword}>
-                <input type={showPassword ? "text" : "password"} name="old_password" placeholder="Kata Sandi" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required/>
-                <input type={showPassword ? "text" : "password"} name="new_password" placeholder="Kata Sand iBaru" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required/>
-                <input type={showPassword ? "text" : "password"} name="confirm_new_password" placeholder="Konfirmasi Kata Sand iBaru" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required/>
+                <input type={showPassword ? "text" : "password"} name="old_password" placeholder="Kata Sandi" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required readOnly={loading}/>
+                <input type={showPassword ? "text" : "password"} name="new_password" placeholder="Kata Sand iBaru" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required readOnly={loading}/>
+                <input type={showPassword ? "text" : "password"} name="confirm_new_password" placeholder="Konfirmasi Kata Sand iBaru" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required readOnly={loading}/>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
                     <button type="button" style={{width: 'fit-content', height: 'fit-content', backgroundColor: 'transparent', color: 'black', fontWeight: '500', fontSize: '14px', padding: 0, margin: 0}} onClick={()=>setShowPassword(!showPassword)}>Lihat Kata Sandi</button>
-                    <button type="submit" style={{width: 'fit-content'}}>Simpan</button>
+                    <button type="submit" style={loading ? {width: 'fit-content', backgroundColor: 'gray'} : {width: 'fit-content'}} disabled={loading}>Simpan</button>
                 </div>
             </form>
         </div>

@@ -10,6 +10,8 @@ import Crypt from "../../utils/Crypt";
 function Permintaan() {
 
     const [documents, setDocuments] = useState<any[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
+    const [dataLoading, setDataLoading] = useState<boolean>(true)
 
     const getDocuments = async (): Promise<void> => {
         const cookies: Cookies = new Cookies()
@@ -26,6 +28,7 @@ function Permintaan() {
         } catch (err: any) {
             console.error(err.message)
         }
+        setDataLoading(false)
     }
 
     useEffect(() => {
@@ -33,6 +36,8 @@ function Permintaan() {
     }, [])
 
     const approveDocument = async (id: string): Promise<void> => {
+        if (loading) return
+        setLoading(true)
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
         if (confirm('Apakah Anda yakin ingin menyetujui penanda tanganan dokumen ini?')) try {
@@ -48,9 +53,12 @@ function Permintaan() {
         } catch (err: any) {
             console.error(err.message)
         }
+        setLoading(false)
     } 
 
     const denyDocument = async (id: string): Promise<void> => {
+        if (loading) return
+        setLoading(true)
         const cookies: Cookies = new Cookies
         const token: string = cookies.get('accessToken')
         if (confirm('Apakah Anda yakin ingin menolak penanda tanganan dokumen ini?')) try {
@@ -65,9 +73,12 @@ function Permintaan() {
         } catch (err: any) {
             console.error(err.message)
         }
+        setLoading(false)
     } 
 
     const downloadDocument = async (url: string, filename: string): Promise<void> => {
+        if (loading) return
+        setLoading(true)
         // const cookies: Cookies = new Cookies
         // const token: string = cookies.get('accessToken')
         try {
@@ -80,6 +91,7 @@ function Permintaan() {
         } catch (err: any) {
             console.error(err.message)
         }
+        setLoading(false)
     }
 
     return (
@@ -99,7 +111,11 @@ function Permintaan() {
                     </thead>
                     <tbody>
                         {/* Contoh data, nanti bisa diganti dengan data dinamis */}
-                        {documents.map((row, index) => {
+                        {dataLoading ? 
+                        <tr>
+                            <td colSpan={6}>Loading ...</td>
+                        </tr>
+                        : documents.map((row, index) => {
                             const isApproved:   boolean = row.documentApprovals[0].approved
                             const isDenied:     boolean = row.documentApprovals[0].denied
                             const isEnableSign: boolean = row.documentApprovals[0].enableSign
@@ -119,12 +135,12 @@ function Permintaan() {
                                                 : isDenied && <div>❌ Ditolak</div>
                                     }
                                 </td>
-                                <td><button className="detailBtn" onClick={()=>window.open(row.url, '_blank')}>🔍 Lihat</button></td>
+                                <td><button className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>window.open(row.url, '_blank')} disabled={loading}>🔍 Lihat</button></td>
                                 <td>
                                     {
                                         (isApproved && isDenied) || (!isApproved && !isDenied) ? <div>
-                                            <button type="button" className="detailBtn" onClick={()=>approveDocument(Crypt.encryptString(`${row.id}`))}>✔️ Setujui</button>
-                                            <button type="button" className="deleteBtn" onClick={()=>denyDocument(Crypt.encryptString(`${row.id}`))}>❌ Tolak</button>
+                                            <button type="button" className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>approveDocument(Crypt.encryptString(`${row.id}`))} disabled={loading}>✔️ Setujui</button>
+                                            <button type="button" className={loading ? 'revoke-btn' : "deleteBtn"} onClick={()=>denyDocument(Crypt.encryptString(`${row.id}`))} disabled={loading}>❌ Tolak</button>
                                         </div>
                                         : <div>
                                             {signedDocument ? <button type="button" onClick={() => {
@@ -138,9 +154,9 @@ function Permintaan() {
                                                         : `/tandatangani/${Crypt.encryptString(`${row.id}`)}?page=${pageNumber}` 
                                                     }} 
                                                     disabled={ 
-                                                        !isEnableSign || signedDocument != null
+                                                        loading || !isEnableSign || signedDocument != null
                                                     } 
-                                                    style={ !isEnableSign || signedDocument ? {backgroundColor: 'gray'} : {}}
+                                                    style={ loading || !isEnableSign || signedDocument ? {backgroundColor: 'gray'} : {}}
                                                 >Tanda Tangani</button>
                                             }
                                         </div>

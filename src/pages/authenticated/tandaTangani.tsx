@@ -16,7 +16,7 @@ import Konva from 'konva';
 
 function TandaTangani() {
   // const signObj = useRef<SignatureComponent | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [loadingData, setLoadingData] = useState<boolean>(true)
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfImage, setPdfImage] = useState<HTMLImageElement | null>(null);
   // const [signatureImage, setSignatureImage] = useState<HTMLImageElement | null>(null);
@@ -33,6 +33,8 @@ function TandaTangani() {
   const [signatureImageSize, setSignatureImageSize] = useState<{width: number, height: number}>({width: 0, height: 0})
   const [renderedPdfSize, setRenderedPdfSize] = useState<{width: number, height: number}>({width: 0, height: 0})
   const [isSignatureSelected, setIsSignatureSelected] = useState<boolean>(false)
+
+  const [loading, setLoading] = useState<boolean>(false)
 
   const signatureRef = useRef<Konva.Image>(null)
   const transformerRef = useRef<Konva.Transformer>(null)
@@ -67,7 +69,7 @@ function TandaTangani() {
             })
             if (data?.payload) {
               setSignature(data.payload.signature)
-              setIsLoading(false)
+              setLoadingData(false)
             }
           } catch (err: any) {
             alert('Terjadi kesalahan')
@@ -105,12 +107,15 @@ function TandaTangani() {
 
   /** ✅ Fungsi untuk Upload & Render PDF */
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (loading) return
+    setLoading(true)
     const file = event.target.files?.[0];
     if (file) {
       setPdfFile(file);
       setCurrentPage(1);
       renderPdf(file, 1);
     }
+    setLoading(false)
   };
 
   /** ✅ Fungsi untuk Merender PDF */
@@ -185,6 +190,8 @@ function TandaTangani() {
 
   /** ✅ Fungsi untuk Menyimpan Signature ke dalam PDF */
   const addSignatureToPDF = async () => {
+    if (loading) return
+    setLoading(true)
     if (!pdfFile) {
       alert("Pilih file PDF terlebih dahulu!");
       return;
@@ -278,11 +285,12 @@ function TandaTangani() {
       // console.log("signatureImage:", signatureImage);
       const modifiedPdfBytes = await pdfDoc.save();
       const blob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
-      saveAs(blob, "signed-document.pdf");
+      saveAs(blob, `[SIGNED] ${pdfFile.name}`);
     };
+    setLoading(false)
   };
 
-  if (isLoading) return <div>Loading ...</div>
+  if (loadingData) return <div>Loading ...</div>
 
   return (
     <Homepage>
@@ -445,7 +453,7 @@ function TandaTangani() {
         <input type="file" accept="application/pdf" onChange={handleFileChange} />
 
         <div id="actionBtn">
-          <button onClick={addSignatureToPDF}>Tanda tangani & Unduh PDF</button>
+          <button onClick={addSignatureToPDF} disabled={!pdfFile || !uploadedImage || loading} style={!pdfFile || !uploadedImage || loading ? {backgroundColor: 'gray'} : {}}>Tanda tangani & Unduh PDF</button>
         </div>
       </div>
     </Homepage>

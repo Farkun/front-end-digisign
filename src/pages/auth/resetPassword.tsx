@@ -9,6 +9,8 @@ const ResetPassword = (): ReactElement => {
     const [formData, setFormData] = useState<{password: string, confirmPassword: string}>({password: '', confirmPassword: ''})
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(true)
+    const [isTokenValid, setIsTokenValid] = useState<boolean>(false)
 
     const validateToken = async (): Promise<void> => {
         try {
@@ -17,6 +19,8 @@ const ResetPassword = (): ReactElement => {
                 window.close()
                 window.location.href = `/login`
             }
+            setLoading(false)
+            setIsTokenValid(true)
         } catch (err: any) {
             console.error(err.message)
         }
@@ -28,6 +32,8 @@ const ResetPassword = (): ReactElement => {
 
     const handleSubmit = async (e: any): Promise<void> => {
         e.preventDefault()
+        if (loading) return
+        setLoading(true)
         if (formData.password != formData.confirmPassword) {
             alert('Konfirmasi Kata Sandi Salah')
             return
@@ -39,7 +45,10 @@ const ResetPassword = (): ReactElement => {
         } catch (err: any) {
             console.error(err.message)
         }
+        setLoading(false)
     }
+
+    if (!isTokenValid) return <div>Invalid Token</div>
 
     return <div className="login-container">
     <h2>Buat Ulang Kata Sandi</h2>
@@ -52,6 +61,7 @@ const ResetPassword = (): ReactElement => {
                 value={formData.password}
                 onChange={(e) => setFormData(prevState => ({...prevState, password: e.target.value}))}
                 required
+                readOnly={loading}
             />
             <button type="button" onClick={() => setShowPassword(!showPassword)} style={{margin: 0, width: 'fit-content', height: 'fit-content'}}>👁️</button>
         </div>
@@ -63,10 +73,11 @@ const ResetPassword = (): ReactElement => {
                 onChange={(e) => setFormData(prevState => ({...prevState, confirmPassword: e.target.value}))}
                 style={{width: "100%"}}
                 required
+                readOnly={loading}
             />
             <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{margin: 0, width: 'fit-content', height: 'fit-content'}}>👁️</button>
         </div>
-        <button type="submit">Ubah</button>
+        <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Ubah</button>
         {/* <div>Tidak bisa masuk? <Link to={'/forgot-password'}>lupa kata sandi</Link></div><br /> */}
     </form>
 </div>

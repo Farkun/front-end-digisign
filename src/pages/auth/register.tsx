@@ -7,6 +7,7 @@ import Cookies from "universal-cookie"
 const Register = () => {
 
     const [formData, setFormData] = useState<any>({})
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleChange = (e: any) => {
         const {name, value} = e.target
@@ -15,6 +16,8 @@ const Register = () => {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
+        if (loading) return
+        setLoading(true)
         if (formData.password != formData.confirm_password) alert('please confirm your password')
         else {
             try {
@@ -41,6 +44,7 @@ const Register = () => {
                 console.error(err.message)
             }
         }
+        setLoading(false)
     }
 
     return <div className="login-container">
@@ -50,35 +54,35 @@ const Register = () => {
             type="text"
             name="username"
             placeholder="Username"
-            // value={data.username}
             onChange={handleChange}
             required
+            readOnly={loading}
             />
             <input
             type="email"
             name="email"
             placeholder="Email"
-            // value={data.email}
             onChange={handleChange}
             required
+            readOnly={loading}
             />
             <input
             type="password"
             name="password"
             placeholder="Kata Sandi"
-            // value={data.password}
             onChange={handleChange}
             required
+            readOnly={loading}
             />
             <input
             type="password"
             name="confirm_password"
             placeholder="Konfirmasi kata Sandi"
-            // value={data.password}
             onChange={handleChange}
             required
+            readOnly={loading}
             />
-            <button type="submit">Registrasi</button>
+            <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Registrasi</button>
             <div>
                 Sudah memiliki akun? <a href="/login">Masuk</a>
             </div>

@@ -29,63 +29,75 @@ const Unggah: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filename, setFilename] = useState<string>('')
+  const [loading, setLoading] = useState<boolean>(false)
 
   
 
   // /** ✅ Upload & Render PDF */
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        setPdfFile(file);
-        setCurrentPage(1);
-        renderPdf(file, 1);
-        setFilename(file.name)
-      }
-    };
+    if (loading) return
+    setLoading(true)
+    const file = event.target.files?.[0];
+    if (file) {
+      setPdfFile(file);
+      setCurrentPage(1);
+      renderPdf(file, 1);
+      setFilename(file.name)
+    }
+    setLoading(false)
+  };
 
   // /** ✅ Render PDF ke gambar */
   const renderPdf = async (file: File, pageNumber = 1) => {
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(file);
-      reader.onload = async () => {
-        const pdfData = new Uint8Array(reader.result as ArrayBuffer);
-        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-  
-        setTotalPages(pdf.numPages); // Simpan total halaman PDF
-  
-        if (pageNumber < 1 || pageNumber > pdf.numPages) return; // Cegah halaman tidak valid
-  
-        const page = await pdf.getPage(pageNumber);
-        const containerWidth = 597; // Sesuaikan dengan lebar <Stage>
-        const scale = containerWidth / page.getViewport({ scale: 1 }).width;
-        const viewport = page.getViewport({ scale });
-  
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        if (!context) return;
-  
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-  
-        await page.render({ canvasContext: context, viewport }).promise;
-  
-        const img = new Image();
-        img.src = canvas.toDataURL();
-        img.onload = () => setPdfImage(img);
-      };
+    setLoading(true)
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = async () => {
+      const pdfData = new Uint8Array(reader.result as ArrayBuffer);
+      const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+
+      setTotalPages(pdf.numPages); // Simpan total halaman PDF
+
+      if (pageNumber < 1 || pageNumber > pdf.numPages) return; // Cegah halaman tidak valid
+
+      const page = await pdf.getPage(pageNumber);
+      const containerWidth = 597; // Sesuaikan dengan lebar <Stage>
+      const scale = containerWidth / page.getViewport({ scale: 1 }).width;
+      const viewport = page.getViewport({ scale });
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      if (!context) return;
+
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({ canvasContext: context, viewport }).promise;
+
+      const img = new Image();
+      img.src = canvas.toDataURL();
+      img.onload = () => setPdfImage(img);
     };
+    setLoading(false)
+  };
 
   // /** ✅ Tambah penandatangan */
   const addSigner = () => {
+    if (loading) return
+    setLoading(true)
     if (newSigner.name) {
       setSigners([...signers, newSigner]);
       setNewSigner({ id: null, name: "", page: 1 });
     }
+    setLoading(false)
   };
 
   // /** ✅ Hapus penandatangan */
   const removeSigner = (index: number) => {
+    if (loading) return
+    setLoading(true)
     setSigners(signers.filter((_, i) => i !== index));
+    setLoading(false)
   };
 
   const getUsers = async () => {
@@ -107,10 +119,9 @@ const Unggah: React.FC = () => {
     getUsers()
   }, [])
 
-  
-  
-
   const handleSubmit = async () => {
+    if (loading) return
+    setLoading(true)
     if (!pdfFile) alert('file not selected')
     if (!signersId || signersId.length == 0) alert('signers not selected')
     if (pdfFile && signersId?.length > 0) {
@@ -143,6 +154,7 @@ const Unggah: React.FC = () => {
         console.error(err.message)
       }
     }
+    setLoading(false)
   }
 
   return (
@@ -160,7 +172,7 @@ const Unggah: React.FC = () => {
 
     <div className="unggah">
       <h2>Unggah Dokumen</h2>
-      <input type="file" accept="application/pdf" onChange={handleFileChange} />
+      <input type="file" accept="application/pdf" onChange={handleFileChange} readOnly={loading}/>
 
       {/* Canvas untuk menampilkan PDF */}
       <div className="pdf-container text-black">
@@ -229,7 +241,7 @@ const Unggah: React.FC = () => {
               <td>{signer.name}</td>
               <td>{signer.page}</td>
               <td>
-                <button className="secondary" onClick={() => removeSigner(index)}>❌</button>
+                <button className={loading ? 'revoke-btn' : "secondary"} onClick={() => removeSigner(index)} disabled={loading}>❌</button>
               </td>
             </tr>
           ))}
@@ -255,6 +267,7 @@ const Unggah: React.FC = () => {
                 setNewSigner({ ...newSigner, name: e.label, id: e.value})
                 setSignersId(prevState => [...prevState, e.value])
               }}
+              isDisabled={loading}
               />
             </td>
             <td>
@@ -265,10 +278,11 @@ const Unggah: React.FC = () => {
                   setNewSigner({ ...newSigner, page: parseInt(e.target.value) || 1 })
                 }}
                 min="1"
+                readOnly={loading}
               />
             </td>
             <td>
-              <button className="primary" onClick={addSigner}>➕</button>
+              <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={addSigner}>➕</button>
             </td>
           </tr>
         </tbody>
@@ -276,7 +290,7 @@ const Unggah: React.FC = () => {
       
       <div style={{height: 'fit-content', width: 'fit-content', padding: 0, display: 'flex', alignItems: 'center', gap: '5px'}}>
         <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
-          <input type="checkbox" name="order" id="order" onChange={() => setIsOrdered(!isOrdered)} />
+          <input type="checkbox" name="order" id="order" onChange={() => setIsOrdered(!isOrdered)} disabled={loading} />
         </div>
         <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
           <label htmlFor="order">Requiring Sign Order</label>
@@ -284,7 +298,7 @@ const Unggah: React.FC = () => {
       </div>
 
       {/* <Link to="/dokumen/diunggah"></Link> */}
-      <button className="primary" onClick={handleSubmit}>💾 Simpan</button>
+      <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={handleSubmit}>💾 Simpan</button>
     </div>
     </Homepage>
   );
