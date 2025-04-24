@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import { Navigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import Cookies from "universal-cookie"
 import Homepage from '../../layouts/homepage';
 import { Image as KonvaImage, Layer, Stage, Transformer } from "react-konva";
