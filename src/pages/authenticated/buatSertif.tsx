@@ -76,7 +76,7 @@ const buatSertif: React.FC = () => {
             <input
               type="number"
               min={0}
-              defaultValue={0}
+              defaultValue={365}
               name="expire_in"
               onChange={(e: any) => setDays(Number(e.target.value))}
               className="input-field"

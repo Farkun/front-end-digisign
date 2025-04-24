@@ -24,11 +24,14 @@ function SertifDigi() {
         const {passphrase, bytes, ...cert}: any = data.payload
         setSignature(cert)
         if (passphrase && cert.expire) {
-          cert.isExpired = new Date().getTime() >= new Date(cert?.expire).getTime()
-          // cert.createdAt = new Date(cert.extensionDate ?? cert.createdAt).toDateString()
+          const currentDate: Date = new Date()
+          const expiringDate: Date = new Date(cert?.expire)
+          cert.isExpired = new Date().getTime() >= expiringDate.getTime()
           cert.createdAt = new DatetimeFormatter().format(cert.extensionDate ?? cert.createdAt)
-          // cert.expiring = new Date(cert.expire).toDateString()
           cert.expiring = new DatetimeFormatter().format(cert.expire)
+          if (currentDate.getMonth() == expiringDate.getMonth()) cert.nearlyExpiring = true
+          else if (currentDate.getMonth() < expiringDate.getMonth() && expiringDate.getDate() - currentDate.getDate() <= 0 ) cert.nearlyExpiring = true
+          else cert.nearlyExpiring = false
           setCertificate(cert)
         }
       }
@@ -134,9 +137,9 @@ function SertifDigi() {
                 Iss: CN=IPB University, OU=IPB, O=IPB, L=Bogor, S=West Java, C=ID</td> */}
                 <td style={{minWidth: '100px'}}>{certificate.createdAt} <br /> - <br /> {certificate.expiring}</td>
                 <td>{certificate.createdAt}</td>
-                <td><span className={`status ${certificate.isExpired ? 'kadaluarsa' : 'aktif'}`}>{certificate.isExpired ? 'Kadaluarsa' : 'Aktif'}</span></td>
+                <td><span className={`status ${certificate.isExpired ? 'kadaluarsa' : 'aktif'}`} style={certificate.nearlyExpiring ? {backgroundColor: '#ffaa0055', color: '#ff7700', border: 'none'} : {}}>{certificate.isExpired ? 'Kadaluarsa' : certificate.nearlyExpiring ? 'Akan Kadaluarsa' : 'Aktif'}</span></td>
                 <td>
-                  <button className="extend-btn" onClick={extend}>⏳ Perpanjang</button>
+                  <button style={{width: 'fit-content'}} onClick={extend}>⏳ Perpanjang</button>
                   <button className="revoke-btn" onClick={revoke}>❌ Revoke</button>
                 </td>
               </tr>
