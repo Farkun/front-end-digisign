@@ -45,7 +45,10 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           {/* Dropdown Dokumen */}
           {isOpen && (
             <li className={styles.dropdown}>
-              <span onClick={() => setShowDokumenDropdown(!showDokumenDropdown)}>
+              <span onClick={() => {
+                setShowDokumenDropdown(!showDokumenDropdown)
+                setShowPengaturanDropdown(false)
+              }}>
                 📂 Dokumen ▼
               </span>
               {showDokumenDropdown && (
@@ -61,7 +64,10 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           {/* Dropdown Pengaturan */}
           {isOpen && (
             <li className={styles.dropdown}>
-              <span onClick={() => setShowPengaturanDropdown(!showPengaturanDropdown)}>
+              <span onClick={() => {
+                setShowPengaturanDropdown(!showPengaturanDropdown)
+                setShowDokumenDropdown(false)
+              }}>
                 ⚙️ Pengaturan ▼
               </span>
               {showPengaturanDropdown && (
