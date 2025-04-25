@@ -40,7 +40,7 @@ const TandaTanganiPersetujuan = () => {
 
     const getDocument = async (): Promise<void> => {
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         try {
             const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/document/requested?document=${id && encodeURIComponent(id)}`, {
                 headers: {
@@ -68,22 +68,24 @@ const TandaTanganiPersetujuan = () => {
     const getDocumentFile = async (url: string, title: string): Promise<void> => {
         try {
             const {data} = await axios.get(url, {responseType: 'arraybuffer'})
-            if (!data) {
-                alert('Dokumen hilang atau rusak')
-                window.location.href = '/permintaan'
-                return
-            }
-            const blob: Blob = new Blob([data], {type: 'application/pdf'})
-            const file: File = new File([blob], title, {type: 'application/pdf'})
-            if (file) {
-                renderPdf(file)
-                setPdfFile(file)
+            // if (!data) {
+            //     alert('Dokumen hilang atau rusak')
+            //     window.location.href = '/permintaan'
+            //     return
+            // }
+            if (data) {
+                const blob: Blob = new Blob([data], {type: 'application/pdf'})
+                const file: File = new File([blob], title, {type: 'application/pdf'})
+                if (file) {
+                    renderPdf(file)
+                    setPdfFile(file)
+                }
             }
         } catch (err: any) {
-            alert('Dokumen hilang atau rusak')
-            window.location.href = '/permintaan'
-            return
-            // console.error(err.message)
+            // alert('Dokumen hilang atau rusak')
+            // window.location.href = '/permintaan'
+            // return
+            console.error(err.message)
         }
     }
 
@@ -122,7 +124,7 @@ const TandaTanganiPersetujuan = () => {
 
     const getSignature = async (): Promise<void> => {
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         try {
             const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get-certificate`, {
                 headers: {
@@ -240,7 +242,7 @@ const TandaTanganiPersetujuan = () => {
     const storeSignedDocument = async (documentId: string | undefined, formData: object): Promise<void> => {
         if (documentId == undefined) throw new Error('document id undefined')
         const cookies: Cookies = new Cookies
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         if (token) try {
             const {data} = await axios.put(import.meta.env.VITE_API_HOST+`/api/document/sign?document=${documentId}`, formData, {
                 headers: {

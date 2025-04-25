@@ -30,7 +30,7 @@ const Profile = (): ReactElement => {
         if (loading) return
         setLoading(true)
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         if (confirm("Apakah Anda yakin ingin mengubah data profil Anda?")) try {
             const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/users/update-profile`, formDataProfile, {
                 headers: {
@@ -57,7 +57,7 @@ const Profile = (): ReactElement => {
             return
         }
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         if (confirm("Apakah Anda yakin ingin mengubah kata sandi Anda?")) try {
             const {confirm_new_password, ...passData} = formDataPassword
             const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/users/change-password`, {}, {

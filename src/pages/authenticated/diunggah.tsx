@@ -16,7 +16,7 @@ function Diunggah() {
   const getDocuments = async (): Promise<void> => {
     try {
       const cookies: Cookies = new Cookies()
-      const token: string = cookies.get('accessToken')
+      const token: string = cookies.get("bhf-e-sign-access-token")
       const {data} = await axios.get(import.meta.env.VITE_API_HOST + '/api/document/get-list', {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -40,7 +40,7 @@ function Diunggah() {
     if (loading) return
     setLoading(true)
     const cookies: Cookies = new Cookies()
-    const token: string = cookies.get('accessToken')
+    const token: string = cookies.get("bhf-e-sign-access-token")
     if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) try {
       const response = await axios.delete(import.meta.env.VITE_API_HOST+`/api/document/delete?document=${id}`, {
         headers: {

@@ -16,7 +16,7 @@ const DigitalSignature = ({isSignatureExist}: any) => {
   const storeSignature = async (bytes: string) => {
     try {
       const cookies: Cookies = new Cookies()
-      const token: string = cookies.get('accessToken')
+      const token: string = cookies.get("bhf-e-sign-access-token")
       const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-sign-base64', {
         bytes: bytes
       }, {

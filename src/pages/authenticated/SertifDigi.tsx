@@ -15,7 +15,7 @@ function SertifDigi() {
   const getCertificate = async (): Promise<void> => {
     try {
       const cookies: Cookies = new Cookies()
-      const token: string = cookies.get('accessToken')
+      const token: string = cookies.get("bhf-e-sign-access-token")
       const {data}: any = await axios.get(import.meta.env.VITE_API_HOST + '/api/signature/get-certificate', {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -53,7 +53,7 @@ function SertifDigi() {
     const passphrase: string | null = prompt('Masukkan passphrase untuk melanjutkan')
     if (!passphrase || passphrase == '') return
     const cookies: Cookies = new Cookies()
-    const token: string = cookies.get('accessToken')
+    const token: string = cookies.get("bhf-e-sign-access-token")
     try {
       const {data} = await axios.delete(import.meta.env.VITE_API_HOST + `/api/signature/revoke?passphrase=${passphrase}`, {
         headers: {
@@ -76,7 +76,7 @@ function SertifDigi() {
     if (loading) return
     setLoading(true)
     const cookies: Cookies = new Cookies()
-    const token: string = cookies.get('accessToken')
+    const token: string = cookies.get("bhf-e-sign-access-token")
     const extend_in_days: string | null = prompt("Masukkan jumlah perpanjangan dalam hari untuk melanjutkan\n\n*Perpanjangan dihitung per hari ini")
     if (!extend_in_days || extend_in_days == '') return
     if (parseInt(extend_in_days) < 1) return

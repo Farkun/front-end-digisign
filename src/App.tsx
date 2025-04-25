@@ -40,7 +40,7 @@ function App() {
 
   const validateToken = async () => {
     const cookies = new Cookies();
-    const token = cookies.get('accessToken')
+    const token = cookies.get("bhf-e-sign-access-token")
     if (token) {
       try {
         const tokenPayload: any = jwtDecode(token) 

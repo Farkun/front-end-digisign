@@ -50,7 +50,7 @@ const GambarTandaTangan = () => {
     if (loading) return
     setLoading(true)
     const cookies: Cookies = new Cookies()
-    const accessToken: string = cookies.get("accessToken")
+    const accessToken: string = cookies.get("bhf-e-sign-access-token")
     if (selectedFile) {
       if (currentImage) {
         if (confirm('Apakah Anda ingin mengganti gambar tanda tangan saat ini?')) saveSign(accessToken)
@@ -66,7 +66,7 @@ const GambarTandaTangan = () => {
     if (loading) return
     setLoading(true)
     const cookies: Cookies = new Cookies()
-    const token: string = cookies.get('accessToken')
+    const token: string = cookies.get("bhf-e-sign-access-token")
     try {
       const {data}: any = await axios.get(import.meta.env.VITE_API_HOST + '/api/signature/get', {
         headers: {
@@ -88,7 +88,7 @@ const GambarTandaTangan = () => {
     if (loading) return
     setLoading(true)
     const cookies: Cookies = new Cookies()
-    const token: string = cookies.get('accessToken')
+    const token: string = cookies.get("bhf-e-sign-access-token")
     if (!confirm('Apakah Anda yakin ingin menghapus tanda tangan?')) return
     try {
       const {data} = await axios.delete(import.meta.env.VITE_API_HOST + `/api/signature/delete`, {headers: {

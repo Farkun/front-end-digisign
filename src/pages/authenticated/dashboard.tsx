@@ -9,7 +9,7 @@ function Dashboard() {
 
   useEffect(() => {
     const cookies = new Cookies()
-    const decoded: any = jwtDecode(cookies.get('accessToken'))
+    const decoded: any = jwtDecode(cookies.get("bhf-e-sign-access-token"))
     setUsername(decoded.username)
   }, [])
 

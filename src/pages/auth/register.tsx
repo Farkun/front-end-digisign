@@ -34,7 +34,7 @@ const Register = () => {
                     const expiration: any = jwtDecode(data.token).exp
                     let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
                     maxAge = parseInt(maxAge.toFixed())
-                    await cookies.set('accessToken', data.token, {
+                    await cookies.set('bhf-e-sign-access-token', data.token, {
                         path: '/',
                         maxAge: maxAge
                     })

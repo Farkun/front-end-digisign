@@ -15,7 +15,7 @@ function Permintaan() {
 
     const getDocuments = async (): Promise<void> => {
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         
         try {
             const {data}: any = await axios.get(import.meta.env.VITE_API_HOST+'/api/document/requested-list', {
@@ -39,7 +39,7 @@ function Permintaan() {
         if (loading) return
         setLoading(true)
         const cookies: Cookies = new Cookies
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         if (confirm('Apakah Anda yakin ingin menyetujui penanda tanganan dokumen ini?')) try {
             const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/approve?document=${id}`, {}, {
                 headers: {
@@ -60,7 +60,7 @@ function Permintaan() {
         if (loading) return
         setLoading(true)
         const cookies: Cookies = new Cookies
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         if (confirm('Apakah Anda yakin ingin menolak penanda tanganan dokumen ini?')) try {
             const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/deny?document=${id}`, {}, {
                 headers: {
@@ -80,7 +80,7 @@ function Permintaan() {
         if (loading) return
         setLoading(true)
         // const cookies: Cookies = new Cookies
-        // const token: string = cookies.get('accessToken')
+        // const token: string = cookies.get("bhf-e-sign-access-token")
         try {
             const {data}: any = await axios.get(url, {responseType: 'arraybuffer'})
             if (data) {

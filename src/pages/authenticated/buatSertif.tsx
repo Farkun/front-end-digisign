@@ -18,7 +18,7 @@ const buatSertif: React.FC = () => {
     if (days > 0 && passphrase && passphrase != '') {
       try {
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get("accessToken")
+        const token: string = cookies.get("bhf-e-sign-access-token")
         const {data}: any = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-certificate', {
           passphrase: passphrase,
           expire_in: days

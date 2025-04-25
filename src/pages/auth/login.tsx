@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import "../../assets/styles/login.css";
 import axios from "axios";
 import Cookies from "universal-cookie";
@@ -10,7 +9,6 @@ function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  // const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +24,8 @@ function Login() {
           "Content-Type": "application/json"
         }
       })
+      console.log(data);
+      
       if (!data) {
         alert('Username, Email, atau Password Salah')
         return
@@ -38,7 +38,7 @@ function Login() {
       let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
       maxAge = parseInt(maxAge.toFixed())
       
-      cookies.set('accessToken', data.token, {
+      cookies.set('bhf-e-sign-access-token', data.token, {
         path: '/',
         maxAge: maxAge
       })

@@ -103,7 +103,7 @@ const Unggah: React.FC = () => {
   const getUsers = async () => {
     try {
       const cookies: Cookies = new Cookies()
-      const token: string = cookies.get('accessToken')
+      const token: string = cookies.get("bhf-e-sign-access-token")
       const {data}: any = await axios.get(import.meta.env.VITE_API_HOST + '/api/users/get', {
         headers: {
           "Authorization": `Bearer ${token}`
@@ -131,7 +131,7 @@ const Unggah: React.FC = () => {
       })
       try {
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get('accessToken')
+        const token: string = cookies.get("bhf-e-sign-access-token")
         const datamap = {
           file: pdfFile,
           title: filename,

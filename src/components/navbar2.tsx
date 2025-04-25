@@ -8,9 +8,9 @@ interface NavbarProps {
 function Navbar2({ isSidebarOpen }: NavbarProps) {
 
   const handleLogout = () => {
-    // localStorage.removeItem('accessToken')
+    // localStorage.removeItem('bhf-e-sign-access-token')
     const cookies = new Cookies()
-    cookies.remove('accessToken')
+    cookies.remove('bhf-e-sign-access-token')
     window.location.href = '/login'
   };
 

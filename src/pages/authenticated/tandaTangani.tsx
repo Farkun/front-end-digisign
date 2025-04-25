@@ -41,7 +41,7 @@ function TandaTangani() {
 
   const getSignature = async (): Promise<void> => {
     const cookies: Cookies = new Cookies()
-    const token: string = cookies.get('accessToken')
+    const token: string = cookies.get("bhf-e-sign-access-token")
     try {
       const {data} = await axios.get(import.meta.env.VITE_API_HOST+`/api/signature/get-certificate`, {headers: {
         'Authorization': `Bearer ${token}`,

@@ -13,7 +13,7 @@ function Ditandatangani() {
 
   const getDocuments = async (): Promise<void> => {
     const cookies: Cookies = new Cookies()
-    const token: string = cookies.get('accessToken')
+    const token: string = cookies.get("bhf-e-sign-access-token")
     try {
       const {data} = await axios.get(import.meta.env.VITE_API_HOST + '/api/document/signed', { headers: {
         'Authorization': `Bearer ${token}`,

@@ -10,7 +10,7 @@ const Unverified = (): ReactElement => {
     const handleLogout = (): void => {
         if (loading) return
         const cookies = new Cookies()
-        cookies.remove('accessToken')
+        cookies.remove('bhf-e-sign-access-token')
         window.location.href = '/login'
     };
 
@@ -18,7 +18,7 @@ const Unverified = (): ReactElement => {
         if (loading) return
         setLoading(true)
         const cookies = new Cookies()
-        const token = cookies.get('accessToken')
+        const token = cookies.get("bhf-e-sign-access-token")
         try {
             const {data} = await axios.get(import.meta.env.VITE_API_HOST + '/api/auth/verification/resend', {
                 headers: {
