@@ -1,6 +1,8 @@
 .sidebar {
   width: 250px;
   height: 100vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
   position: fixed;
   left: 0;
   top: 0;
@@ -9,6 +11,24 @@
   padding: 20px;
   z-index: 1000;
   transition: width 0.3s ease-in-out;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #00000000;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
 }
 
 .open {

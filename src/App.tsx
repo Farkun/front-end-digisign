@@ -26,6 +26,7 @@ import ProtectedRoutes from "./routes/ProtectedRoutes";
 import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import Profile from "./pages/authenticated/profile";
+import VerifikasiDokumen from "./pages/authenticated/verifikasi_dokumen";
 // import useAuthCheck from "./hooks/useAuthCheck";
 
 function App() {
@@ -99,6 +100,7 @@ function App() {
           <Route path="pengaturan/sertifikat" element={<SertifDigi />} />
           <Route path="pengaturan/sertifikat/create" element={<BuatSertif />} />
           <Route path="pengaturan/profile" element={<Profile />} />
+          <Route path="verifikasi-dokumen" element={<VerifikasiDokumen/>}/>
         </Route>
 
         <Route path="*" element={<NotFound />} />

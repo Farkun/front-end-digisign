@@ -19,9 +19,9 @@ const buatSertif: React.FC = () => {
       try {
         const cookies: Cookies = new Cookies()
         const token: string = cookies.get("bhf-e-sign-access-token")
-        const {data}: any = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-certificate', {
+        const {data}: any = await axios.post(import.meta.env.VITE_API_HOST + '/api/certificate/store', {
           passphrase: passphrase,
-          expire_in: days
+          expiration: days
         }, {
           headers: {
             'Authorization': `Bearer ${token}`,

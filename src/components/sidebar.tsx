@@ -24,7 +24,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         {isOpen && "BHI - eSign"}
       </Link>
 
-      <nav>
+      <nav style={{paddingBottom: '20px'}}>
         <ul>
           <li>
             <NavLink to="/dashboard" className={({ isActive }) => isActive ? styles.active : ""}>
@@ -43,42 +43,44 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           </li>
 
           {/* Dropdown Dokumen */}
-          {isOpen && (
-            <li className={styles.dropdown}>
-              <span onClick={() => {
-                setShowDokumenDropdown(!showDokumenDropdown)
-                setShowPengaturanDropdown(false)
-              }}>
-                📂 Dokumen ▼
-              </span>
-              {showDokumenDropdown && (
-                <ul className={styles.dropdownMenu}>
-                  <li><NavLink to="/dokumen/unggah">Unggah</NavLink></li>
-                  <li><NavLink to="/dokumen/diunggah">Diunggah</NavLink></li>
-                  <li><NavLink to="/dokumen/tandatangani">Ditandatangani</NavLink></li>
-                </ul>
-              )}
-            </li>
-          )}
-
+          <li className={styles.dropdown}>
+            <span onClick={() => {
+              setShowDokumenDropdown(!showDokumenDropdown)
+              setShowPengaturanDropdown(false)
+              setIsOpen(true)
+            }}>
+              📂 {isOpen && 'Dokumen ▼'}
+            </span>
+            {isOpen && showDokumenDropdown && (
+              <ul className={styles.dropdownMenu}>
+                <li><NavLink to="/dokumen/unggah">Unggah</NavLink></li>
+                <li><NavLink to="/dokumen/diunggah">Diunggah</NavLink></li>
+                <li><NavLink to="/dokumen/tandatangani">Ditandatangani</NavLink></li>
+              </ul>
+            )}
+          </li>
+          <li>
+            <NavLink to="/verifikasi-dokumen" className={({ isActive }) => isActive ? styles.active : ""}>
+              📋 {isOpen && "Verifikasi Dokumen"}
+            </NavLink>
+          </li>
           {/* Dropdown Pengaturan */}
-          {isOpen && (
-            <li className={styles.dropdown}>
-              <span onClick={() => {
-                setShowPengaturanDropdown(!showPengaturanDropdown)
-                setShowDokumenDropdown(false)
-              }}>
-                ⚙️ Pengaturan ▼
-              </span>
-              {showPengaturanDropdown && (
-                <ul className={styles.dropdownMenu}>
-                  <li><NavLink to="/pengaturan/sertifikat">Sertifikat Digital</NavLink></li>
-                  <li><NavLink to="/pengaturan/tanda-tangan">Gambar Tanda Tangan</NavLink></li>
-                  <li><NavLink to="/pengaturan/profile">Profil</NavLink></li>
-                </ul>
-              )}
-            </li>
-          )}
+          <li className={styles.dropdown}>
+            <span onClick={() => {
+              setShowPengaturanDropdown(!showPengaturanDropdown)
+              setShowDokumenDropdown(false)
+              setIsOpen(true)
+            }}>
+              ⚙️ {isOpen && 'Pengaturan ▼'}
+            </span>
+            {isOpen && showPengaturanDropdown && (
+              <ul className={styles.dropdownMenu}>
+                <li><NavLink to="/pengaturan/sertifikat">Sertifikat Digital</NavLink></li>
+                <li><NavLink to="/pengaturan/tanda-tangan">Gambar Tanda Tangan</NavLink></li>
+                <li><NavLink to="/pengaturan/profile">Profil</NavLink></li>
+              </ul>
+            )}
+          </li>
         </ul>
       </nav>
     </aside>

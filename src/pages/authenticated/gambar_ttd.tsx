@@ -73,7 +73,7 @@ const GambarTandaTangan = () => {
           "Authorization": `Bearer ${token}`
         }
       })
-      if (data && data.payload) setCurrentImage(data.payload.signature)
+      if (data && data.payload) setCurrentImage(data.payload)
     } catch (err: any) {
       console.error(err.message)
     }

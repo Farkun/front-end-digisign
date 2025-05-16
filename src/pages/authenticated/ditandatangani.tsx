@@ -5,10 +5,12 @@ import axios from "axios";
 import { ReactElement, useEffect, useState } from "react";
 import DatetimeFormatter from "../../utils/DatetimeFormatter";
 import { saveAs } from "file-saver";
+import { jwtDecode } from 'jwt-decode';
 
 function Ditandatangani() {
 
   const [documents, setDocuments] = useState<any[]>([])
+  const [userId, setUserId] = useState<any>(null)
   const [dataLoading, setDataLoading] = useState<boolean>(true)
 
   const getDocuments = async (): Promise<void> => {
@@ -26,7 +28,14 @@ function Ditandatangani() {
     setDataLoading(false)
   }
 
+  const getUser = (): void => {
+    const cookies: Cookies = new Cookies()
+    const profile: any = jwtDecode(cookies.get('bhf-e-sign-access-token'))
+    setUserId(profile?.id)
+  }
+
   useEffect(() => {
+    getUser()
     getDocuments()
   }, [])
 
@@ -63,12 +72,20 @@ function Ditandatangani() {
             {dataLoading ? 
             <tr><td colSpan={7}>Loading ...</td></tr>
             : documents.map((doc: any, index: number): ReactElement => {
-              return <tr key={index}>
+              const mySiqgnIndex: number = doc.signers.map((e: any, i: number) => {
+                if (e.id == userId) return i
+                return null
+              }).filter((item: number | null) => item != null)[0]
+              const lastSigner: any = doc.documentApprovals[mySiqgnIndex]
+              return <tr key={index} style={{fontSize: '14px'}}>
                 <td>{index + 1}</td>
                 <td>{doc.title.replaceAll('.pdf', '')}</td>
-                <td>{new DatetimeFormatter().format(doc.createdAt)}</td>
+                <td>
+                  <div>{new DatetimeFormatter().format(doc.createdAt)}</div>
+                  <div style={{marginTop: '5px', fontSize: '12px', color: 'gray'}}>Oleh: {doc.applicant.username}</div>
+                </td>
                 <td>{new DatetimeFormatter().format(doc.signedAt)}</td>
-                <td></td>
+                <td>{lastSigner.serialNumber}</td>
                 <td>{doc.signedCount}/{doc.requestCount}</td>
                 <td className="aksi-buttons">
                   <button className="detail-btn" onClick={() => window.open(doc.url, '_blank')}>🔍 Detail</button>
