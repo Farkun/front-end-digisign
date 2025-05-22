@@ -247,27 +247,21 @@ const Unggah: React.FC = () => {
           ))}
           <tr>
             <td>
-              {/* <input
-                type="text"
-                placeholder="Cari nama mahasiswa atau pegawai..."
-                value={newSigner.name}
-                onChange={(e) => setNewSigner({ ...newSigner, name: e.target.value })}
-              /> */}
-              {/* <select name="" id="" defaultValue={''} onChange={e => setNewSigner({...newSigner, name: e.target.value})}>
-                <option value={''} disabled>-- Select User --</option>
-                {users.map((item: any, index: number) => {
-                  return <option value={item.id} key={index}>
-                    {item.username} [{item.email}]
-                  </option>
-                })}
-              </select> */}
               <Select options={users.map((item) => { return { value: item.id, label: `${item.username} [${item.email}]` }; })} 
-              // inputValue={""} 
-              onChange={(e: any) => {
-                setNewSigner({ ...newSigner, name: e.label, id: e.value})
-                setSignersId(prevState => [...prevState, e.value])
-              }}
-              isDisabled={loading}
+                onChange={(e: any) => {
+                  setNewSigner({ ...newSigner, name: e.label, id: e.value})
+                  setSignersId(prevState => [...prevState, e.value])
+                }}
+                styles={{
+                  control: (baseStyle) => ({
+                    ...baseStyle,
+                    color: 'black',
+                    width: '100%'
+                  }),
+                  option: (baseStyle) => ({...baseStyle, color: 'black'}),
+                }}
+                placeholder={'Cari penanda tangan'}
+                isDisabled={loading}
               />
             </td>
             <td>
@@ -297,7 +291,6 @@ const Unggah: React.FC = () => {
         </div>
       </div>
 
-      {/* <Link to="/dokumen/diunggah"></Link> */}
       <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={handleSubmit}>💾 Simpan</button>
     </div>
     </Homepage>

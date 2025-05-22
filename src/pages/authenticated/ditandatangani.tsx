@@ -86,7 +86,14 @@ function Ditandatangani() {
                 </td>
                 <td>{new DatetimeFormatter().format(doc.signedAt)}</td>
                 <td>{lastSigner.serialNumber}</td>
-                <td>{doc.signedCount}/{doc.requestCount}</td>
+                <td>
+                  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <div style={{width: '100%', height: '5px', backgroundColor: '#aaa'}}>
+                      <div style={{width: `calc(${doc.signedCount/doc.requestCount}*100%)`, height: '5px', backgroundColor: '#0c0'}}></div>
+                    </div>
+                    <div>{doc.signedCount}/{doc.requestCount}</div>
+                  </div>
+                </td>
                 <td className="aksi-buttons">
                   <button className="detail-btn" onClick={() => window.open(doc.url, '_blank')}>🔍 Detail</button>
                   <button className="download-btn" onClick={() => downloadDocument(doc.url, `[SIGNED] ${doc.title}`)}>📥 Unduh</button>

@@ -102,20 +102,22 @@ function Diunggah() {
                 <td>{index + 1}</td>
                 <td>{doc.title}</td>
                 <td>{new DatetimeFormatter().format(doc.createdAt)}</td>
-                <td style={deniedCount == doc.requestCount ? {
-                  color: "white",
-                  backgroundColor: "#E74C3C",
-                  fontWeight: "bold"
-                } : doc.signedCount == doc.requestCount ? {
-                  color: "white",
-                  backgroundColor: "#00AA00",
-                  fontWeight: "bold"
-                } : {}}>{doc.signedCount}/{doc.requestCount}</td>
-                <td style={deniedCount == doc.requestCount ? {
-                  color: "white",
-                  backgroundColor: "#E74C3C",
-                  fontWeight: "bold"
-                } : {}}>{deniedCount}</td>
+                <td>
+                  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <div style={{width: '100%', height: '5px', backgroundColor: '#aaa'}}>
+                      <div style={{width: `calc(${doc.signedCount/doc.requestCount}*100%)`, height: '5px', backgroundColor: '#0c0'}}></div>
+                    </div>
+                    <div>{doc.signedCount}/{doc.requestCount}</div>
+                  </div>
+                </td>
+                <td>
+                  <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <div style={{width: '100%', height: '5px', backgroundColor: '#aaa'}}>
+                      <div style={{width: `calc(${deniedCount/doc.requestCount}*100%)`, height: '5px', backgroundColor: '#f00'}}></div>
+                    </div>
+                    <div>{deniedCount}/{doc.requestCount}</div>
+                  </div>
+                </td>
                 <td className="aksi-buttons">
                   <button className={loading ? 'revoke-btn' : "detail-btn"} onClick={()=>{ 
                     window.open(doc.url, '_blank') 
