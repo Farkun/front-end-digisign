@@ -27,6 +27,7 @@ import ForgotPassword from "./pages/auth/forgotPassword";
 import ResetPassword from "./pages/auth/resetPassword";
 import Profile from "./pages/authenticated/profile";
 import VerifikasiDokumen from "./pages/authenticated/verifikasi_dokumen";
+import DownloadDocument from "./pages/guest/downloadDocument";
 // import useAuthCheck from "./hooks/useAuthCheck";
 
 function App() {
@@ -68,6 +69,8 @@ function App() {
     <Router>
       {/* <LocationLogger/> */}
       <Routes>
+        <Route path="esign/:filename" element={<DownloadDocument/>}/>
+        
         <Route path="/" element={<Navbar isAuthenticated={isAuthenticated} />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
