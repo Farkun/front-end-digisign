@@ -6,7 +6,7 @@ import Cookies from "universal-cookie"
 
 const buatSertif: React.FC = () => {
   const [passphrase, setPassphrase] = useState(null)
-  const [days, setDays] = useState(0)
+  const [days, setDays] = useState(365)
   const [loading, setLoading] = useState<boolean>(false)
 
   const handleSubmit = async (event: React.FormEvent) => {

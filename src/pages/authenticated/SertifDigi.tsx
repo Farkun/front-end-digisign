@@ -43,7 +43,8 @@ function SertifDigi() {
           cert.isExpired = new Date().getTime() >= expiringDate.getTime()
           cert.createdAt = new DatetimeFormatter().format(cert.extensionDate ?? cert.createdAt)
           cert.expiring = new DatetimeFormatter().format(cert.expire)
-          if (currentDate.getMonth() == expiringDate.getMonth() && !cert.isExpired) cert.nearlyExpiring = true
+          if (currentDate.getFullYear() < expiringDate.getFullYear()) cert.nearlyExpiring = false
+          else if (currentDate.getMonth() == expiringDate.getMonth() && !cert.isExpired) cert.nearlyExpiring = true
           else if (currentDate.getMonth() < expiringDate.getMonth() && expiringDate.getDate() - currentDate.getDate() <= 0 ) cert.nearlyExpiring = true
           else cert.nearlyExpiring = false
           return cert
@@ -91,43 +92,6 @@ function SertifDigi() {
     }
     setLoading(false)
   }
-
-  // const extend = async (): Promise<void> => {
-  //   if (loading) return
-  //   setLoading(true)
-  //   const cookies: Cookies = new Cookies()
-  //   const token: string = cookies.get("bhf-e-sign-access-token")
-  //   const extend_in_days: string | null = prompt("Masukkan jumlah perpanjangan dalam hari untuk melanjutkan\n\n*Perpanjangan dihitung per hari ini")
-  //   if (!extend_in_days || extend_in_days == '') {
-  //     setLoading(false)
-  //     return
-  //   }
-  //   if (parseInt(extend_in_days) < 1) {
-  //     setLoading(false)
-  //     return
-  //   }
-  //   const passphrase: string | null = prompt('Masukkan passphrase untuk melanjutkan')
-  //   if (!passphrase || passphrase == '') {
-  //     setLoading(false)
-  //     return
-  //   }
-  //   try {
-  //     const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/signature/extends?passphrase=${passphrase}&extend_in_days=${extend_in_days}`, {}, { headers: {
-  //       "Authorization": `Bearer ${token}`,
-  //       "Content-Type": "application/json"
-  //     }})
-  //     if (data) {
-  //       alert('Sertifikat berhasil diperpanjang')
-  //       window.location.reload()
-  //     } else {
-  //       alert('Sertifikat gagal diperpanjang')
-  //       return
-  //     }
-  //   } catch (err: any) {
-  //     console.error(err.message)
-  //   }
-  //   setLoading(false)
-  // }
   
   if (loadingData) return <div>Loading ...</div>
 
@@ -166,6 +130,7 @@ function SertifDigi() {
           </thead>
           <tbody>
             {certificate && certificate.map((cert: any, index: number) => {
+              // console.log(new Date(cert.expire).getTime() > new Date().getTime())
               return <tr key={index} style={cert.isRevoked || cert.isExpired ? {opacity: '50%',fontSize: '14px'} : {fontSize: '14px'}}>
                 <td>{index + 1}</td>
                 <td>{cert.serialNumber}</td>

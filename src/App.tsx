@@ -84,7 +84,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="verifikasi/:token" element={<Verifying/>}/>
+        <Route path="api/auth/verification/:token/verify" element={isAuthenticated && isVerified ? <Navigate to={'/dashboard'} /> : <Verifying/>}/>
         
         <Route path="/unverified" element={
           !isAuthenticated ? 
