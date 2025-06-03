@@ -24,8 +24,6 @@ function Login() {
           "Content-Type": "application/json"
         }
       })
-      console.log(data);
-      
       if (!data) {
         alert('Username, Email, atau Password Salah')
         return
