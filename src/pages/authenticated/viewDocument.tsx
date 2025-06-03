@@ -32,11 +32,11 @@ const ViewDocument = (): ReactElement => {
             height: '99.292vh',
             backgroundColor: 'white'
         }}>
-        {displaySource && <iframe src={displaySource} style={{
+        {displaySource ? <iframe src={displaySource} style={{
             width: '100%',
             height: '100%',
             border: 'none'
-        }}></iframe>}
+        }}></iframe> : 'Loading ...'}
     </div>
 }
 

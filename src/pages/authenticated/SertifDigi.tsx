@@ -68,7 +68,10 @@ function SertifDigi() {
       return
     }
     const passphrase: string | null = prompt('Masukkan passphrase untuk melanjutkan')
-    if (!passphrase || passphrase == '') return
+    if (!passphrase || passphrase == '') {
+      setLoading(false)
+      return
+    }
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get("bhf-e-sign-access-token")
     try {

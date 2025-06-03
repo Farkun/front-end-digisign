@@ -134,7 +134,7 @@ function Permintaan() {
                                                 : isDenied && <div>❌ Ditolak</div>
                                     }
                                 </td>
-                                <td><button className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>window.open(row.url, '_blank')} disabled={loading}>🔍 Lihat</button></td>
+                                <td><button className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>window.open(row.url.replace(`${import.meta.env.VITE_API_HOST}/api/storage/document`, `${import.meta.env.VITE_BASE_URL}/dokumen/detail`), '_blank')} disabled={loading}>🔍 Lihat</button></td>
                                 <td>
                                     {
                                         (isApproved && isDenied) || (!isApproved && !isDenied) ? <div>

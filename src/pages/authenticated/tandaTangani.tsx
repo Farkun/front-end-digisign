@@ -247,7 +247,9 @@ function TandaTangani() {
         "Authorization": `Bearer ${token}`
       }})
       // console.log(data)
-      if (data) saveAs(data, `[SIGNED] ${pdfFile.name}`)
+      if (!data) return 
+      saveAs(data, `[SIGNED] ${pdfFile.name}`)
+      window.location.href = '/dokumen/tandatangani'
     } catch (err: any) {
       console.error(err.message)
     }

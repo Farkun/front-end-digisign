@@ -120,7 +120,7 @@ function Diunggah() {
                 </td>
                 <td className="aksi-buttons">
                   <button className={loading ? 'revoke-btn' : "detail-btn"} onClick={()=>{ 
-                    window.open(doc.url, '_blank') 
+                    window.open(doc.url.replace(`${import.meta.env.VITE_API_HOST}/api/storage/document`, `${import.meta.env.VITE_BASE_URL}/dokumen/detail`), '_blank') 
                   }} disabled={loading}>🔍 Detail</button>
                   <button className={loading ? 'revoke-btn' : "download-btn"} onClick={()=>{ 
                     downloadDocument(doc.url, doc.title, doc.signedCount == doc.requestCount)
