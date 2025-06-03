@@ -95,7 +95,7 @@ function Ditandatangani() {
                   </div>
                 </td>
                 <td className="aksi-buttons">
-                  <button className="detail-btn" onClick={() => window.open(doc.url, '_blank')}>🔍 Detail</button>
+                  <button className="detail-btn" onClick={() => window.open(doc.url.replace(`${import.meta.env.VITE_API_HOST}/api/storage/document`, `${import.meta.env.VITE_BASE_URL}/dokumen/detail`), '_blank')}>🔍 Detail</button>
                   <button className="download-btn" onClick={() => downloadDocument(doc.url, `[SIGNED] ${doc.title}`)}>📥 Unduh</button>
                 </td>
               </tr>

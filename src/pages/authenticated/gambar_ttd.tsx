@@ -17,7 +17,7 @@ const GambarTandaTangan = () => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        alert('Ukuran gamber terlalu besar')
+        alert('Ukuran gambar terlalu besar')
         return
       }
       setSelectedFile(file);
@@ -38,15 +38,18 @@ const GambarTandaTangan = () => {
           "Authorization": `Bearer ${accessToken}`
         }
       })
-      if (data) alert("Tanda tangan berhasil diupload!")
-      } catch (err: any) {
-        console.error(err.message)
-      }
-      setLoading(false)
+      if (!data) return
+        alert("Tanda tangan berhasil diupload!")
+        setCurrentImage(previewUrl)
+        setPreviewUrl(null)
+    } catch (err: any) {
+      console.error(err.message)
     }
+  }
 
   // Simpan tanda tangan yang di-upload
-  const handleSave = (): void => {
+  const handleSave = (e: any): void => {
+    e.preventDefault()
     if (loading) return
     setLoading(true)
     const cookies: Cookies = new Cookies()
@@ -121,8 +124,7 @@ const GambarTandaTangan = () => {
             <p className="info-text">
               Anda dapat meng-upload gambar hasil scan tanda tangan Anda (PNG) pada halaman
               ini untuk ditempelkan di dokumen. Pastikan gambar tanda tangan cukup jelas, memiliki
-              kontras yang baik, dan berlatar belakang putih bersih atau transparan. Anda juga dapat
-              menggambar tanda tangan menggunakan mouse, pen tablet, atau alat penunjuk lainnya.
+              kontras yang baik, dan berlatar belakang transparan.
             </p>
           </div>
         </div>
@@ -141,7 +143,7 @@ const GambarTandaTangan = () => {
             </div>
             {selectedFile && <p className="file-name">File: {selectedFile.name}</p>}
             <form onSubmit={handleSave}>
-              <input type="file" accept="image/png" onChange={handleFileChange} required readOnly={loading}/>
+              {loading ? 'Loading ...' : <input type="file" accept="image/png" onChange={handleFileChange} required readOnly={loading}/>}
               <button type="submit" className="save-button" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>
                 Simpan
               </button>

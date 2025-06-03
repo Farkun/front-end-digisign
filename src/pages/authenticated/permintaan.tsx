@@ -118,7 +118,6 @@ function Permintaan() {
                         : documents.map((row, index) => {
                             const isApproved:   boolean = row.documentApprovals[0].approved
                             const isDenied:     boolean = row.documentApprovals[0].denied
-                            const isEnableSign: boolean = row.documentApprovals[0].enableSign
                             const signedDocument: string | null = row.documentApprovals[0].signedDocument
                             const pageNumber:   number = row.documentApprovals[0].pageNumber
                             
@@ -150,13 +149,13 @@ function Permintaan() {
                                                 : 
                                                 !isDenied && <button 
                                                     type="button" 
-                                                    onClick={() => { window.location.href = !isEnableSign || signedDocument ? '' 
+                                                    onClick={() => { window.location.href = signedDocument ? '' 
                                                         : `/tandatangani/${Crypt.encryptString(`${row.id}`)}?page=${pageNumber}` 
                                                     }} 
                                                     disabled={ 
-                                                        loading || !isEnableSign || signedDocument != null
+                                                        loading || signedDocument != null
                                                     } 
-                                                    style={ loading || !isEnableSign || signedDocument ? {backgroundColor: 'gray'} : {}}
+                                                    style={ loading || signedDocument ? {backgroundColor: 'gray'} : {}}
                                                 >Tanda Tangani</button>
                                             }
                                         </div>

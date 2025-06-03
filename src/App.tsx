@@ -28,6 +28,8 @@ import ResetPassword from "./pages/auth/resetPassword";
 import Profile from "./pages/authenticated/profile";
 import VerifikasiDokumen from "./pages/authenticated/verifikasi_dokumen";
 import DownloadDocument from "./pages/guest/downloadDocument";
+import ViewDocument from "./pages/authenticated/viewDocument";
+import Verifying from "./pages/auth/verifying";
 // import useAuthCheck from "./hooks/useAuthCheck";
 
 function App() {
@@ -82,6 +84,8 @@ function App() {
           </Route>
         </Route>
 
+        <Route path="verifikasi/:token" element={<Verifying/>}/>
+        
         <Route path="/unverified" element={
           !isAuthenticated ? 
           <Navigate to={'/login'} /> 
@@ -105,6 +109,7 @@ function App() {
           <Route path="pengaturan/profile" element={<Profile />} />
           <Route path="verifikasi-dokumen" element={<VerifikasiDokumen/>}/>
         </Route>
+        <Route path="dokumen/detail/:filename" element={<ViewDocument/>}/>
 
         <Route path="*" element={<NotFound />} />
       </Routes>

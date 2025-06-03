@@ -83,8 +83,8 @@ const Profile = (): ReactElement => {
         <div style={{backgroundColor: 'white', borderRadius: '10px', padding: '20px', borderLeft: '6px solid #007bff', color: "black", fontWeight: 'normal', margin: '20px', width: '50vw'}}>
             <h3 style={{textAlign: 'start'}}>Username dan Email</h3>
             <form style={{width: '96%'}} onSubmit={handleSubmitProfile}>
-                <input type="text" name="username" placeholder="Username" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} required readOnly={loading}/>
-                <input type="email" name="email" placeholder="Email" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} required readOnly={loading}/>
+                <input type="text" name="username" placeholder="Username" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} readOnly={loading}/>
+                <input type="email" name="email" placeholder="Email" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} readOnly={loading}/>
                 <div style={{display: 'flex', justifyContent: 'flex-end'}}>
                     <button type="submit" style={loading ? {width: 'fit-content', backgroundColor: 'gray'} : {width: 'fit-content'}} disabled={loading}>Simpan</button>
                 </div>

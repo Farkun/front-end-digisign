@@ -37,7 +37,7 @@ const Unverified = (): ReactElement => {
     return <div>
         <div>
             <button style={{backgroundColor: '#aa0000', width: 'fit-content'}} onClick={handleLogout}>Logout</button>
-            <h1 style={{color: 'white'}}>Your Account is not verified.</h1>
+            <h1 style={{color: window.matchMedia("(prefers-color-scheme: dark)").matches ? 'white' : 'black'}}>Your Account is not verified.</h1>
             <div>Check your email to verify or <button className="btn-link" onClick={handleResendEmail}>resend email</button></div>
         </div>
     </div>

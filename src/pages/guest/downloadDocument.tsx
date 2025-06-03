@@ -1,6 +1,6 @@
 import axios from "axios";
 import { saveAs } from "file-saver";
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 import { useParams } from "react-router-dom";
 
 
@@ -30,10 +30,6 @@ const DownloadDocument = (): ReactElement => {
             console.error(err.message)
         }
     }
-
-    useEffect(() => {
-        getDocument()
-    }, [])
 
     return <div style={{
         display: 'flex',
