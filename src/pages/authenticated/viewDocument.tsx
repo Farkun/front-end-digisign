@@ -8,21 +8,29 @@ const ViewDocument = (): ReactElement => {
     const {filename} = useParams<string>()
     const url: string = `${import.meta.env.VITE_API_HOST}/api/storage/document/${filename}`
     const [displaySource, setDisplaySource] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(true)
 
     const getDocumentFile = async (): Promise<void> => {
         try {
-            const {data} = await axios.get(url, {responseType: 'arraybuffer'});
+            let {data} = await axios.get(url, {responseType: 'arraybuffer'})
+            if (!data) {
+                const response = await axios.get(url, {responseType: 'arraybuffer'})
+                data = response?.data
+            }
             if (!data || !filename) return
             const newFilename: string = filename.replace('.pdf', '')
             const blob: Blob = new Blob([data], {type: 'application/pdf'})
             const file: File = new File([blob], newFilename, {type: 'application/pdf'})
             setDisplaySource(URL.createObjectURL(file))
+            setLoading(false)
         } catch (err: any) {
             console.error(err.message)
         }
     }
 
     useEffect(() => {getDocumentFile()}, [])
+
+    if (loading) return <div>Loading ...</div>
 
     return <div style={{
             width: '100vw',
