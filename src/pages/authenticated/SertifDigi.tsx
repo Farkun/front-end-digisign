@@ -130,7 +130,6 @@ function SertifDigi() {
           </thead>
           <tbody>
             {certificate && certificate.map((cert: any, index: number) => {
-              // console.log(new Date(cert.expire).getTime() > new Date().getTime())
               return <tr key={index} style={cert.isRevoked || cert.isExpired ? {opacity: '50%',fontSize: '14px'} : {fontSize: '14px'}}>
                 <td>{index + 1}</td>
                 <td>{cert.serialNumber}</td>

@@ -27,19 +27,15 @@ const Register = () => {
                         'Content-Type': 'application/json'
                     }
                 })
-                // console.log(data);
-                // if (data && data.token) {
-                    
-                    const cookies = new Cookies();
-                    const expiration: any = jwtDecode(data.token).exp
-                    let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
-                    maxAge = parseInt(maxAge.toFixed())
-                    await cookies.set('bhf-e-sign-access-token', data.token, {
-                        path: '/',
-                        maxAge: maxAge
-                    })
-                    window.location.href = '/unverified'
-                // }
+                const cookies = new Cookies();
+                const expiration: any = jwtDecode(data.token).exp
+                let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
+                maxAge = parseInt(maxAge.toFixed())
+                await cookies.set('bhf-e-sign-access-token', data.token, {
+                    path: '/',
+                    maxAge: maxAge
+                })
+                window.location.href = '/unverified'
             } catch (err: any) {
                 console.error(err.message)
             }

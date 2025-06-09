@@ -23,7 +23,6 @@ function Diunggah() {
         }
       })
       if (data?.payload) setDocuments(data.payload)
-        // console.log(data?.payload)
     } catch (err: any) {
       console.error(err.message)
     }
@@ -32,8 +31,6 @@ function Diunggah() {
 
   useEffect(() => {
     getDocuments()
-    // console.log(documents);
-    
   }, [])
 
   const deleteDocument = async (id: string): Promise<void> => {

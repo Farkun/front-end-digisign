@@ -15,7 +15,6 @@ const Verifying = (): ReactElement => {
             const cookies: Cookies = new Cookies()
             cookies.remove('bhf-e-sign-access-token')
             const {data} = await axios.get(url)
-            console.log(data)
             if (!data) return
             window.location.href = '/'
             return

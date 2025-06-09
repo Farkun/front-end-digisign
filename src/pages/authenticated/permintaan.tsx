@@ -48,7 +48,6 @@ function Permintaan() {
                 },
                 withCredentials: true
             })
-            // console.log(data)
             if (data) window.location.reload()
         } catch (err: any) {
             console.error(err.message)
