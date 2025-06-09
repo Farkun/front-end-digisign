@@ -1,6 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Home from "./pages/guest/home";
-import About from "./pages/guest/about";
 import Login from "./pages/auth/login";
 import NotFound from "./pages/notFound";
 import Dashboard from "./pages/authenticated/dashboard";
@@ -13,7 +11,6 @@ import TandaTangan from "./pages/authenticated/tandaTangan";
 import SertifDigi from "./pages/authenticated/SertifDigi";
 import Unggah from "./pages/authenticated/unggah";
 import BuatSertif from "./pages/authenticated/buatSertif";
-import Navbar from "./components/navbar";
 import "./App.css";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
@@ -30,13 +27,7 @@ import VerifikasiDokumen from "./pages/authenticated/verifikasi_dokumen";
 import DownloadDocument from "./pages/guest/downloadDocument";
 import ViewDocument from "./pages/authenticated/viewDocument";
 import Verifying from "./pages/auth/verifying";
-// import useAuthCheck from "./hooks/useAuthCheck";
-
 function App() {
-
-  // const {user, loading} = useAuthCheck()
-  // const isAuthenticated = user ? true : false
-  // const isVerified = user?.verifiedAt ? true : false
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [isVerified, setIsVerified] = useState<boolean>(false)
@@ -69,26 +60,21 @@ function App() {
 
   return (
     <Router>
-      {/* <LocationLogger/> */}
       <Routes>
         <Route path="esign/:filename" element={<DownloadDocument/>}/>
         
-        <Route path="/" element={<Navbar isAuthenticated={isAuthenticated} />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route element={<GuestRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password/:token" element={<ResetPassword />} />
-          </Route>
+        <Route path="/" element={<GuestRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
+          <Route index element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password/:token" element={<ResetPassword />} />
         </Route>
 
         <Route path="api/auth/verification/:token/verify" element={isAuthenticated && isVerified ? <Navigate to={'/dashboard'} /> : <Verifying/>}/>
         
         <Route path="/unverified" element={
           !isAuthenticated ? 
-          <Navigate to={'/login'} /> 
+          <Navigate to={'/'} /> 
           : isVerified ? 
             <Navigate to={'/dashboard'}/> 
             : <Unverified/>

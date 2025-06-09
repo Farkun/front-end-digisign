@@ -84,7 +84,7 @@ const Register = () => {
             />
             <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Registrasi</button>
             <div>
-                Sudah memiliki akun? <a href="/login">Masuk</a>
+                Sudah memiliki akun? <a href="/">Masuk</a>
             </div>
         </form>
     </div>

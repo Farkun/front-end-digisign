@@ -11,7 +11,7 @@ function Navbar2({ isSidebarOpen }: NavbarProps) {
     // localStorage.removeItem('bhf-e-sign-access-token')
     const cookies = new Cookies()
     cookies.remove('bhf-e-sign-access-token')
-    window.location.href = '/login'
+    window.location.href = '/'
   };
 
   return (

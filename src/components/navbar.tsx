@@ -10,7 +10,7 @@ const Navbar = ({isAuthenticated}: {isAuthenticated: boolean}): ReactElement => 
           <li><Link to="/">🏠 Beranda</Link></li>
           <li><Link to="/about">ℹ️ Tentang</Link></li>
           {!isAuthenticated ?
-            <li><Link to="/login">🔑 Masuk</Link></li>
+            <li><Link to="/">🔑 Masuk</Link></li>
             : <li><Link to="/dashboard">🖥️ Dashboard</Link></li>
           }
         </ul>

@@ -11,7 +11,7 @@ const Unverified = (): ReactElement => {
         if (loading) return
         const cookies = new Cookies()
         cookies.remove('bhf-e-sign-access-token')
-        window.location.href = '/login'
+        window.location.href = '/'
     };
 
     const handleResendEmail = async (): Promise<void> => {

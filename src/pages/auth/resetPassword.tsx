@@ -17,7 +17,7 @@ const ResetPassword = (): ReactElement => {
             const {data} = await axios.post(import.meta.env.VITE_API_HOST + `/api/auth/validate-reset-password-token?token=${token}`)
             if (!data) {
                 window.close()
-                window.location.href = `/login`
+                window.location.href = `/`
             }
             setLoading(false)
             setIsTokenValid(true)
@@ -41,7 +41,7 @@ const ResetPassword = (): ReactElement => {
         try {
             const {data} = await axios.post(import.meta.env.VITE_API_HOST + `/api/auth/reset-password/${token}?password=${formData.password}`)
             if (data) alert("Kata Sandi Berhasil Diubah")
-            window.location.href = '/login'
+            window.location.href = '/'
         } catch (err: any) {
             console.error(err.message)
         }

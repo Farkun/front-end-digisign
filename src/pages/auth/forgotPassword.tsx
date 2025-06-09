@@ -15,7 +15,7 @@ const ForgotPassword = (): ReactElement => {
             const {data} = await axios.post(import.meta.env.VITE_API_HOST + `/api/auth/forgot-password?email=${email}`)
             if (data) {
                 alert('email pemulihan telah terkirim')
-                window.location.href = '/login'
+                window.location.href = '/'
             } else alert('Email tidak terdaftar')
         } catch (err: any) {
             console.error(err.message)

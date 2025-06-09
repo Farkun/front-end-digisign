@@ -17,7 +17,7 @@ const Verifying = (): ReactElement => {
             const {data} = await axios.get(url)
             console.log(data)
             if (!data) return
-            window.location.href = '/login'
+            window.location.href = '/'
             return
         } catch (err: any) {
             console.error(err.message)
