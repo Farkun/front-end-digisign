@@ -21,7 +21,7 @@ const VerifikasiDokumen = (): ReactElement => {
             })
             if (data?.payload) setResult(data.payload)
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
     }
 

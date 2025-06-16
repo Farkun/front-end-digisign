@@ -19,7 +19,7 @@ const Verifying = (): ReactElement => {
             window.location.href = '/'
             return
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
             // setFailed(true)
         }
     }

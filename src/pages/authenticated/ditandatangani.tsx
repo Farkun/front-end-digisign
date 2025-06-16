@@ -23,7 +23,7 @@ function Ditandatangani() {
       }})
       if (data?.payload) setDocuments(data.payload)
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
     setDataLoading(false)
   }
@@ -48,7 +48,7 @@ function Ditandatangani() {
         saveAs(file)
       }
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
   }
 

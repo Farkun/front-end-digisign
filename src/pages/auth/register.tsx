@@ -37,7 +37,7 @@ const Register = () => {
                 })
                 window.location.href = '/unverified'
             } catch (err: any) {
-                console.error(err.message)
+                // console.error(err.message)
             }
         }
         setLoading(false)

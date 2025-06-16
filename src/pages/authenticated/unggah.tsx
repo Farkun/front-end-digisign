@@ -111,7 +111,7 @@ const Unggah: React.FC = () => {
       })
       if (data?.payload) setUsers(data.payload)
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
   }
 
@@ -151,7 +151,7 @@ const Unggah: React.FC = () => {
           window.location.href = '/dokumen/diunggah'
         }
       } catch (err: any) {
-        console.error(err.message)
+        // console.error(err.message)
       }
     }
     setLoading(false)

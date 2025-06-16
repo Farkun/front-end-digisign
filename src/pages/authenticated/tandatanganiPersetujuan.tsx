@@ -87,7 +87,7 @@ const TandaTanganiPersetujuan = () => {
                 }
             }
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
     }
 
@@ -155,7 +155,7 @@ const TandaTanganiPersetujuan = () => {
                 setIsLoadingSignature(false)
                 return
             } catch (err:any) {
-                console.error(err.message)
+                // console.error(err.message)
                 setIsLoadingSignature(false)
                 return
             }

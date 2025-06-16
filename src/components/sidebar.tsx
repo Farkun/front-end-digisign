@@ -21,7 +21,7 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
       <Link to={'/'} className={styles.logo} style={{color: 'white'}}>
         <img src="/eSign-logo-transparent.png" alt="logo" style={{width: isOpen ? '100px' : '20px'}} /> <br />
-        {isOpen && "BHI - eSign"}
+        {isOpen && "PolBo - eSign"}
       </Link>
 
       <nav style={{paddingBottom: '20px'}}>

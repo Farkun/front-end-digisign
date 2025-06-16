@@ -43,7 +43,7 @@ const GambarTandaTangan = () => {
         setCurrentImage(previewUrl)
         setPreviewUrl(null)
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
   }
 
@@ -78,7 +78,7 @@ const GambarTandaTangan = () => {
       })
       if (data && data.payload) setCurrentImage(data.payload)
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
     setLoading(false)
   }

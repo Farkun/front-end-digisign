@@ -43,7 +43,7 @@ function Login() {
       if (data.token) window.location.href = '/dashboard'
     } catch (err: any) {
       alert('Username, Email, atau Password Salah')
-      console.error(err.message)
+      // console.error(err.message)
     }
     setLoading(false)
   };

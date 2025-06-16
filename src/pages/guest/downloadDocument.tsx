@@ -14,7 +14,7 @@ const DownloadDocument = (): ReactElement => {
             if (!data) return
             getDocumentFile(data)
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
     }
 
@@ -27,7 +27,7 @@ const DownloadDocument = (): ReactElement => {
             const file: File = new File([blob], newFilename, {type: 'application/pdf'})
             saveAs(file)
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
     }
 

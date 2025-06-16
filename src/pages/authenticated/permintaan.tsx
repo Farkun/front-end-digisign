@@ -26,7 +26,7 @@ function Permintaan() {
             });
             if (data?.payload) setDocuments(data.payload)
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
         setDataLoading(false)
     }
@@ -50,7 +50,7 @@ function Permintaan() {
             })
             if (data) window.location.reload()
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
         setLoading(false)
     } 
@@ -70,7 +70,7 @@ function Permintaan() {
             })
             if (data) window.location.reload()
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
         setLoading(false)
     } 
@@ -88,7 +88,7 @@ function Permintaan() {
                 saveAs(file)
             }
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
         setLoading(false)
     }

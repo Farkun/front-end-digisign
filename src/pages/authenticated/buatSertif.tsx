@@ -31,7 +31,7 @@ const buatSertif: React.FC = () => {
         if (data) alert(`Sertifikat berhasil dibuat!\nBerlaku sampai dengan: ${days} hari`)
         window.location.href = '/pengaturan/sertifikat'
       } catch (err: any) {
-        console.error(err.message)
+        // console.error(err.message)
       }
     }
     setLoading(false)

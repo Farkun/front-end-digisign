@@ -43,7 +43,7 @@ const Profile = (): ReactElement => {
                 window.location.reload()
             }
         } catch (err: any) {
-            console.error(err.messae)
+            // console.error(err.messae)
         }
         setLoading(false)
     }
@@ -72,7 +72,7 @@ const Profile = (): ReactElement => {
                 window.location.reload()
             }
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
         setLoading(false)
     }

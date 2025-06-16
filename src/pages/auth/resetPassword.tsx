@@ -22,7 +22,7 @@ const ResetPassword = (): ReactElement => {
             setLoading(false)
             setIsTokenValid(true)
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
     }
 
@@ -43,7 +43,7 @@ const ResetPassword = (): ReactElement => {
             if (data) alert("Kata Sandi Berhasil Diubah")
             window.location.href = '/'
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
         setLoading(false)
     }

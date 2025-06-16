@@ -21,7 +21,7 @@ function SertifDigi() {
       })
       if (data) setSignature(data)
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
   }
 
@@ -52,7 +52,7 @@ function SertifDigi() {
         setCertificate(cert)
       }
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
     setLoadingData(false)
   }
@@ -88,7 +88,7 @@ function SertifDigi() {
       alert('Sertifikat berhasil direvoke')
       window.location.reload()
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
     setLoading(false)
   }

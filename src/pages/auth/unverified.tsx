@@ -27,7 +27,7 @@ const Unverified = (): ReactElement => {
             })
             if (data) alert('Email verifikasi berhasil dikirim ulang')
         } catch (err) {
-            console.error(err)
+            // console.error(err)
         }
         setLoading(false)
     }

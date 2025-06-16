@@ -24,7 +24,7 @@ const ViewDocument = (): ReactElement => {
             setDisplaySource(URL.createObjectURL(file))
             setLoading(false)
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
     }
 

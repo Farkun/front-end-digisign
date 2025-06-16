@@ -18,7 +18,7 @@ const ForgotPassword = (): ReactElement => {
                 window.location.href = '/'
             } else alert('Email tidak terdaftar')
         } catch (err: any) {
-            console.error(err.message)
+            // console.error(err.message)
         }
         setLoading(false)
     }

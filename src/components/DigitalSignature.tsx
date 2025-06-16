@@ -29,7 +29,7 @@ const DigitalSignature = ({isSignatureExist}: any) => {
       
       if (data && data.payload) alert('Tanda tangan berhasil disimpan')
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
   }
 
