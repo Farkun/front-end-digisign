@@ -7,7 +7,6 @@ import { Group, Image as KonvaImage, Layer, Line, Stage, Text, Transformer } fro
 import * as pdfjsLib from 'pdfjs-dist';
 import Konva from 'konva';
 import Random from "../../utils/Random";
-import { jwtDecode } from "jwt-decode";
 import CombineImage from "../../utils/CombineImage";
 import { KonvaEventObject, Node, NodeConfig } from "konva/lib/Node";
 import RenderChoice from "../../data_class/RenderChoice";
@@ -40,7 +39,6 @@ const TandaTanganiPersetujuan = () => {
     const [renderChoice, setRenderMode] = useState<String>('GRAPHIC')
     const [qrcode, setQrcode] = useState<string | null>(null)
     const [combineSign, setCombineSign] = useState<string | null>(null)
-    const [username, setUsername] = useState<string>('')
     const [serial, setSerial] = useState<string>('')
 
     useEffect(() => {
@@ -147,8 +145,6 @@ const TandaTanganiPersetujuan = () => {
                     }
                 })
                 if (data?.payload) {
-                    const userData: any = jwtDecode(cookies.get("bhf-e-sign-access-token")) 
-                    userData && setUsername(userData.username)
                     setSerial(`${Random.stringGenerate(8)}-${Random.stringGenerate(8)}-${Random.stringGenerate(8)}`)
                     setSignatureData(data.payload)
                 }
@@ -231,7 +227,8 @@ const TandaTanganiPersetujuan = () => {
                 const ctx = canvas.getContext('2d')
                 if (!ctx) return
                 if (choice == 'IMAGE') ctx.drawImage(img, width/26, height/26, width*12/13, height*12/13);
-                else if (choice == 'QR') ctx.drawImage(img, 0, height/3, width/3, height/3);
+                // else if (choice == 'QR') ctx.drawImage(img, 0, height/3, width/3, height/3);
+                else if (choice == 'QR') ctx.drawImage(img, 0, 0, width*15/17, height*15/17);
                 else if (choice == 'BOTH') ctx.drawImage(img, 0, 0, width, height);
                 const dataUrl = canvas.toDataURL('image/png');
                 renderedImg.src = dataUrl
@@ -280,16 +277,18 @@ const TandaTanganiPersetujuan = () => {
     const pageLimit = (e: KonvaEventObject<DragEvent, Node<NodeConfig>>) => {
         let limitTop = 0
         let limitBottom = -e.target.height()
+        let limitRight = e.target.width()
         if (renderChoice == 'QR') {
-            limitTop = e.target.height()/3
-            limitBottom = -e.target.height()*2/3
+            limitRight = e.target.width()*15/17
+            // limitTop = e.target.height()/3
+            // limitBottom = -e.target.height()*2/3
         } else if (renderChoice == 'IMAGE') {
             limitTop = e.target.height()/6
             limitBottom = -e.target.height()*5/6
         }
     
         if (e.target.x() < 0) e.target.x(0)
-        if (e.target.x() > renderedPdfSize.width - e.target.width()) e.target.x(renderedPdfSize.width - e.target.width())
+        if (e.target.x() > renderedPdfSize.width - limitRight) e.target.x(renderedPdfSize.width - limitRight)
         if (e.target.y() < -limitTop) e.target.y(-limitTop)
         if (e.target.y() > renderedPdfSize.height + limitBottom) e.target.y(renderedPdfSize.height + limitBottom)
     }
@@ -335,8 +334,8 @@ const TandaTanganiPersetujuan = () => {
                     <KonvaImage
                         image={signatureImage}
                         ref={signatureImageRef}
-                        x={signaturePositions.x}
-                        y={signaturePositions.y}
+                        x={signaturePositions.x || 0}
+                        y={signaturePositions.y || 0}
                         width={signatureImageSize.width}
                         height={signatureImageSize.height}
                         draggable={true}
@@ -448,7 +447,7 @@ const TandaTanganiPersetujuan = () => {
                         y={0}
                         listening={false}
                         >
-                        <Text
+                        {/* <Text
                             text={'Digitally signed by:'}
                             fontSize={signatureImageSize.height/30}
                             fill="black"
@@ -466,22 +465,23 @@ const TandaTanganiPersetujuan = () => {
                             y={(signaturePositions?.y || 0) + signatureImageSize.height*19/50}
                             width={signatureImageSize.width}
                             align={renderChoice == 'IMAGE' ? "center" : 'left'}
-                        />
+                        /> */}
                         <Text
                             text={`Date: ${new Date().toUTCString().replace(' GMT', '')}`}
-                            fontSize={signatureImageSize.height/30}
+                            fontSize={signatureImageSize.height/20}
                             fill="black"
-                            x={(signaturePositions?.x || 0) + signatureImageSize.width*9/25}
-                            y={(signaturePositions?.y || 0) + signatureImageSize.height*2/3 - signatureImageSize.height*2/25}
+                            // x={(signaturePositions?.x || 0) + signatureImageSize.width*9/25}
+                            x={signaturePositions?.x || 0}
+                            y={(signaturePositions?.y || 0) + signatureImageSize.height - signatureImageSize.height*2/20}
                             width={signatureImageSize.width}
                             align={'left'}
                         />
                         <Text
                             text={`Verify at sign.bh-foundation.org`}
-                            fontSize={signatureImageSize.height/30}
+                            fontSize={signatureImageSize.height/20}
                             fill="black"
-                            x={(signaturePositions?.x || 0) + signatureImageSize.width*9/25}
-                            y={(signaturePositions?.y || 0) + signatureImageSize.height*2/3 - signatureImageSize.height/30}
+                            x={signaturePositions?.x || 0}
+                            y={(signaturePositions?.y || 0) + signatureImageSize.height - signatureImageSize.height/20}
                             width={signatureImageSize.width}
                             align={'left'}
                         />
@@ -491,8 +491,11 @@ const TandaTanganiPersetujuan = () => {
                     {signatureImage && signaturePositions && signatureImageSize && isSignatureSelected &&
                         <Transformer
                         ref={signatureTransformerRef}
-                        scaleY={renderChoice == 'IMAGE' ? 2/3 : renderChoice == 'QR' ? 1/3 : 1}
-                        offsetY={renderChoice == 'IMAGE' ? -signatureImageSize.height/4 : renderChoice == 'QR' ? -signatureImageSize.height : 0}
+                        // scaleY={renderChoice == 'IMAGE' ? 2/3 : renderChoice == 'QR' ? 1/3 : 1}
+                        scaleY={renderChoice == 'IMAGE' ? 2/3 : renderChoice == 'QR' ? 1 : 1}
+                        scaleX={renderChoice == 'QR' ? 15/17 : 1}
+                        // offsetY={renderChoice == 'IMAGE' ? -signatureImageSize.height/4 : renderChoice == 'QR' ? -signatureImageSize.height : 0}
+                        offsetY={renderChoice == 'IMAGE' ? -signatureImageSize.height/4 : renderChoice == 'QR' ? 0 : 0}
                         anchorDragBoundFunc={(oldPos: Vector2d, newPos: Vector2d) => {
                             if (
                             (newPos.x < 0 || newPos.y < 0)

@@ -29,6 +29,7 @@ const Unggah: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [filename, setFilename] = useState<string>('')
+  const [changeDocument, setChangeDocument] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
 
   
@@ -44,6 +45,7 @@ const Unggah: React.FC = () => {
       renderPdf(file, 1);
       setFilename(file.name)
     }
+    setChangeDocument(false)
     setLoading(false)
   };
 
@@ -172,126 +174,136 @@ const Unggah: React.FC = () => {
 
     <div className="unggah">
       <h2>Unggah Dokumen</h2>
-      <input type="file" accept="application/pdf" onChange={handleFileChange} readOnly={loading}/>
 
-      {/* Canvas untuk menampilkan PDF */}
-      <div className="pdf-container text-black">
-        <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage text-black">
-          <Layer >{pdfImage && <KonvaImage image={pdfImage} />}</Layer>
-        </Stage>
-      </div>
-      <div className="pdf-navigation">
-          <button
-            onClick={() => {
-              if (currentPage > 1) {
-                setCurrentPage(currentPage - 1);
-                renderPdf(pdfFile as File, currentPage - 1);
-              }
-            }}
-            disabled={currentPage === 1}
-          >
-            ← Halaman Sebelumnya
-          </button>
+      {(!pdfFile || changeDocument) && <input type="file" accept="application/pdf" onChange={handleFileChange} readOnly={loading}/>}
 
-          {/* 🔄 Input untuk memilih halaman secara langsung */}
-          <span>Halaman</span>
-          <input
-            type="number"
-            value={currentPage}
-            onChange={(e) => {
-              let newPage = parseInt(e.target.value, 10) || 1;
-              if (newPage < 1) newPage = 1;
-              if (newPage > totalPages) newPage = totalPages;
-
-              setCurrentPage(newPage);
-              renderPdf(pdfFile as File, newPage);
-            }}
-            min="1"
-            max={totalPages}
-            style={{ width: "50px", textAlign: "center" }}
-          />
-          <span> dari {totalPages}</span>
-
-          <button
-            onClick={() => {
-              if (currentPage < totalPages) {
-                setCurrentPage(currentPage + 1);
-                renderPdf(pdfFile as File, currentPage + 1);
-              }
-            }}
-            disabled={currentPage === totalPages}
-          >
-            Halaman Selanjutnya →
-          </button>
+      {pdfFile && <div>
+        {!changeDocument && <button style={{
+            width: 'fit-content',
+            backgroundColor: '#fa0',
+            color: 'black'
+          }}
+          onClick={() => setChangeDocument(true)}
+        >Ganti Dokumen</button>}
+        {/* Canvas untuk menampilkan PDF */}
+        <div className="pdf-container text-black">
+          <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage text-black">
+            <Layer >{pdfImage && <KonvaImage image={pdfImage} />}</Layer>
+          </Stage>
         </div>
+        <div className="pdf-navigation">
+            <button
+              onClick={() => {
+                if (currentPage > 1) {
+                  setCurrentPage(currentPage - 1);
+                  renderPdf(pdfFile as File, currentPage - 1);
+                }
+              }}
+              disabled={currentPage === 1}
+            >
+              ← Halaman Sebelumnya
+            </button>
 
-      {/* Formulir untuk Daftar Penandatangan */}
-      <h3>Daftar Penanda Tangan</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Penanda Tangan</th>
-            <th>No. Halaman</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          {signers.map((signer, index) => (
-            <tr key={index}>
-              <td>{signer.name}</td>
-              <td>{signer.page}</td>
+            {/* 🔄 Input untuk memilih halaman secara langsung */}
+            <span>Halaman</span>
+            <input
+              type="number"
+              value={currentPage}
+              onChange={(e) => {
+                let newPage = parseInt(e.target.value, 10) || 1;
+                if (newPage < 1) newPage = 1;
+                if (newPage > totalPages) newPage = totalPages;
+
+                setCurrentPage(newPage);
+                renderPdf(pdfFile as File, newPage);
+              }}
+              min="1"
+              max={totalPages}
+              style={{ width: "50px", textAlign: "center" }}
+            />
+            <span> dari {totalPages}</span>
+
+            <button
+              onClick={() => {
+                if (currentPage < totalPages) {
+                  setCurrentPage(currentPage + 1);
+                  renderPdf(pdfFile as File, currentPage + 1);
+                }
+              }}
+              disabled={currentPage === totalPages}
+            >
+              Halaman Selanjutnya →
+            </button>
+          </div>
+
+        {/* Formulir untuk Daftar Penandatangan */}
+        <h3>Daftar Penanda Tangan</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Penanda Tangan</th>
+              <th>No. Halaman</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {signers.map((signer, index) => (
+              <tr key={index}>
+                <td>{signer.name}</td>
+                <td>{signer.page}</td>
+                <td>
+                  <button className={loading ? 'revoke-btn' : "secondary"} onClick={() => removeSigner(index)} disabled={loading}>❌</button>
+                </td>
+              </tr>
+            ))}
+            <tr>
               <td>
-                <button className={loading ? 'revoke-btn' : "secondary"} onClick={() => removeSigner(index)} disabled={loading}>❌</button>
+                <Select options={users.map((item) => { return { value: item.id, label: `${item.username} [${item.email}]` }; })} 
+                  onChange={(e: any) => {
+                    setNewSigner({ ...newSigner, name: e.label, id: e.value})
+                    setSignersId(prevState => [...prevState, e.value])
+                  }}
+                  styles={{
+                    control: (baseStyle) => ({
+                      ...baseStyle,
+                      color: 'black',
+                      width: '100%'
+                    }),
+                    option: (baseStyle) => ({...baseStyle, color: 'black'}),
+                  }}
+                  placeholder={'Cari penanda tangan'}
+                  isDisabled={loading}
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  defaultValue={newSigner.page}
+                  onChange={(e) => {
+                    setNewSigner({ ...newSigner, page: parseInt(e.target.value) || 1 })
+                  }}
+                  min="1"
+                  readOnly={loading}
+                />
+              </td>
+              <td>
+                <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={addSigner}>➕</button>
               </td>
             </tr>
-          ))}
-          <tr>
-            <td>
-              <Select options={users.map((item) => { return { value: item.id, label: `${item.username} [${item.email}]` }; })} 
-                onChange={(e: any) => {
-                  setNewSigner({ ...newSigner, name: e.label, id: e.value})
-                  setSignersId(prevState => [...prevState, e.value])
-                }}
-                styles={{
-                  control: (baseStyle) => ({
-                    ...baseStyle,
-                    color: 'black',
-                    width: '100%'
-                  }),
-                  option: (baseStyle) => ({...baseStyle, color: 'black'}),
-                }}
-                placeholder={'Cari penanda tangan'}
-                isDisabled={loading}
-              />
-            </td>
-            <td>
-              <input
-                type="number"
-                defaultValue={newSigner.page}
-                onChange={(e) => {
-                  setNewSigner({ ...newSigner, page: parseInt(e.target.value) || 1 })
-                }}
-                min="1"
-                readOnly={loading}
-              />
-            </td>
-            <td>
-              <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={addSigner}>➕</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <div style={{height: 'fit-content', width: 'fit-content', padding: 0, display: 'flex', alignItems: 'center', gap: '5px'}}>
-        <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
-          <input type="checkbox" name="order" id="order" onChange={() => setIsOrdered(!isOrdered)} disabled={loading} />
+          </tbody>
+        </table>
+        
+        <div style={{height: 'fit-content', width: 'fit-content', padding: 0, display: 'flex', alignItems: 'center', gap: '5px'}}>
+          <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
+            <input type="checkbox" name="order" id="order" onChange={() => setIsOrdered(!isOrdered)} disabled={loading} />
+          </div>
+          <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
+            <label htmlFor="order">Requiring Sign Order</label>
+          </div>
         </div>
-        <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
-          <label htmlFor="order">Requiring Sign Order</label>
-        </div>
-      </div>
 
-      <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={handleSubmit}>💾 Simpan</button>
+        <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={handleSubmit}>💾 Simpan</button>
+      </div>}
     </div>
     </Homepage>
   );
