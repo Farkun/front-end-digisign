@@ -35,7 +35,8 @@ const Register = () => {
                     path: '/',
                     maxAge: maxAge
                 })
-                window.location.href = '/unverified'
+                // window.location.href = '/unverified'
+                window.location.href = '/verifikasi'
             } catch (err: any) {
                 // console.error(err.message)
             }

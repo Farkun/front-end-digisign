@@ -15,7 +15,7 @@ import "./App.css";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
-import Unverified from "./pages/auth/unverified";
+// import Unverified from "./pages/auth/unverified";
 import Register from "./pages/auth/register";
 import TandaTanganiPersetujuan from "./pages/authenticated/tandatanganiPersetujuan";
 import GuestRoutes from "./routes/GuestRoutes";
@@ -27,6 +27,7 @@ import VerifikasiDokumen from "./pages/authenticated/verifikasi_dokumen";
 import DownloadDocument from "./pages/guest/downloadDocument";
 import ViewDocument from "./pages/authenticated/viewDocument";
 import Verifying from "./pages/auth/verifying";
+import VerifyOtp from "./pages/authenticated/VerifyOtp";
 function App() {
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
@@ -61,6 +62,7 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* <Route path="verifikasi" element={<VerifyOtp/>}/> */}
         <Route path="esign/:filename" element={<DownloadDocument/>}/>
         
         <Route path="/" element={<GuestRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
@@ -72,12 +74,20 @@ function App() {
 
         <Route path="api/auth/verification/:token/verify" element={isAuthenticated && isVerified ? <Navigate to={'/dashboard'} /> : <Verifying/>}/>
         
-        <Route path="/unverified" element={
+        {/* <Route path="/unverified" element={
           !isAuthenticated ? 
           <Navigate to={'/'} /> 
           : isVerified ? 
             <Navigate to={'/dashboard'}/> 
             : <Unverified/>
+        } /> */}
+
+        <Route path="/verifikasi" element={
+          !isAuthenticated ? 
+          <Navigate to={'/'} /> 
+          : isVerified ? 
+            <Navigate to={'/dashboard'}/> 
+            : <VerifyOtp/>
         } />
         
         <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
