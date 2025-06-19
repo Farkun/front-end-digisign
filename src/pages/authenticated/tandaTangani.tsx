@@ -252,7 +252,7 @@ function TandaTangani() {
       }})
       if (!data) return 
       saveAs(data, `[SIGNED] ${pdfFile.name}`)
-      // window.location.href = '/dokumen/tandatangani'
+      window.location.href = '/dokumen/tandatangani'
     } catch (err: any) {
       // console.error(err.message)
     }
