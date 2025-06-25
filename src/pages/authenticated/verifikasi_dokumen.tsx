@@ -32,7 +32,7 @@ const VerifikasiDokumen = (): ReactElement => {
             alignItems: 'center',
             justifyContent: 'center',
         }}>
-            <h2>Unggah dokumen untuk verifikasi</h2>
+            <h2>Upload Document to Verify</h2>
             <div>
                 <input type="file" accept="application/pdf" onChange={handleChange} />
             </div>
@@ -68,10 +68,10 @@ const VerifikasiDokumen = (): ReactElement => {
                         </div>
                         <table style={{border: 'none', background: 'none'}}>
                             <tbody>
-                                <tr><th style={{background: 'none', border: 'none', color: 'black'}}>Penanda tangan</th><td style={{border: 'none'}}>{item.signer}</td></tr>
+                                <tr><th style={{background: 'none', border: 'none', color: 'black'}}>Signed By</th><td style={{border: 'none'}}>{item.signer}</td></tr>
                                 <tr><th style={{background: 'none', border: 'none', color: 'black'}}>Serial number</th><td style={{border: 'none'}}>{item.serialNumber}</td></tr>
-                                <tr><th style={{background: 'none', border: 'none', color: 'black'}}>Sertifikat oleh</th><td style={{border: 'none'}}>{item.certifiedBy}</td></tr>
-                                <tr><th style={{background: 'none', border: 'none', color: 'black'}}>Tanggal tanda tangan</th><td style={{border: 'none'}}>{item.signedAt}</td></tr>
+                                <tr><th style={{background: 'none', border: 'none', color: 'black'}}>Certified by</th><td style={{border: 'none'}}>{item.certifiedBy}</td></tr>
+                                <tr><th style={{background: 'none', border: 'none', color: 'black'}}>Signed at</th><td style={{border: 'none'}}>{item.signedAt}</td></tr>
                             </tbody>
                         </table>
                     </div>

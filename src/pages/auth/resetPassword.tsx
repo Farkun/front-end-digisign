@@ -35,12 +35,12 @@ const ResetPassword = (): ReactElement => {
         if (loading) return
         setLoading(true)
         if (formData.password != formData.confirmPassword) {
-            alert('Konfirmasi Kata Sandi Salah')
+            alert('Invalid password confirmation')
             return
         } 
         try {
             const {data} = await axios.post(import.meta.env.VITE_API_HOST + `/api/auth/reset-password/${token}?password=${formData.password}`)
-            if (data) alert("Kata Sandi Berhasil Diubah")
+            if (data) alert("Change password successful")
             window.location.href = '/'
         } catch (err: any) {
             // console.error(err.message)
@@ -51,13 +51,13 @@ const ResetPassword = (): ReactElement => {
     if (!isTokenValid) return <div>Invalid Token</div>
 
     return <div className="login-container">
-    <h2>Buat Ulang Kata Sandi</h2>
+    <h2>Enter New Password</h2>
     {/* <p>Masukkan email Anda yang teregistrasi</p> */}
     <form onSubmit={handleSubmit}>
         <div style={{display: "flex", alignItems: 'center', gap: '10px'}}>
             <input
                 type={showPassword ? 'text' : "password"}
-                placeholder="Kata Sandi Baru"
+                placeholder="New Password"
                 value={formData.password}
                 onChange={(e) => setFormData(prevState => ({...prevState, password: e.target.value}))}
                 required
@@ -68,7 +68,7 @@ const ResetPassword = (): ReactElement => {
         <div style={{display: "flex", alignItems: 'center', gap: '10px'}}>
             <input
                 type={showConfirmPassword ? 'text' : "password"}
-                placeholder="Konfirmasi Kata Sandi Baru"
+                placeholder="Confirm New Password"
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData(prevState => ({...prevState, confirmPassword: e.target.value}))}
                 style={{width: "100%"}}
@@ -77,7 +77,7 @@ const ResetPassword = (): ReactElement => {
             />
             <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{margin: 0, width: 'fit-content', height: 'fit-content'}}>👁️</button>
         </div>
-        <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Ubah</button>
+        <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Send</button>
         {/* <div>Tidak bisa masuk? <Link to={'/forgot-password'}>lupa kata sandi</Link></div><br /> */}
     </form>
 </div>

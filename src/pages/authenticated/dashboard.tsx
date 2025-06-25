@@ -16,12 +16,12 @@ function Dashboard() {
   return (
     <Homepage>
       <div className="content">
-        <h2>Selamat datang, {username}</h2>
-        <p>Pilih aktivitas yang ingin Anda lakukan</p>
+        <h2>Welcome, {username}</h2>
+        <p>What would you do?</p>
         <div className="dashboard-cards">
-          <Link to="/tandatangani" className="card">✍️ Tanda Tangani Dokumen Sendiri</Link>
-          <Link to="/dokumen/unggah" className="card">📤 Unggah Dokumen</Link>
-          <Link to="/permintaan" className="card">📄 Lihat Dokumen</Link>
+          <Link to="/tandatangani" className="card">✍️ Sign Document by Self</Link>
+          <Link to="/dokumen/unggah" className="card">📤 Upload Document</Link>
+          <Link to="/permintaan" className="card">📄 View Requested Documents</Link>
         </div>
       </div>
     </Homepage>

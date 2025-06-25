@@ -58,7 +58,7 @@ function TandaTangani() {
         'Content-Type': 'application/json'
       }})
       if (!data?.payload) {
-        alert('Anda belum memiliki sertifikat tanda tangan aktif')
+        alert("You don't have an active signature certificate yet")
         window.location.href = '/pengaturan/sertifikat'
         return
       }
@@ -78,13 +78,13 @@ function TandaTangani() {
             setLoadingData(false)
           }
         } catch (err: any) {
-          alert('Terjadi kesalahan')
+          alert('Failed to proceed')
           window.location.href = '/pengaturan/sertifikat'
           return
         }
       }
     } catch (err: any) {
-      alert('Anda belum memiliki sertifikat tanda tangan')
+      alert("You don't have signature certificate yet")
       window.location.href = '/pengaturan/sertifikat'
       return
       // console.error(err.message)
@@ -230,7 +230,7 @@ function TandaTangani() {
   const addSignatureToPDF = async (): Promise<void> => {
     if (loading) return
     if (!pdfFile) return
-    const passphrase: string | null = prompt('Masukkan passphrase')
+    const passphrase: string | null = prompt('Enter passphrase')
     if (!passphrase) return
     setLoading(true)
     try {
@@ -284,7 +284,7 @@ function TandaTangani() {
   return (
     <Homepage>
       <div className="tandaTangani" style={{color: 'black'}}>
-        <h1>Unggah dokumen PDF untuk ditandatangani</h1>
+        <h1>Upload PDF Document to Sign</h1>
         
         {/* ✅ Input File untuk PDF */}
         {(!pdfFile || changeDocument) && <input type="file" accept="application/pdf" onChange={handleFileChange} />}
@@ -297,17 +297,17 @@ function TandaTangani() {
               color: 'black'
             }}
             onClick={() => setChangeDocument(true)}
-            >Ganti Dokumen</button>}
+            >Change Document</button>}
             <select name="" id="" defaultValue="" style={{margin: '10px', padding: '5px 10px', textAlign: 'center', fontWeight: '600', fontSize: '15px', width: '100%', borderRadius: '7px', backgroundColor: pdfImage ? '#28A745' : '#444'}} disabled={!pdfImage} onChange={(e) => {
               if (e.target.value == RenderChoice.IMAGE) setUploadedImage(signature)
               else if (e.target.value == RenderChoice.QR) setUploadedImage(qrcode)
               else if (e.target.value == RenderChoice.BOTH) setUploadedImage(combineSign)
               setRenderMode(e.target.value)
             }}>
-              <option style={{backgroundColor: '#eee', color: "white"}} value="" disabled>Terapkan Tanda Tangan</option>
-              <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.IMAGE}>Tanda Tangan</option>
+              <option style={{backgroundColor: '#eee', color: "white"}} value="" disabled>Apply Signature</option>
+              <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.IMAGE}>Signature Image</option>
               <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.QR}>QR Code</option>
-              <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.BOTH}>Tanda Tangan dan QR Code</option>
+              <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.BOTH}>Both</option>
             </select>
             <button onClick={() => {
                 setUploadedImage(null)
@@ -315,7 +315,7 @@ function TandaTangani() {
                 setUploadedImagePos({...uploadedImagePos, [currentPage]: {x: 0, y: 0}})
               }} 
               style={pdfImage ? {} : {backgroundColor: 'gray'}}
-            >Hapus Tanda Tangan</button>
+            >Delete Signature</button>
           </div>
 
           <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage">
@@ -541,11 +541,11 @@ function TandaTangani() {
               }}
               disabled={currentPage === 1}
             >
-              ← Halaman Sebelumnya
+              ← Previous Page
             </button>
 
             {/* 🔄 Input untuk memilih halaman secara langsung */}
-            <span>Halaman</span>
+            <span>Page</span>
             <input
               type="number"
               value={currentPage}
@@ -561,7 +561,7 @@ function TandaTangani() {
               max={totalPages}
               style={{ width: "50px", textAlign: "center" }}
             />
-            <span> dari {totalPages}</span>
+            <span> from {totalPages} {totalPages > 1 ? 'pages' : 'page'}</span>
 
             <button
               onClick={() => {
@@ -572,14 +572,14 @@ function TandaTangani() {
               }}
               disabled={currentPage === totalPages}
             >
-              Halaman Selanjutnya →
+              Next Page →
             </button>
           </div>
 
           <div id="actionBtn">
             <button onClick={addSignatureToPDF} 
             disabled={!pdfFile || !uploadedImage || loading} 
-            style={!pdfFile || !uploadedImage || loading ? {backgroundColor: 'gray'} : {}}>Tanda tangani & Unduh PDF</button>
+            style={!pdfFile || !uploadedImage || loading ? {backgroundColor: 'gray'} : {}}>Sign & Download PDF Document</button>
           </div>
         </div>}
       </div>

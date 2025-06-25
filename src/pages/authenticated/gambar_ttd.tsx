@@ -115,16 +115,14 @@ const GambarTandaTangan = () => {
   return (
     <Homepage>
       <div className="gambar-ttd-container">
-        <h2 className="gambar-ttd-title" style={window.matchMedia("(prefers-color-scheme: dark)").matches ? {color: 'white'} : {}}>Gambar Tanda Tangan</h2>
+        <h2 className="gambar-ttd-title" style={window.matchMedia("(prefers-color-scheme: dark)").matches ? {color: 'white'} : {}}>Signature Image</h2>
 
         {/* Informasi */}
         <div className="card" style={{color: 'black'}}>
           <div className="card-content">
-            <h4 className="card-title">Informasi</h4>
+            <h4 className="card-title">Information</h4>
             <p className="info-text">
-              Anda dapat meng-upload gambar hasil scan tanda tangan Anda (PNG) pada halaman
-              ini untuk ditempelkan di dokumen. Pastikan gambar tanda tangan cukup jelas, memiliki
-              kontras yang baik, dan berlatar belakang transparan.
+              You can upload a scanned image of your signature (PNG) on this page to paste into your document. Make sure the signature image is clear, has good contrast, and has a transparent background.
             </p>
           </div>
         </div>
@@ -132,7 +130,7 @@ const GambarTandaTangan = () => {
         {/* Upload Tanda Tangan */}
         <div className="card" style={{color: 'black'}}>
           <div className="card-content">
-            <h4 className="card-title">Upload Tanda Tangan</h4>
+            <h4 className="card-title">Upload Signature Image</h4>
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -145,11 +143,11 @@ const GambarTandaTangan = () => {
             <form onSubmit={handleSave}>
               {loading ? 'Loading ...' : <input type="file" accept="image/png" onChange={handleFileChange} required readOnly={loading}/>}
               <button type="submit" className="save-button" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>
-                Simpan
+                Save
               </button>
             </form>
             {currentImage &&
-              <button type="button" style={loading ? {backgroundColor: 'gray'} : {backgroundColor: '#cc0000'}} onClick={deleteSignature} disabled={loading}>Hapus</button>
+              <button type="button" style={loading ? {backgroundColor: 'gray'} : {backgroundColor: '#cc0000'}} onClick={deleteSignature} disabled={loading}>Delete</button>
             }
           </div>
         </div>

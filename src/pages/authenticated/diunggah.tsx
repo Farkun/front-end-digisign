@@ -38,14 +38,14 @@ function Diunggah() {
     setLoading(true)
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get("bhf-e-sign-access-token")
-    if (confirm('Apakah Anda yakin ingin menghapus dokumen ini?')) try {
+    if (confirm('Are you sure to delete this document?')) try {
       const response = await axios.delete(import.meta.env.VITE_API_HOST+`/api/document/delete?document=${id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
       if (response) {
-        alert('Dokumen berhasil dihapus')
+        alert('Document deleted successfully')
         window.location.reload()
       }
     } catch (err: any) {
@@ -74,16 +74,16 @@ function Diunggah() {
   return (
     <Homepage>
       <div className="diunggah-container" style={{color: 'black'}}>
-        <h2>Dokumen yang Diunggah</h2>
+        <h2>Uploaded Documents</h2>
         <table className="diunggah-table">
           <thead>
             <tr>
               <th>#</th>
-              <th>Judul</th>
-              <th>Tanggal Upload</th>
-              <th>Penandatanganan</th>
-              <th>Ditolak</th>
-              <th>Aksi</th>
+              <th>Title</th>
+              <th>Uploaded at</th>
+              <th>Signer</th>
+              <th>Denied</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -121,8 +121,8 @@ function Diunggah() {
                   }} disabled={loading}>🔍 Detail</button>
                   <button className={loading ? 'revoke-btn' : "download-btn"} onClick={()=>{ 
                     downloadDocument(doc.url, doc.title, doc.signedCount == doc.requestCount)
-                  }} disabled={loading}>📥 Unduh</button>
-                  <button className={loading ? 'revoke-btn' : "delete-btn"} onClick={() => deleteDocument(Crypt.encryptString(`${doc.id}`))} disabled={loading}>🗑️ Hapus</button>
+                  }} disabled={loading}>📥 Download</button>
+                  <button className={loading ? 'revoke-btn' : "delete-btn"} onClick={() => deleteDocument(Crypt.encryptString(`${doc.id}`))} disabled={loading}>🗑️ Delete</button>
                 </td>
               </tr>
             })}

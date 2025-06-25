@@ -55,17 +55,17 @@ function Ditandatangani() {
   return (
     <Homepage>
       <div className="ditandatangani-container" style={{color: 'black'}}>
-        <h2>Dokumen Ditandatangani</h2>
+        <h2>Signed Documents</h2>
         <table className="ditandatangani-table">
           <thead>
             <tr>
               <th>#</th>
-              <th>Judul</th>
-              <th>Upload</th>
-              <th>Ditandatangani</th>
-              <th>Sertifikat</th>
-              <th>Penandatanganan</th>
-              <th>Aksi</th>
+              <th>Title</th>
+              <th>Uploaded at</th>
+              <th>Signed at</th>
+              <th>Certificate</th>
+              <th>Signing Progress</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -82,7 +82,7 @@ function Ditandatangani() {
                 <td>{doc.title.replaceAll('.pdf', '')}</td>
                 <td>
                   <div>{new DatetimeFormatter().format(doc.createdAt)}</div>
-                  <div style={{marginTop: '5px', fontSize: '12px', color: 'gray'}}>Oleh: {doc.applicant.username}</div>
+                  <div style={{marginTop: '5px', fontSize: '12px', color: 'gray'}}>By: {doc.applicant.username}</div>
                 </td>
                 <td>{new DatetimeFormatter().format(doc.signedAt)}</td>
                 <td>{lastSigner.serialNumber}</td>
@@ -96,7 +96,7 @@ function Ditandatangani() {
                 </td>
                 <td className="aksi-buttons">
                   <button className="detail-btn" onClick={() => window.open(doc.url.replace(`${import.meta.env.VITE_API_HOST}/api/storage/document`, `${import.meta.env.VITE_BASE_URL}/dokumen/detail`), '_blank')}>🔍 Detail</button>
-                  <button className="download-btn" onClick={() => downloadDocument(doc.url, `[SIGNED] ${doc.title}`)}>📥 Unduh</button>
+                  <button className="download-btn" onClick={() => downloadDocument(doc.url, `[SIGNED] ${doc.title}`)}>📥 Download</button>
                 </td>
               </tr>
             })}

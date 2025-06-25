@@ -45,7 +45,7 @@ const Register = () => {
     }
 
     return <div className="login-container">
-        <h2>Registrasi</h2>
+        <h2>Register</h2>
         <form onSubmit={handleSubmit}>
             <input
             type="text"
@@ -66,7 +66,7 @@ const Register = () => {
             <input
             type="password"
             name="password"
-            placeholder="Kata Sandi"
+            placeholder="Password"
             onChange={handleChange}
             required
             readOnly={loading}
@@ -74,14 +74,14 @@ const Register = () => {
             <input
             type="password"
             name="confirm_password"
-            placeholder="Konfirmasi kata Sandi"
+            placeholder="Confirm Password"
             onChange={handleChange}
             required
             readOnly={loading}
             />
-            <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Registrasi</button>
+            <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Register</button>
             <div>
-                Sudah memiliki akun? <a href="/">Masuk</a>
+                Already have an account? <a href="/">Login</a>
             </div>
         </form>
     </div>

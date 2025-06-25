@@ -125,7 +125,7 @@ const Unggah: React.FC = () => {
     if (loading) return
     setLoading(true)
     if (!pdfFile) alert('file not selected')
-    if (!signersId || signersId.length == 0) alert('signers not selected')
+    if (!signersId || signersId.length == 0) alert('signers is not selected')
     if (pdfFile && signersId?.length > 0) {
       const signerdata = [...signers, newSigner]
       const pageNumbers: number[] = signerdata.map((val: {page: number}) => {
@@ -163,17 +163,17 @@ const Unggah: React.FC = () => {
     <Homepage>
     <div className="card" style={{color: 'black'}}>
       <div className="card-content">
-        <h4 className="card-title">Informasi</h4>
+        <h4 className="card-title">Information</h4>
         <p className="info-text">
-        Di halaman ini Anda dapat mengunggah satu atau lebih dokumen untuk ditandatangani oleh satu atau lebih penanda tangan. 
-        Orang yang Anda minta untuk menandatangani dokumen akan mendapat notifikasi melalui e-mail. 
-        Jika Anda hendak menandatangani suatu dokumen oleh Anda sendiri, gunakan halaman ini.
+          On this page you can upload one or more documents to be signed by one or more signers. 
+          The person you ask to sign the document will be notified by email. 
+          If you want to sign a document yourself, use this page.
         </p>
       </div>
     </div>
 
     <div className="unggah">
-      <h2>Unggah Dokumen</h2>
+      <h2>Upload Document</h2>
 
       {(!pdfFile || changeDocument) && <input type="file" accept="application/pdf" onChange={handleFileChange} readOnly={loading}/>}
 
@@ -184,7 +184,7 @@ const Unggah: React.FC = () => {
             color: 'black'
           }}
           onClick={() => setChangeDocument(true)}
-        >Ganti Dokumen</button>}
+        >Change Document</button>}
         {/* Canvas untuk menampilkan PDF */}
         <div className="pdf-container text-black">
           <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage text-black">
@@ -201,11 +201,11 @@ const Unggah: React.FC = () => {
               }}
               disabled={currentPage === 1}
             >
-              ← Halaman Sebelumnya
+              ← Previous Page
             </button>
 
             {/* 🔄 Input untuk memilih halaman secara langsung */}
-            <span>Halaman</span>
+            <span>Page</span>
             <input
               type="number"
               value={currentPage}
@@ -221,7 +221,7 @@ const Unggah: React.FC = () => {
               max={totalPages}
               style={{ width: "50px", textAlign: "center" }}
             />
-            <span> dari {totalPages}</span>
+            <span> from {totalPages} {totalPages > 1 ? 'pages' : 'page'}</span>
 
             <button
               onClick={() => {
@@ -232,18 +232,18 @@ const Unggah: React.FC = () => {
               }}
               disabled={currentPage === totalPages}
             >
-              Halaman Selanjutnya →
+              Next Page →
             </button>
           </div>
 
         {/* Formulir untuk Daftar Penandatangan */}
-        <h3>Daftar Penanda Tangan</h3>
+        <h3>Signer List</h3>
         <table>
           <thead>
             <tr>
-              <th>Penanda Tangan</th>
-              <th>No. Halaman</th>
-              <th>Aksi</th>
+              <th>Signer</th>
+              <th>Page</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -271,7 +271,7 @@ const Unggah: React.FC = () => {
                     }),
                     option: (baseStyle) => ({...baseStyle, color: 'black'}),
                   }}
-                  placeholder={'Cari penanda tangan'}
+                  placeholder={'Search signer'}
                   isDisabled={loading}
                 />
               </td>
@@ -298,11 +298,11 @@ const Unggah: React.FC = () => {
             <input type="checkbox" name="order" id="order" onChange={() => setIsOrdered(!isOrdered)} disabled={loading} />
           </div>
           <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
-            <label htmlFor="order">Requiring Sign Order</label>
+            <label htmlFor="order">Requiring Signing Order</label>
           </div>
         </div>
 
-        <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={handleSubmit}>💾 Simpan</button>
+        <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={handleSubmit}>💾 Save</button>
       </div>}
     </div>
     </Homepage>

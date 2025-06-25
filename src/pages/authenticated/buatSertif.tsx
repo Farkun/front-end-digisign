@@ -28,7 +28,7 @@ const buatSertif: React.FC = () => {
             'Content-Type': 'multipart/form-data'
           }
         })
-        if (data) alert(`Sertifikat berhasil dibuat!\nBerlaku sampai dengan: ${days} hari`)
+        if (data) alert(`Certificate created successfully!\nExpired in: ${days} ${days > 1 ? 'days' : 'day'}`)
         window.location.href = '/pengaturan/sertifikat'
       } catch (err: any) {
         // console.error(err.message)
@@ -40,26 +40,25 @@ const buatSertif: React.FC = () => {
   return <Homepage>
     <div className="buatSertifcontainer" style={{color: 'black'}}>
       {/* Header */}
-      <h2 className="header">Buat Sertifikat Baru</h2>
+      <h2 className="header">Create New Certificate</h2>
 
       {/* Informasi */}
       <div className="info">
-        <h3>Informasi</h3>
+        <h3>Information</h3>
         <p>
-          Passphrase sertifikat digunakan setiap kali Anda akan menandatangani
-          dokumen dengan sertifikat.
+          The certificate passphrase is used every time you sign a document with a certificate.
         </p>
-        <ul>
+        {/* <ul>
           <li>Panjang passphrase minimal 4 karakter</li>
           <li>Berisi huruf kecil (non-kapital) dan angka</li>
           <li className="warning">Jangan gunakan passphrase yang sama dengan password login akun</li>
-        </ul>
+        </ul> */}
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit}>
         <div className="data-box">
-          <h3>Data Sertifikat</h3>
+          <h3>Certificates Data</h3>
 
           {/* Input Masa Berlaku */}
           <div className="input-group">
@@ -70,14 +69,14 @@ const buatSertif: React.FC = () => {
               name="passphrase"
               onChange={(e: any) => setPassphrase(e.target.value)}
               className="input-field"
-              placeholder="Masukkan passphrase"
+              placeholder="Enter Passphrase"
               required
               readOnly={loading}
             />
           </div>
 
           <div className="input-group">
-            <label>Masa Berlaku</label>
+            <label>Expired In</label>
             <input
               type="number"
               min={0}
@@ -88,13 +87,13 @@ const buatSertif: React.FC = () => {
               required
               readOnly={loading}
             />
-            <span>hari dari sekarang</span>
+            <span>{days > 1 ? 'days' : 'day'} from today</span>
           </div>
         </div>
 
         {/* Tombol Simpan */}
         <button type="submit" className={loading ? 'revoke-btn' : "save-btn"} disabled={loading}>
-          Simpan
+          Submit
         </button>
       </form>
     </div>

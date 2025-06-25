@@ -64,11 +64,11 @@ function SertifDigi() {
   const revoke = async (serial: string): Promise<void> => {
     if (loading) return
     setLoading(true)
-    if (!confirm('Apakah Anda yakin ingin merevoke sertifikat tanda tangan ini?')) {
+    if (!confirm('Are you sure to revoke this certificate?')) {
       setLoading(false)
       return
     }
-    const passphrase: string | null = prompt('Masukkan passphrase untuk melanjutkan')
+    const passphrase: string | null = prompt('Enter passphrase to process')
     if (!passphrase || passphrase == '') {
       setLoading(false)
       return
@@ -82,10 +82,10 @@ function SertifDigi() {
         }
       })
       if (!data) {
-        alert('gagal revoke sertifikat')
+        alert('Failed to revoke certificate')
         return
       }
-      alert('Sertifikat berhasil direvoke')
+      alert('Certificate revoked successfully')
       window.location.reload()
     } catch (err: any) {
       // console.error(err.message)
@@ -99,23 +99,23 @@ function SertifDigi() {
     <Homepage>
         <div className="card" style={{color: 'black'}}>
           <div className="card-content">
-            <h4 className="card-title">Informasi</h4>
+            <h4 className="card-title">Information</h4>
             <p className="info-text">
-            Sertifikat digital merupakan identitas Anda di sistem untuk membuat tanda tangan digital. 
-            Anda hanya dapat memiliki satu sertifikat yang aktif dalam satu waktu. 
-            Jika Anda membuat sertifikat baru, sertifikat lama akan dinonaktifkan (revoked) secara otomatis. 
-            Anda juga dapat menonaktifkan suatu sertifikat secara manual.
+              A digital certificate is your identity in the system to create a digital signature. 
+              You can only have one certificate active at a time. 
+              If you create a new certificate, the old certificate will be automatically deactivated (revoked). 
+              You can also deactivate a certificate manually.
             </p>
           </div>
         </div>
       <div className="SertifDigi-container" style={{color: 'black'}}>
-        <h2>Sertifikat</h2>
+        <h2>Certificates</h2>
           <button className="buat-sertifikat-btn" style={loading ? {backgroundColor: 'gray'} : {}} onClick={() => {
             if (!signature) {
               alert('Anda belum memiliki tanda tangan')
               window.location.href = '/pengaturan/tanda-tangan'
             } else window.location.href = "/pengaturan/sertifikat/create"
-          }} disabled={loading}>➕ Buat Sertifikat</button>
+          }} disabled={loading}>➕ Create New Certificate</button>
         <table className="SertifDigi-table">
           <thead>
             <tr>
@@ -123,9 +123,9 @@ function SertifDigi() {
               <th>Serial Number</th>
               <th>Subject</th>
               <th>Valid Time</th>
-              <th>Dibuat</th>
+              <th>Created at</th>
               <th>Status</th>
-              <th>Aksi</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -142,7 +142,7 @@ function SertifDigi() {
                     {cert.createdAt} - {cert.expiring}
                 </td>
                 <td>{cert.createdAt}</td>
-                <td><span className={`status ${cert.isExpired || cert.isRevoked ? 'kadaluarsa' : 'aktif'}`} style={cert.nearlyExpiring && !cert.isRevoked ? {backgroundColor: '#ffaa0055', color: '#ff7700', border: 'none'} : {}}>{cert.isExpired ? 'kadaluarsa' : cert.isRevoked ? 'direvoke' : cert.nearlyExpiring ? 'akan kadaluarsa' : 'aktif'}</span></td>
+                <td><span className={`status ${cert.isExpired || cert.isRevoked ? 'kadaluarsa' : 'aktif'}`} style={cert.nearlyExpiring && !cert.isRevoked ? {backgroundColor: '#ffaa0055', color: '#ff7700', border: 'none'} : {}}>{cert.isExpired ? 'expired' : cert.isRevoked ? 'revoked' : cert.nearlyExpiring ? 'expired soon' : 'aktif'}</span></td>
                 <td>
                   {
                     !cert.isRevoked && !cert.isExpired ?

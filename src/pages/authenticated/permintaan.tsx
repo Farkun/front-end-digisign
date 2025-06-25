@@ -40,7 +40,7 @@ function Permintaan() {
         setLoading(true)
         const cookies: Cookies = new Cookies
         const token: string = cookies.get("bhf-e-sign-access-token")
-        if (confirm('Apakah Anda yakin ingin menyetujui penanda tanganan dokumen ini?')) try {
+        if (confirm('Are you sure to approve this document?')) try {
             const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/approve?document=${id}`, {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -60,7 +60,7 @@ function Permintaan() {
         setLoading(true)
         const cookies: Cookies = new Cookies
         const token: string = cookies.get("bhf-e-sign-access-token")
-        if (confirm('Apakah Anda yakin ingin menolak penanda tanganan dokumen ini?')) try {
+        if (confirm('Are you sure to deny this document?')) try {
             const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/document/deny?document=${id}`, {}, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -101,11 +101,11 @@ function Permintaan() {
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Judul</th>
-                            <th>Upload</th>
-                            <th>Persetujuan</th>
+                            <th>Title</th>
+                            <th>Uploaded</th>
+                            <th>Status</th>
                             <th>Detail</th>
-                            <th>Aksi</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,24 +127,24 @@ function Permintaan() {
                                 <td>
                                     {
                                         (isApproved && isDenied) || (!isApproved && !isDenied) 
-                                            ? <div>⏳ <span style={{ color: "red" }}>Belum Menanggapi</span></div> 
+                                            ? <div>⏳ <span style={{ color: "red" }}>Unprocessed</span></div> 
                                             : isApproved 
-                                                ? <div>✔️ Disetujui</div>
-                                                : isDenied && <div>❌ Ditolak</div>
+                                                ? <div>✔️ Approved</div>
+                                                : isDenied && <div>❌ Denied</div>
                                     }
                                 </td>
-                                <td><button className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>window.open(row.url.replace(`${import.meta.env.VITE_API_HOST}/api/storage/document`, `${import.meta.env.VITE_BASE_URL}/dokumen/detail`), '_blank')} disabled={loading}>🔍 Lihat</button></td>
+                                <td><button className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>window.open(row.url.replace(`${import.meta.env.VITE_API_HOST}/api/storage/document`, `${import.meta.env.VITE_BASE_URL}/dokumen/detail`), '_blank')} disabled={loading}>🔍 View</button></td>
                                 <td>
                                     {
                                         (isApproved && isDenied) || (!isApproved && !isDenied) ? <div>
-                                            <button type="button" className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>approveDocument(Crypt.encryptString(`${row.id}`))} disabled={loading}>✔️ Setujui</button>
-                                            <button type="button" className={loading ? 'revoke-btn' : "deleteBtn"} onClick={()=>denyDocument(Crypt.encryptString(`${row.id}`))} disabled={loading}>❌ Tolak</button>
+                                            <button type="button" className={loading ? 'revoke-btn' : "detailBtn"} onClick={()=>approveDocument(Crypt.encryptString(`${row.id}`))} disabled={loading}>✔️ Approve</button>
+                                            <button type="button" className={loading ? 'revoke-btn' : "deleteBtn"} onClick={()=>denyDocument(Crypt.encryptString(`${row.id}`))} disabled={loading}>❌ Deny</button>
                                         </div>
                                         : <div>
                                             {signedDocument ? <button type="button" onClick={() => {
                                                     // window.open(signedDocument, '_blank')
                                                     downloadDocument(signedDocument, `[SIGNED] ${row.title}`)
-                                                }}>📥 Unduh</button>
+                                                }}>📥 Download</button>
                                                 : 
                                                 !isDenied && <button 
                                                     type="button" 
@@ -155,7 +155,7 @@ function Permintaan() {
                                                         loading || signedDocument != null
                                                     } 
                                                     style={ loading || signedDocument ? {backgroundColor: 'gray'} : {}}
-                                                >Tanda Tangani</button>
+                                                >Sign Document</button>
                                             }
                                         </div>
                                     }

@@ -25,7 +25,7 @@ const Unverified = (): ReactElement => {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            if (data) alert('Email verifikasi berhasil dikirim ulang')
+            if (data) alert('Resend verification email successful')
         } catch (err) {
             // console.error(err)
         }

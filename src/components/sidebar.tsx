@@ -28,17 +28,17 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         <ul>
           <li>
             <NavLink to="/dashboard" className={({ isActive }) => isActive ? styles.active : ""}>
-              🏠 {isOpen && "Beranda"}
+              🏠 {isOpen && "Dashboard"}
             </NavLink>
           </li>
           <li>
             <NavLink to="/permintaan" className={({ isActive }) => isActive ? styles.active : ""}>
-              📄 {isOpen && "Permintaan"}
+              📄 {isOpen && "Requests"}
             </NavLink>
           </li>
           <li>
             <NavLink to="/tandatangani" className={({ isActive }) => isActive ? styles.active : ""}>
-              ✍️ {isOpen && "Tanda Tangani"}
+              ✍️ {isOpen && "Sign by Self"}
             </NavLink>
           </li>
 
@@ -49,19 +49,19 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               setShowPengaturanDropdown(false)
               setIsOpen(true)
             }}>
-              📂 {isOpen && 'Dokumen ▼'}
+              📂 {isOpen && 'Documents ▼'}
             </span>
             {isOpen && showDokumenDropdown && (
               <ul className={styles.dropdownMenu}>
-                <li><NavLink to="/dokumen/unggah">Unggah</NavLink></li>
-                <li><NavLink to="/dokumen/diunggah">Diunggah</NavLink></li>
-                <li><NavLink to="/dokumen/tandatangani">Ditandatangani</NavLink></li>
+                <li><NavLink to="/dokumen/unggah">Upload</NavLink></li>
+                <li><NavLink to="/dokumen/diunggah">Uploaded</NavLink></li>
+                <li><NavLink to="/dokumen/tandatangani">Signed</NavLink></li>
               </ul>
             )}
           </li>
           <li>
             <NavLink to="/verifikasi-dokumen" className={({ isActive }) => isActive ? styles.active : ""}>
-              📋 {isOpen && "Verifikasi Dokumen"}
+              📋 {isOpen && "Document Verification"}
             </NavLink>
           </li>
           {/* Dropdown Pengaturan */}
@@ -71,13 +71,13 @@ function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               setShowDokumenDropdown(false)
               setIsOpen(true)
             }}>
-              ⚙️ {isOpen && 'Pengaturan ▼'}
+              ⚙️ {isOpen && 'Settings ▼'}
             </span>
             {isOpen && showPengaturanDropdown && (
               <ul className={styles.dropdownMenu}>
-                <li><NavLink to="/pengaturan/sertifikat">Sertifikat Digital</NavLink></li>
-                <li><NavLink to="/pengaturan/tanda-tangan">Gambar Tanda Tangan</NavLink></li>
-                <li><NavLink to="/pengaturan/profile">Profil</NavLink></li>
+                <li><NavLink to="/pengaturan/sertifikat">Digital Certificates</NavLink></li>
+                <li><NavLink to="/pengaturan/tanda-tangan">Signature Image</NavLink></li>
+                <li><NavLink to="/pengaturan/profile">Profile</NavLink></li>
               </ul>
             )}
           </li>

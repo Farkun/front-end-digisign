@@ -19,7 +19,7 @@ function Navbar2({ isSidebarOpen }: NavbarProps) {
       className={styles.navbar2}
       style={{ left: isSidebarOpen ? "290px" : "70px", width: `calc(100% - ${isSidebarOpen ? "290px" : "70px"})` }}
     >
-      <button className={styles.logoutBtn} onClick={handleLogout}>Keluar</button>
+      <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
     </header>
   );
 }

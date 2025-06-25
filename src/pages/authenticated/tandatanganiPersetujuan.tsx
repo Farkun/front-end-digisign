@@ -59,14 +59,14 @@ const TandaTanganiPersetujuan = () => {
                 }
             })
             if (!data?.payload) {
-                alert('Dokumen tidak ditemukan')
+                alert('Document not found')
                 window.location.href = '/permintaan'
                 return
             }
             const {url, title} = data.payload
             getDocumentFile(url, title)
         } catch (err: any) {
-            alert('Dokumen tidak ditemukan')
+            alert('Document not found')
             window.location.href = '/permintaan'
             return
         }
@@ -133,7 +133,7 @@ const TandaTanganiPersetujuan = () => {
                 }
             })
             if (!data?.payload) {
-                alert('Anda belum memiliki sertifikat tanda tangan')
+                alert("You don't have signature certificate yet")
                 window.location.href = '/permintaan'
                 return
             }
@@ -156,7 +156,7 @@ const TandaTanganiPersetujuan = () => {
                 return
             }
         } catch (err: any) {
-            alert('Anda belum memiliki sertifikat tanda tangan')
+            alert("You don't have signature certificate yet")
             window.location.href = '/pengaturan/sertifikat'
             return
             // console.error(err.message )
@@ -241,9 +241,9 @@ const TandaTanganiPersetujuan = () => {
         if (loading) return
         setLoading(true)
         if (pdfFile) {
-            const passphrase: string | null = prompt('Masukkan passphrase tanda tangan')
+            const passphrase: string | null = prompt('Enter passphrase')
             if (!passphrase || passphrase == '') {
-                alert('passphrase tidak boleh kosong')
+                alert("passphrase can't be null")
             } else {
                 const formData: FormData = new FormData()
                 formData.append('document', `${id}`)
@@ -296,7 +296,7 @@ const TandaTanganiPersetujuan = () => {
     if (isLoadingDocument || isLoadingSignature) return <div>Loading ...</div>
 
     return <Homepage>
-        tandatangani dokumen disetujui
+        Sign Approved Document
 
         <div style={{
             display: 'flex',
@@ -311,16 +311,16 @@ const TandaTanganiPersetujuan = () => {
                     else if (e.target.value == RenderChoice.BOTH) attachSign(combineSign, e.target.value)
                     setRenderMode(e.target.value)
                 }}>
-                    <option style={{backgroundColor: '#eee', color: "white"}} value="" disabled>Terapkan Tanda Tangan</option>
-                    <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.IMAGE}>Tanda Tangan</option>
+                    <option style={{backgroundColor: '#eee', color: "white"}} value="" disabled>Apply Signature</option>
+                    <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.IMAGE}>Signature Image</option>
                     <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.QR}>QR Code</option>
-                    <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.BOTH}>Tanda Tangan dan QR Code</option>
+                    <option style={{backgroundColor: 'white', color: "black"}} value={RenderChoice.BOTH}>Both</option>
                 </select>
                 <button type="button" onClick={()=>{
                     setSignatureImage(null)
                     setSignaturePositions({x: 0, y: 0})
                     setIsSignatureSelected(false)
-                }}>Hapus Tanda Tangan</button>
+                }}>Delete Signature</button>
             </div>
             <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage" style={{marginTop: 0}}>
                 <Layer onMouseDown={(e) => {
@@ -535,7 +535,7 @@ const TandaTanganiPersetujuan = () => {
                     }
                 </Layer>
             </Stage>
-            <button type="button" onClick={loadSignatureToDocument} disabled={!signatureData || !signatureImage || loading} style={!signatureData || !signatureImage || loading ? {backgroundColor: 'gray'} : {}}>Tanda Tangani</button>
+            <button type="button" onClick={loadSignatureToDocument} disabled={!signatureData || !signatureImage || loading} style={!signatureData || !signatureImage || loading ? {backgroundColor: 'gray'} : {}}>Sign</button>
         </div>
     </Homepage>
 }

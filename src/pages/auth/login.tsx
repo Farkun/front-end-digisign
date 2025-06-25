@@ -51,12 +51,12 @@ function Login() {
 
   return (
     <div className="login-container">
-      <h2>Masuk</h2>
-      <p>Masuk untuk menandatangani dokumen</p>
+      <h2>Login</h2>
+      <p>Login to sign document</p>
       <form onSubmit={handleLogin}>
         <input
           type="text"
-          placeholder="Username atau Email"
+          placeholder="Username or Email"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           required
@@ -64,16 +64,16 @@ function Login() {
         />
         <input
           type="password"
-          placeholder="Kata Sandi"
+          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
           readOnly={loading}
         />
-        <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Masuk</button>
-        <div>Tidak bisa masuk? <Link to={'/forgot-password'}>lupa kata sandi</Link></div><br />
+        <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Login</button>
+        <div>Cannot login? <Link to={'/forgot-password'}>forgot password</Link></div><br />
         <div>
-          atau <a href="/register">registrasi</a>
+          or <a href="/register">register</a>
         </div>
       </form>
     </div>
