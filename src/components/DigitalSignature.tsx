@@ -27,7 +27,7 @@ const DigitalSignature = ({isSignatureExist}: any) => {
       })
       // setDrawed(data);
       
-      if (data && data.payload) alert('Tanda tangan berhasil disimpan')
+      if (data && data.payload) alert('Signature Saved Successfully')
     } catch (err: any) {
       // console.error(err.message)
     }
@@ -37,7 +37,7 @@ const DigitalSignature = ({isSignatureExist}: any) => {
     const dataUrl = signatureRef.current?.getSignature();
     if (dataUrl) {
       if (isSignatureExist) {
-        if (confirm('Apakah Anda ingin mengganti gambar tanda tangan saat ini?')) storeSignature(dataUrl)
+        if (confirm('Are you sure to change current signature?')) storeSignature(dataUrl)
       }
       else storeSignature(dataUrl)
     }

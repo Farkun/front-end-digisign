@@ -17,7 +17,7 @@ const GambarTandaTangan = () => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        alert('Ukuran gambar terlalu besar')
+        alert('Maximum file size is 2MB')
         return
       }
       setSelectedFile(file);
@@ -39,7 +39,7 @@ const GambarTandaTangan = () => {
         }
       })
       if (!data) return
-        alert("Tanda tangan berhasil diupload!")
+        alert("Signature uploaded successfully!")
         setCurrentImage(previewUrl)
         setPreviewUrl(null)
     } catch (err: any) {
@@ -56,11 +56,11 @@ const GambarTandaTangan = () => {
     const accessToken: string = cookies.get("bhf-e-sign-access-token")
     if (selectedFile) {
       if (currentImage) {
-        if (confirm('Apakah Anda ingin mengganti gambar tanda tangan saat ini?')) saveSign(accessToken)
+        if (confirm('Are you sure to change current signature?')) saveSign(accessToken)
       }
       saveSign(accessToken)
     } else {
-      alert("Silakan pilih file terlebih dahulu.");
+      alert("Please choose file for signature image.");
     }
     setLoading(false)
   };
@@ -92,21 +92,21 @@ const GambarTandaTangan = () => {
     setLoading(true)
     const cookies: Cookies = new Cookies()
     const token: string = cookies.get("bhf-e-sign-access-token")
-    if (!confirm('Apakah Anda yakin ingin menghapus tanda tangan?')) return
+    if (!confirm('Are you sure to delete this signature?')) return
     try {
       const {data} = await axios.delete(import.meta.env.VITE_API_HOST + `/api/signature/delete`, {headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       }})
       if (!data) {
-        alert('Gagal menghapus tanda tangan')
+        alert('Failed to delete signature')
         return
       } 
-      alert('Tanda tangan berhasil dihapus')
+      alert('Signature saved successfully')
       window.location.reload()
       return
     } catch (err: any) {
-      alert('Gagal menghapus tanda tangan')
+      alert('Failed to delete signature')
       // console.error(err.message)
     }
     setLoading(false)

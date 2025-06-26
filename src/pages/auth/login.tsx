@@ -25,11 +25,11 @@ function Login() {
         }
       })
       if (!data) {
-        alert('Username, Email, atau Password Salah')
+        alert('Username, Email, or Password incorrect')
         return
       }
       if (!data.token) {
-        alert('Terlalu banyak percobaan, coba lagi dalam 24 jam')
+        alert('Too many attempt, try again in 24 hours')
         return
       }
       const expiration: any = jwtDecode(data.token).exp
@@ -42,7 +42,7 @@ function Login() {
       })
       if (data.token) window.location.href = '/dashboard'
     } catch (err: any) {
-      alert('Username, Email, atau Password Salah')
+      alert('Username, Email, or Password incorrect')
       // console.error(err.message)
     }
     setLoading(false)
@@ -71,7 +71,7 @@ function Login() {
           readOnly={loading}
         />
         <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Login</button>
-        <div>Cannot login? <Link to={'/forgot-password'}>forgot password</Link></div><br />
+        <div>Can't login? <Link to={'/forgot-password'}>forgot password</Link></div><br />
         <div>
           or <a href="/register">register</a>
         </div>

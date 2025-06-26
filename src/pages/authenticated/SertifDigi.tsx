@@ -112,7 +112,7 @@ function SertifDigi() {
         <h2>Certificates</h2>
           <button className="buat-sertifikat-btn" style={loading ? {backgroundColor: 'gray'} : {}} onClick={() => {
             if (!signature) {
-              alert('Anda belum memiliki tanda tangan')
+              alert("You don't have signature yet")
               window.location.href = '/pengaturan/tanda-tangan'
             } else window.location.href = "/pengaturan/sertifikat/create"
           }} disabled={loading}>➕ Create New Certificate</button>

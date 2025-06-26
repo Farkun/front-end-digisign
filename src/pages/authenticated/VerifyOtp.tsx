@@ -28,7 +28,7 @@ const VerifyOtp = (): ReactElement => {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            if (data) alert('Email verifikasi berhasil dikirim ulang')
+            if (data) alert('Verification sent successfully')
         } catch (err) {
             // console.error(err)
         }
