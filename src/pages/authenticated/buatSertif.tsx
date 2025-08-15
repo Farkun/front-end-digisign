@@ -1,61 +1,64 @@
 import React, { useState } from "react"
-import Homepage from "../layouts/homepage"
-import "../assets/styles/buatSertif.css" // Import CSS
+import Homepage from "../../layouts/homepage"
+import "../../assets/styles/buatSertif.css" // Import CSS
 import axios from "axios"
 import Cookies from "universal-cookie"
 
 const buatSertif: React.FC = () => {
   const [passphrase, setPassphrase] = useState(null)
-  const [days, setDays] = useState(0)
+  const [days, setDays] = useState(365)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+    if (loading) return
+    setLoading(true)
     if (days <= 0) alert('minimum expiration is 1 day')
     if (!passphrase || passphrase == '') alert('passphrase cannot be null')
     if (days > 0 && passphrase && passphrase != '') {
       try {
         const cookies: Cookies = new Cookies()
-        const token: string = cookies.get("accessToken")
-        const {data}: any = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-certificate', {
+        const token: string = cookies.get("bhf-e-sign-access-token")
+        const {data}: any = await axios.post(import.meta.env.VITE_API_HOST + '/api/certificate/store', {
           passphrase: passphrase,
-          expire_in: days
+          expiration: days
         }, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
           }
         })
-        if (data) alert(`Sertifikat berhasil dibuat!\nBerlaku sampai dengan: ${days} hari`)
+        if (data) alert(`Certificate created successfully!\nExpired in: ${days} ${days > 1 ? 'days' : 'day'}`)
         window.location.href = '/pengaturan/sertifikat'
       } catch (err: any) {
-        console.error(err.message)
+        // console.error(err.message)
       }
     }
+    setLoading(false)
   }
 
   return <Homepage>
     <div className="buatSertifcontainer" style={{color: 'black'}}>
       {/* Header */}
-      <h2 className="header">Buat Sertifikat Baru</h2>
+      <h2 className="header">Create New Certificate</h2>
 
       {/* Informasi */}
       <div className="info">
-        <h3>Informasi</h3>
+        <h3>Information</h3>
         <p>
-          Passphrase sertifikat digunakan setiap kali Anda akan menandatangani
-          dokumen dengan sertifikat.
+          The certificate passphrase is used every time you sign a document with a certificate.
         </p>
-        <ul>
+        {/* <ul>
           <li>Panjang passphrase minimal 4 karakter</li>
           <li>Berisi huruf kecil (non-kapital) dan angka</li>
           <li className="warning">Jangan gunakan passphrase yang sama dengan password login akun</li>
-        </ul>
+        </ul> */}
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit}>
         <div className="data-box">
-          <h3>Data Sertifikat</h3>
+          <h3>Certificates Data</h3>
 
           {/* Input Masa Berlaku */}
           <div className="input-group">
@@ -66,29 +69,31 @@ const buatSertif: React.FC = () => {
               name="passphrase"
               onChange={(e: any) => setPassphrase(e.target.value)}
               className="input-field"
-              placeholder="Masukkan passphrase"
+              placeholder="Enter Passphrase"
               required
+              readOnly={loading}
             />
           </div>
 
           <div className="input-group">
-            <label>Masa Berlaku</label>
+            <label>Expired In</label>
             <input
               type="number"
               min={0}
-              defaultValue={0}
+              defaultValue={365}
               name="expire_in"
               onChange={(e: any) => setDays(Number(e.target.value))}
               className="input-field"
               required
+              readOnly={loading}
             />
-            <span>hari dari sekarang</span>
+            <span>{days > 1 ? 'days' : 'day'} from today</span>
           </div>
         </div>
 
         {/* Tombol Simpan */}
-        <button type="submit" className="save-btn">
-          Simpan
+        <button type="submit" className={loading ? 'revoke-btn' : "save-btn"} disabled={loading}>
+          Submit
         </button>
       </form>
     </div>

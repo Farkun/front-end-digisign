@@ -1,0 +1,110 @@
+import { ReactElement, useState } from "react";
+import Homepage from "../../layouts/homepage";
+import axios from "axios";
+import Cookies from "universal-cookie";
+
+
+const Profile = (): ReactElement => {
+
+    const [showPassword, setShowPassword] = useState<boolean>(false)
+    const [formDataProfile, setFormDataProfile] = useState<{username: string | null, email: string | null}>({username: null, email: null})
+    const [formDataPassword, setFormDataPassword] = useState<{old_password: string | null, new_password: string | null, confirm_new_password: string | null}>({old_password: null, new_password: null, confirm_new_password: null})
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const handleChangeProfileData = (e: any): void => {
+        setFormDataProfile({
+            ...formDataProfile,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleChangePasswordData = (e: any): void => {
+        setFormDataPassword({
+            ...formDataPassword,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleSubmitProfile = async (e: any): Promise<void> => {
+        e.preventDefault()
+        if (loading) return
+        setLoading(true)
+        const cookies: Cookies = new Cookies()
+        const token: string = cookies.get("bhf-e-sign-access-token")
+        if (confirm("Are you sure to change your profile?")) try {
+            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/users/update-profile`, formDataProfile, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            })
+            if (data) {
+                alert('Profile changed successfully')
+                window.location.reload()
+            }
+        } catch (err: any) {
+            // console.error(err.messae)
+        }
+        setLoading(false)
+    }
+
+    const handleSubmitPassword = async (e: any): Promise<void> => {
+        e.preventDefault()
+        if (loading) return
+        setLoading(true)
+        if (formDataPassword.new_password != formDataPassword.confirm_new_password) {
+            alert('Incorrect New Password Confirmation')
+            return
+        }
+        const cookies: Cookies = new Cookies()
+        const token: string = cookies.get("bhf-e-sign-access-token")
+        if (confirm("Are you sure to change your password?")) try {
+            const {confirm_new_password, ...passData} = formDataPassword
+            const {data} = await axios.put(import.meta.env.VITE_API_HOST + `/api/users/change-password`, {}, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                params: passData
+            })
+            if (data) {
+                alert('New password changed successfully')
+                window.location.reload()
+            }
+        } catch (err: any) {
+            // console.error(err.message)
+        }
+        setLoading(false)
+    }
+
+    return <Homepage>
+        <h1 style={window.matchMedia("(prefers-color-scheme: dark)").matches ? {color: 'white', textAlign: 'start'} : {textAlign: 'start'}}>Edit Profile</h1>
+
+        <div style={{backgroundColor: 'white', borderRadius: '10px', padding: '20px', borderLeft: '6px solid #007bff', color: "black", fontWeight: 'normal', margin: '20px', width: '50vw'}}>
+            <h3 style={{textAlign: 'start'}}>Username and Email</h3>
+            <form style={{width: '96%'}} onSubmit={handleSubmitProfile}>
+                <input type="text" name="username" placeholder="Username" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} readOnly={loading}/>
+                <input type="email" name="email" placeholder="Email" style={{maxWidth: '100%'}} onChange={handleChangeProfileData} readOnly={loading}/>
+                <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+                    <button type="submit" style={loading ? {width: 'fit-content', backgroundColor: 'gray'} : {width: 'fit-content'}} disabled={loading}>Save</button>
+                </div>
+            </form>
+        </div>
+
+        <div style={{backgroundColor: 'white', borderRadius: '10px', padding: '20px', borderLeft: '6px solid #007bff', color: "black", fontWeight: 'normal', margin: '20px', width: '50vw'}}>
+            <h3 style={{textAlign: 'start'}}>Change Password</h3>
+            <form style={{width: '96%'}} onSubmit={handleSubmitPassword}>
+                <input type={showPassword ? "text" : "password"} name="old_password" placeholder="Current Password" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required readOnly={loading}/>
+                <input type={showPassword ? "text" : "password"} name="new_password" placeholder="New Password" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required readOnly={loading}/>
+                <input type={showPassword ? "text" : "password"} name="confirm_new_password" placeholder="Confirm New Passsword" style={{maxWidth: '100%'}} onChange={handleChangePasswordData} required readOnly={loading}/>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start'}}>
+                    <button type="button" style={{width: 'fit-content', height: 'fit-content', backgroundColor: 'transparent', color: 'black', fontWeight: '500', fontSize: '14px', padding: 0, margin: 0}} onClick={()=>setShowPassword(!showPassword)}>Show Password</button>
+                    <button type="submit" style={loading ? {width: 'fit-content', backgroundColor: 'gray'} : {width: 'fit-content'}} disabled={loading}>Save</button>
+                </div>
+            </form>
+        </div>
+
+    </Homepage>
+}
+
+export default Profile

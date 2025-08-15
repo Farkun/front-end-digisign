@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { SignatureComponent } from "@syncfusion/ej2-react-inputs";
 import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
 import styles from "./DigitalSignature.module.css"; // Import CSS Module
@@ -7,7 +7,7 @@ import Cookies from "universal-cookie";
 
 const DigitalSignature = ({isSignatureExist}: any) => {
   const signatureRef = useRef<SignatureComponent>(null);
-  const [drawed, setDrawed] = useState<any>(null)
+  // const [drawed, setDrawed] = useState<any>(null)
 
   const clearSignature = () => {
     signatureRef.current?.clear();
@@ -16,7 +16,7 @@ const DigitalSignature = ({isSignatureExist}: any) => {
   const storeSignature = async (bytes: string) => {
     try {
       const cookies: Cookies = new Cookies()
-      const token: string = cookies.get('accessToken')
+      const token: string = cookies.get("bhf-e-sign-access-token")
       const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/signature/store-sign-base64', {
         bytes: bytes
       }, {
@@ -25,11 +25,11 @@ const DigitalSignature = ({isSignatureExist}: any) => {
           "Authorization": `Bearer ${token}`
         }
       })
-      setDrawed(data);
+      // setDrawed(data);
       
-      if (data && data.payload) alert('Tanda tangan berhasil disimpan')
+      if (data && data.payload) alert('Signature Saved Successfully')
     } catch (err: any) {
-      console.error(err.message)
+      // console.error(err.message)
     }
   }
 
@@ -37,13 +37,11 @@ const DigitalSignature = ({isSignatureExist}: any) => {
     const dataUrl = signatureRef.current?.getSignature();
     if (dataUrl) {
       if (isSignatureExist) {
-        if (confirm('Apakah Anda ingin mengganti gambar tanda tangan saat ini?')) storeSignature(dataUrl)
+        if (confirm('Are you sure to change current signature?')) storeSignature(dataUrl)
       }
       else storeSignature(dataUrl)
     }
   }
-
-  console.log(drawed?.payload);
   
 
   return (

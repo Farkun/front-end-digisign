@@ -1,86 +1,113 @@
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, Outlet } from "react-router-dom";
-import Home from "./pages/home";
-import About from "./pages/about";
-import Login from "./pages/login";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Login from "./pages/auth/login";
 import NotFound from "./pages/notFound";
-import Dashboard from "./pages/dashboard";
-import Permintaan from "./pages/permintaan";
-import GambarTTD from "./pages/gambar_ttd";
-import Diunggah from "./pages/diunggah";
-import Ditandatangani from "./pages/ditandatangani";
-import TandaTangani from "./pages/tandaTangani";
-import TandaTangan from "./pages/tandaTangan";
-import SertifDigi from "./pages/SertifDigi";
-import Unggah from "./pages/unggah";
-import BuatSertif from "./pages/buatSertif";
-import Navbar from "./components/navbar";
+import Dashboard from "./pages/authenticated/dashboard";
+import Permintaan from "./pages/authenticated/permintaan";
+import GambarTTD from "./pages/authenticated/gambar_ttd";
+import Diunggah from "./pages/authenticated/diunggah";
+import Ditandatangani from "./pages/authenticated/ditandatangani";
+import TandaTangani from "./pages/authenticated/tandaTangani";
+import TandaTangan from "./pages/authenticated/tandaTangan";
+import SertifDigi from "./pages/authenticated/SertifDigi";
+import Unggah from "./pages/authenticated/unggah";
+import BuatSertif from "./pages/authenticated/buatSertif";
 import "./App.css";
 import { useEffect, useState } from "react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
-import Unverified from "./pages/unverified";
-import Register from "./pages/register";
-
+// import Unverified from "./pages/auth/unverified";
+import Register from "./pages/auth/register";
+import TandaTanganiPersetujuan from "./pages/authenticated/tandatanganiPersetujuan";
+import GuestRoutes from "./routes/GuestRoutes";
+import ProtectedRoutes from "./routes/ProtectedRoutes";
+import ForgotPassword from "./pages/auth/forgotPassword";
+import ResetPassword from "./pages/auth/resetPassword";
+import Profile from "./pages/authenticated/profile";
+import VerifikasiDokumen from "./pages/authenticated/verifikasi_dokumen";
+import DownloadDocument from "./pages/guest/downloadDocument";
+import ViewDocument from "./pages/authenticated/viewDocument";
+import Verifying from "./pages/auth/verifying";
+import VerifyOtp from "./pages/authenticated/VerifyOtp";
 function App() {
+
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [isVerified, setIsVerified] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
 
-  
-  const LocationLogger = () => {
-    const location: any = useLocation()
-    const validateToken = async () => {
-      const cookies = new Cookies();
-      const token = cookies.get('accessToken')
-      if (token) {
+  const validateToken = async () => {
+    const cookies = new Cookies();
+    const token = cookies.get("bhf-e-sign-access-token")
+    if (token) {
+      try {
         const tokenPayload: any = jwtDecode(token) 
         const isExpire: boolean = tokenPayload.exp * 1000 <= Date.now()
-        !isExpire && setIsAuthenticated(true)
+        if (!isExpire) {
+          setIsAuthenticated(true)
           if (tokenPayload.is_verified) setIsVerified(true)
+        }
+      } catch {
+        setIsAuthenticated(false)
+        setIsVerified(false)
       }
     }
-    
-    useEffect(() => {
-      validateToken()
-      
-      
-    }, [location])
+    setLoading(false)
+  }
+  
+  useEffect(() => {
+    validateToken()
+  }, [])
 
-    return null
-  }  
-  
-  
+  if (loading) return <div>Loading...</div>;
+
   return (
     <Router>
-      <LocationLogger/>
       <Routes>
-        <Route path="/" element={<Navbar />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="login" element={!isAuthenticated ? <Login /> : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>} />
-          <Route path="register" element={!isAuthenticated ? <Register /> : isVerified ? <Navigate to={'/dashboard'}/> : <Navigate to={'/unverified'}/>} />
+        {/* <Route path="verifikasi" element={<VerifyOtp/>}/> */}
+        <Route path="esign/:filename" element={<DownloadDocument/>}/>
+        
+        <Route path="/" element={<GuestRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
+          <Route index element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password/:token" element={<ResetPassword />} />
         </Route>
 
-        <Route path="/unverified" element={!isAuthenticated ? <Login /> : isVerified ? <Navigate to={'/dashboard'}/> : <Unverified/>} />
-        <Route path="*" element={<NotFound />} />
-
-        {/* ✅ Panggil `Dashboard` langsung, karena sudah ada `Homepage` di dalamnya */}
-        <Route path="/" element={
+        <Route path="api/auth/verification/:token/verify" element={isAuthenticated && isVerified ? <Navigate to={'/dashboard'} /> : <Verifying/>}/>
+        
+        {/* <Route path="/unverified" element={
           !isAuthenticated ? 
-            <Navigate to={'/login'} />
-            : !isVerified ?
-              <Navigate to={'/unverified'}/> : <Outlet/>
-        }>
+          <Navigate to={'/'} /> 
+          : isVerified ? 
+            <Navigate to={'/dashboard'}/> 
+            : <Unverified/>
+        } /> */}
+
+        <Route path="/verifikasi" element={
+          !isAuthenticated ? 
+          <Navigate to={'/'} /> 
+          : isVerified ? 
+            <Navigate to={'/dashboard'}/> 
+            : <VerifyOtp/>
+        } />
+        
+        <Route element={<ProtectedRoutes isAuthenticated={isAuthenticated} isVerified={isVerified}/>}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="permintaan" element={<Permintaan />} />
           <Route path="permintaan/tandatangan" element={<TandaTangan />} />
           <Route path="tandatangani" element={<TandaTangani />} />
+          <Route path="tandatangani/:id" element={<TandaTanganiPersetujuan />} />
           <Route path="dokumen/diunggah" element={<Diunggah />} />
           <Route path="dokumen/tandatangani" element={<Ditandatangani />} />
           <Route path="dokumen/unggah" element={<Unggah />} />
           <Route path="pengaturan/tanda-tangan" element={<GambarTTD />} />
           <Route path="pengaturan/sertifikat" element={<SertifDigi />} />
           <Route path="pengaturan/sertifikat/create" element={<BuatSertif />} />
+          <Route path="pengaturan/profile" element={<Profile />} />
+          <Route path="verifikasi-dokumen" element={<VerifikasiDokumen/>}/>
         </Route>
+        <Route path="dokumen/detail/:filename" element={<ViewDocument/>}/>
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );

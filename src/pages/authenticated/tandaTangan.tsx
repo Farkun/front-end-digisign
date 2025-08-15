@@ -1,19 +1,19 @@
-import "../assets/styles/tandaTangani.css";
-import Homepage from "../layouts/homepage";
+import "../../assets/styles/tandaTangan.css";
+import Homepage from "../../layouts/homepage";
 import React, { useRef, useState, useEffect } from "react";
-import { PDFDocument } from "pdf-lib";
-import { saveAs } from "file-saver";
 import * as pdfjsLib from "pdfjs-dist";
 import { Stage, Layer, Image as KonvaImage } from "react-konva";
 import { SignatureComponent } from "@syncfusion/ej2-react-inputs";
 import { ButtonComponent } from "@syncfusion/ej2-react-buttons";
+import { NavLink } from "react-router-dom";
 
 (pdfjsLib as any).GlobalWorkerOptions.workerSrc =
   `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js`;
 
 function TandaTangani() {
   const signObj = useRef<SignatureComponent | null>(null);
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  // const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfFile] = useState<File | null>(null);
   const [pdfImage, setPdfImage] = useState<HTMLImageElement | null>(null);
   const [signatureImage, setSignatureImage] = useState<HTMLImageElement | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -35,14 +35,14 @@ function TandaTangani() {
   }, [uploadedImage]);
 
   /** ✅ Fungsi untuk Upload & Render PDF */
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setPdfFile(file);
-      setCurrentPage(1);
-      renderPdf(file, 1);
-    }
-  };
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     setPdfFile(file);
+  //     setCurrentPage(1);
+  //     renderPdf(file, 1);
+  //   }
+  // };
 
   /** ✅ Fungsi untuk Merender PDF */
   const renderPdf = async (file: File, pageNumber = 1) => {
@@ -111,79 +111,9 @@ function TandaTangani() {
     }));
   };
 
-  /** ✅ Fungsi untuk Menyimpan Signature ke dalam PDF */
-  const addSignatureToPDF = async () => {
-    if (!pdfFile) {
-      alert("Pilih file PDF terlebih dahulu!");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(pdfFile);
-    reader.onload = async () => {
-      const pdfBytes = new Uint8Array(reader.result as ArrayBuffer);
-      const pdfDoc = await PDFDocument.load(pdfBytes);
-
-      for (const [pageNumber, position] of Object.entries(signaturePositions)) {
-        const pageIndex = parseInt(pageNumber, 10) - 1; // PDF page index dimulai dari 0
-        if (pageIndex < pdfDoc.getPages().length) {
-          const page = pdfDoc.getPages()[pageIndex];
-
-          // ✅ Tambahkan tanda tangan digital (jika ada)
-          if (signatureImage) {
-            const signatureBytes = await fetch(signatureImage.src).then(res => res.arrayBuffer());
-            const pdfSignature = await pdfDoc.embedPng(signatureBytes);
-            page.drawImage(pdfSignature, {
-              x: position.x,
-              y: page.getHeight() - position.y - 40,
-              width: 120,
-              height: 40,
-            });
-
-            console.log(`✅ Digital signature ditempatkan di halaman ${pageNumber} pada (${position.x}, ${position.y})`);
-          }
-        }
-      }
-
-      // 🔄 Loop untuk tanda tangan gambar yang diunggah
-      for (const [pageNumber, position] of Object.entries(uploadedImagePos)) {
-        const pageIndex = parseInt(pageNumber, 10) - 1; // PDF page index dimulai dari 0
-        if (pageIndex < pdfDoc.getPages().length) {
-          const page = pdfDoc.getPages()[pageIndex];
-
-          // ✅ Tambahkan tanda tangan yang diunggah (jika ada)
-          if (uploadedImage) {
-            const uploadedBytes = await fetch(uploadedImage).then(res => res.arrayBuffer());
-            const pdfUploadedSignature = await pdfDoc.embedPng(uploadedBytes);
-            page.drawImage(pdfUploadedSignature, {
-              x: position.x,
-              y: page.getHeight() - position.y - 40,
-              width: 120,
-              height: 40,
-            });
-
-            console.log(`📸 Uploaded signature ditempatkan di halaman ${pageNumber} pada (${position.x}, ${position.y})`);
-          }
-        }
-      }
-
-      // Simpan & Unduh PDF yang telah dimodifikasi
-      console.log("Cek data sebelum ditambahkan ke PDF:");
-      console.log("uploadedImagePos:", uploadedImagePos);
-      console.log("uploadedImage:", uploadedImage);
-      console.log("uploadedImageElement:", uploadedImageElement);
-      console.log("signatureImage:", signatureImage);
-      const modifiedPdfBytes = await pdfDoc.save();
-      const blob = new Blob([modifiedPdfBytes], { type: "application/pdf" });
-      saveAs(blob, "signed-document.pdf");
-    };
-  };
-
-
   return (
     <Homepage>
-      <div className="tandaTangani" style={{color: 'black'}}>
-        <h1>Unggah dokumen PDF untuk ditandatangani</h1>
+      <div className="tandaTangan">
 
         {/* ✅ Input File untuk Tanda Tangan Gambar */}
         <input
@@ -278,10 +208,10 @@ function TandaTangani() {
           </button>
         </div>
         {/* ✅ Input File untuk PDF */}
-        <input type="file" accept="application/pdf" onChange={handleFileChange} />
 
-        <div id="actionBtn">
-          <ButtonComponent onClick={addSignatureToPDF}>Tandatangani & Unduh PDF</ButtonComponent>
+        <div className="actionBtn">
+            <button className="download-btn"> Tandatangani</button>
+            <NavLink to="/permintaan"><button className="delete-btn">Batal</button></NavLink>
         </div>
       </div>
     </Homepage>

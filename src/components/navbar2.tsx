@@ -8,17 +8,18 @@ interface NavbarProps {
 function Navbar2({ isSidebarOpen }: NavbarProps) {
 
   const handleLogout = () => {
-    // localStorage.removeItem('accessToken')
+    // localStorage.removeItem('bhf-e-sign-access-token')
     const cookies = new Cookies()
-    cookies.remove('accessToken')
-    window.location.href = '/login'
+    cookies.remove('bhf-e-sign-access-token')
+    window.location.href = '/'
   };
+
   return (
     <header
       className={styles.navbar2}
       style={{ left: isSidebarOpen ? "290px" : "70px", width: `calc(100% - ${isSidebarOpen ? "290px" : "70px"})` }}
     >
-      <button className={styles.logoutBtn} onClick={handleLogout}>Sign Out</button>
+      <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
     </header>
   );
 }

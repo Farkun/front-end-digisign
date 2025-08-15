@@ -7,6 +7,7 @@ import Cookies from "universal-cookie"
 const Register = () => {
 
     const [formData, setFormData] = useState<any>({})
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleChange = (e: any) => {
         const {name, value} = e.target
@@ -15,6 +16,8 @@ const Register = () => {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault()
+        if (loading) return
+        setLoading(true)
         if (formData.password != formData.confirm_password) alert('please confirm your password')
         else {
             try {
@@ -24,23 +27,21 @@ const Register = () => {
                         'Content-Type': 'application/json'
                     }
                 })
-                // console.log(data);
-                // if (data && data.token) {
-                    
-                    const cookies = new Cookies();
-                    const expiration: any = jwtDecode(data.token).exp
-                    let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
-                    maxAge = parseInt(maxAge.toFixed())
-                    await cookies.set('accessToken', data.token, {
-                        path: '/',
-                        maxAge: maxAge
-                    })
-                    window.location.href = '/unverified'
-                // }
+                const cookies = new Cookies();
+                const expiration: any = jwtDecode(data.token).exp
+                let maxAge = (expiration * 1000 - Date.now()) / (30 * 24)
+                maxAge = parseInt(maxAge.toFixed())
+                await cookies.set('bhf-e-sign-access-token', data.token, {
+                    path: '/',
+                    maxAge: maxAge
+                })
+                // window.location.href = '/unverified'
+                window.location.href = '/verifikasi'
             } catch (err: any) {
-                console.error(err.message)
+                // console.error(err.message)
             }
         }
+        setLoading(false)
     }
 
     return <div className="login-container">
@@ -50,37 +51,37 @@ const Register = () => {
             type="text"
             name="username"
             placeholder="Username"
-            // value={data.username}
             onChange={handleChange}
             required
+            readOnly={loading}
             />
             <input
             type="email"
             name="email"
-            placeholder="email"
-            // value={data.email}
+            placeholder="Email"
             onChange={handleChange}
             required
+            readOnly={loading}
             />
             <input
             type="password"
             name="password"
             placeholder="Password"
-            // value={data.password}
             onChange={handleChange}
             required
+            readOnly={loading}
             />
             <input
             type="password"
             name="confirm_password"
             placeholder="Confirm Password"
-            // value={data.password}
             onChange={handleChange}
             required
+            readOnly={loading}
             />
-            <button type="submit">Register</button>
+            <button type="submit" disabled={loading} style={loading ? {backgroundColor: 'gray'} : {}}>Register</button>
             <div>
-                Allready have an account? <a href="/login">Login</a>
+                Already have an account? <a href="/">Login</a>
             </div>
         </form>
     </div>

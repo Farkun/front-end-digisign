@@ -1,0 +1,312 @@
+import React, { useEffect, useState } from "react";
+import * as pdfjsLib from "pdfjs-dist";
+import { Stage, Layer, Image as KonvaImage } from "react-konva";
+import Homepage from "../../layouts/homepage";
+import "../../assets/styles/unggah.css";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import Select from "react-select";
+
+(pdfjsLib as any).GlobalWorkerOptions.workerSrc = 
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.worker.min.js";
+
+const Unggah: React.FC = () => {
+  const [users, setUsers] = useState<{
+    id: number,
+    username: string,
+    email: string
+  }[]>([]);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [signersId, setSignersId] = useState<number[]>([])
+  const [isOrdered, setIsOrdered] = useState<boolean>(false)
+  const [pdfImage, setPdfImage] = useState<HTMLImageElement | null>(null);
+  const [signers, setSigners] = useState<{ id: number | null,name: string; page: number }[]>([]);
+  const [newSigner, setNewSigner] = useState<{ id: number | null,name: string; page: number }>({
+    id: null,
+    name: "",
+    page: 1,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [filename, setFilename] = useState<string>('')
+  const [changeDocument, setChangeDocument] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+
+  
+
+  // /** ✅ Upload & Render PDF */
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (loading) return
+    setLoading(true)
+    const file = event.target.files?.[0];
+    if (file) {
+      setPdfFile(file);
+      setCurrentPage(1);
+      renderPdf(file, 1);
+      setFilename(file.name)
+    }
+    setChangeDocument(false)
+    setLoading(false)
+  };
+
+  // /** ✅ Render PDF ke gambar */
+  const renderPdf = async (file: File, pageNumber = 1) => {
+    setLoading(true)
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onload = async () => {
+      const pdfData = new Uint8Array(reader.result as ArrayBuffer);
+      const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+
+      setTotalPages(pdf.numPages); // Simpan total halaman PDF
+
+      if (pageNumber < 1 || pageNumber > pdf.numPages) return; // Cegah halaman tidak valid
+
+      const page = await pdf.getPage(pageNumber);
+      const containerWidth = 597; // Sesuaikan dengan lebar <Stage>
+      const scale = containerWidth / page.getViewport({ scale: 1 }).width;
+      const viewport = page.getViewport({ scale });
+
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
+      if (!context) return;
+
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      await page.render({ canvasContext: context, viewport }).promise;
+
+      const img = new Image();
+      img.src = canvas.toDataURL();
+      img.onload = () => setPdfImage(img);
+    };
+    setLoading(false)
+  };
+
+  // /** ✅ Tambah penandatangan */
+  const addSigner = () => {
+    if (loading) return
+    setLoading(true)
+    if (newSigner.name) {
+      setSigners([...signers, newSigner]);
+      setNewSigner({ id: null, name: "", page: 1 });
+    }
+    setLoading(false)
+  };
+
+  // /** ✅ Hapus penandatangan */
+  const removeSigner = (index: number) => {
+    if (loading) return
+    setLoading(true)
+    setSigners(signers.filter((_, i) => i !== index));
+    setLoading(false)
+  };
+
+  const getUsers = async () => {
+    try {
+      const cookies: Cookies = new Cookies()
+      const token: string = cookies.get("bhf-e-sign-access-token")
+      const {data}: any = await axios.get(import.meta.env.VITE_API_HOST + '/api/users/get', {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      if (data?.payload) setUsers(data.payload)
+    } catch (err: any) {
+      // console.error(err.message)
+    }
+  }
+
+  useEffect(() => {
+    getUsers()
+  }, [])
+
+  const handleSubmit = async () => {
+    if (loading) return
+    setLoading(true)
+    if (!pdfFile) alert('file not selected')
+    if (!signersId || signersId.length == 0) alert('signers is not selected')
+    if (pdfFile && signersId?.length > 0) {
+      const signerdata = [...signers, newSigner]
+      const pageNumbers: number[] = signerdata.map((val: {page: number}) => {
+        return val?.page
+      })
+      try {
+        const cookies: Cookies = new Cookies()
+        const token: string = cookies.get("bhf-e-sign-access-token")
+        const datamap = {
+          file: pdfFile,
+          title: filename,
+          signers_id: signersId,
+          order_sign: isOrdered,
+          page_number: pageNumbers
+        }
+        const {data} = await axios.post(import.meta.env.VITE_API_HOST + '/api/document/send', datamap, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+          },
+          withCredentials: true
+        })
+        if (data?.payload) {
+          alert('document sent successfully')
+          window.location.href = '/dokumen/diunggah'
+        }
+      } catch (err: any) {
+        // console.error(err.message)
+      }
+    }
+    setLoading(false)
+  }
+
+  return (
+    <Homepage>
+    <div className="card" style={{color: 'black'}}>
+      <div className="card-content">
+        <h4 className="card-title">Information</h4>
+        <p className="info-text">
+          On this page you can upload one or more documents to be signed by one or more signers. 
+          The person you ask to sign the document will be notified by email. 
+          If you want to sign a document yourself, use this page.
+        </p>
+      </div>
+    </div>
+
+    <div className="unggah">
+      <h2>Upload Document</h2>
+
+      {(!pdfFile || changeDocument) && <input type="file" accept="application/pdf" onChange={handleFileChange} readOnly={loading}/>}
+
+      {pdfFile && <div>
+        {!changeDocument && <button style={{
+            width: 'fit-content',
+            backgroundColor: '#fa0',
+            color: 'black'
+          }}
+          onClick={() => setChangeDocument(true)}
+        >Change Document</button>}
+        {/* Canvas untuk menampilkan PDF */}
+        <div className="pdf-container text-black">
+          <Stage width={pdfImage?.width || 500} height={pdfImage?.height || 633} className="pdf-stage text-black">
+            <Layer >{pdfImage && <KonvaImage image={pdfImage} />}</Layer>
+          </Stage>
+        </div>
+        <div className="pdf-navigation">
+            <button
+              onClick={() => {
+                if (currentPage > 1) {
+                  setCurrentPage(currentPage - 1);
+                  renderPdf(pdfFile as File, currentPage - 1);
+                }
+              }}
+              disabled={currentPage === 1}
+            >
+              ← Previous Page
+            </button>
+
+            {/* 🔄 Input untuk memilih halaman secara langsung */}
+            <span>Page</span>
+            <input
+              type="number"
+              value={currentPage}
+              onChange={(e) => {
+                let newPage = parseInt(e.target.value, 10) || 1;
+                if (newPage < 1) newPage = 1;
+                if (newPage > totalPages) newPage = totalPages;
+
+                setCurrentPage(newPage);
+                renderPdf(pdfFile as File, newPage);
+              }}
+              min="1"
+              max={totalPages}
+              style={{ width: "50px", textAlign: "center" }}
+            />
+            <span> from {totalPages} {totalPages > 1 ? 'pages' : 'page'}</span>
+
+            <button
+              onClick={() => {
+                if (currentPage < totalPages) {
+                  setCurrentPage(currentPage + 1);
+                  renderPdf(pdfFile as File, currentPage + 1);
+                }
+              }}
+              disabled={currentPage === totalPages}
+            >
+              Next Page →
+            </button>
+          </div>
+
+        {/* Formulir untuk Daftar Penandatangan */}
+        <h3>Signer List</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Signer</th>
+              <th>Page</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {signers.map((signer, index) => (
+              <tr key={index}>
+                <td>{signer.name}</td>
+                <td>{signer.page}</td>
+                <td>
+                  <button className={loading ? 'revoke-btn' : "secondary"} onClick={() => removeSigner(index)} disabled={loading}>❌</button>
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td>
+                <Select options={users.map((item) => { return { value: item.id, label: `${item.username} [${item.email}]` }; })} 
+                  onChange={(e: any) => {
+                    setNewSigner({ ...newSigner, name: e.label, id: e.value})
+                    setSignersId(prevState => [...prevState, e.value])
+                  }}
+                  styles={{
+                    control: (baseStyle) => ({
+                      ...baseStyle,
+                      color: 'black',
+                      width: '100%'
+                    }),
+                    option: (baseStyle) => ({...baseStyle, color: 'black'}),
+                  }}
+                  placeholder={'Search signer'}
+                  isDisabled={loading}
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  defaultValue={newSigner.page}
+                  onChange={(e) => {
+                    setNewSigner({ ...newSigner, page: parseInt(e.target.value) || 1 })
+                  }}
+                  min="1"
+                  readOnly={loading}
+                />
+              </td>
+              <td>
+                <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={addSigner}>➕</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div style={{height: 'fit-content', width: 'fit-content', padding: 0, display: 'flex', alignItems: 'center', gap: '5px'}}>
+          <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
+            <input type="checkbox" name="order" id="order" onChange={() => setIsOrdered(!isOrdered)} disabled={loading} />
+          </div>
+          <div style={{height: 'fit-content', width: 'fit-content', padding: 0}}>
+            <label htmlFor="order">Requiring Signing Order</label>
+          </div>
+        </div>
+
+        <button className={loading ? 'revoke-btn' : "primary"} disabled={loading} onClick={handleSubmit}>💾 Save</button>
+      </div>}
+    </div>
+    </Homepage>
+  );
+};
+
+export default Unggah;

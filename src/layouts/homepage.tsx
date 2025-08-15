@@ -8,7 +8,9 @@ function Homepage({ children }: { children?: React.ReactNode }) {
 
   return (
     <div className={`homepage-container ${isSidebarOpen ? "open" : "closed"}`}>
-      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <div>
+        <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      </div>
       <main className={`main-content ${isSidebarOpen ? "open" : "closed"}`}>
         <Navbar2 isSidebarOpen={isSidebarOpen} />
         <section className="content">{children}</section>

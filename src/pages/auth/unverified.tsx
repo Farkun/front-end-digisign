@@ -1,0 +1,46 @@
+import axios from "axios";
+import { ReactElement, useState } from "react";
+import Cookies from "universal-cookie";
+
+
+const Unverified = (): ReactElement => {
+
+    const [loading, setLoading] = useState<boolean>(false)
+
+    const handleLogout = (): void => {
+        if (loading) return
+        const cookies = new Cookies()
+        cookies.remove('bhf-e-sign-access-token')
+        window.location.href = '/'
+    };
+
+    const handleResendEmail = async (): Promise<void> => {
+        if (loading) return
+        setLoading(true)
+        const cookies = new Cookies()
+        const token = cookies.get("bhf-e-sign-access-token")
+        try {
+            const {data} = await axios.get(import.meta.env.VITE_API_HOST + '/api/auth/verification/resend', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            if (data) alert('Resend verification email successful')
+        } catch (err) {
+            // console.error(err)
+        }
+        setLoading(false)
+    }
+
+    if (loading) return <div>Loading ...</div>
+
+    return <div>
+        <div>
+            <button style={{backgroundColor: '#aa0000', width: 'fit-content'}} onClick={handleLogout}>Logout</button>
+            <h1 style={{color: window.matchMedia("(prefers-color-scheme: dark)").matches ? 'white' : 'black'}}>Your Account is not verified.</h1>
+            <div>Check your email to verify or <button className="btn-link" onClick={handleResendEmail}>resend email</button></div>
+        </div>
+    </div>
+}
+
+export default Unverified
